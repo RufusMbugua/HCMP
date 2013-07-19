@@ -110,7 +110,7 @@ if (isset($styles)) {
 	fieldset {
 		padding: 0;
 		border: 0;
-		margin-top: 25px;
+		
 	}
 	h1 {
 		font-size: 1.2em;
@@ -410,20 +410,20 @@ if ($current == "home_controller") {echo "active";
   	
 	<div style="font-size:15px; float:right; padding: 1em "><?php echo date('l, dS F Y'); ?>&nbsp;<div id="clock" style="font-size:15px; float:right; " ></div>
 	 </div><div style="width :53em;height: 4.2em; margin: auto; ;" ></div>
-	 
-<div class="banner_content" style="font-size:20px; float:right; margin-top: 0.3em;padding-bottom: 0.35em;"><div style="float: left;"><?php echo $this -> session -> userdata('full_name') . ": " . $banner_text; ?></div>
-<div>
+	 <div >
 <?php $flash_success_data = NULL;
 	$flash_error_data = NULL;
 	$flash_success_data = $this -> session -> flashdata('system_success_message');
 	$flash_error_data = $this -> session -> flashdata('system_error_message');
 	if ($flash_success_data != NULL) {
-		echo '<p class="successreset">' . $flash_success_data . '</p>';
+		echo '<p class="successreset" style="margin: auto;">' . $flash_success_data . '</p>';
 	} elseif ($flash_error_data != NULL) {
-		echo '<p class="errorlogin">' . $flash_error_data . '</p>';
+		echo '<p class="errorlogin" style="margin: auto;">' . $flash_error_data . '</p>';
 	}
  ?>
 </div>
+<div class="banner_content" style="font-size:20px; float:right; margin-top: 0.3em;padding-bottom: 0.35em;"><div style="float: left;"><?php echo $this -> session -> userdata('full_name') . ": " . $banner_text; ?></div>
+
 		<div style="float:right">
 		
 		

@@ -127,13 +127,19 @@ background:url('<?php echo base_url()?>
 	}
 
 </style>
-<div class="leftpanel"><h3 class="accordion" id="section1">Commodity Expiries<span></span><h3>
+<div class="leftpanel"><h3 class="accordion" id="section1">Expiries<span></span><h3>
 <div class="container">
     <div class="content">
       
-    <h3> <a href="#"  id="expired">View Expired Commodities</a></h3> 
+    <h3> <a href="#"  id="expired">View Expiries</a></h3> 
     </n>
      <h3> <a href="#" id="potentialexpiries">View Potential Expiries</a></h3> 
+     <?php $attributes = array( 'name' => 'myform', 'id'=>'myform');
+	 echo form_open('raw_data/gen_pdf',$attributes); ?>	
+<button id="downloader" class="btn" >Download PDF<i class="icon-circle-arrow-down" style="margin-left: 3px"></i></button>
+<input type="hidden" id="timer" name="timer" value="3" readonly="readonly"/>
+<?php  echo form_close();
+		?>
       
     
     
@@ -162,7 +168,13 @@ background:url('<?php echo base_url()?>
 	<h2>Click below to choose date range</h2>
 	<input type="text" size="10"  value="" id="from" placeholder="From" />
 	<input type="text" size="10"  value="" id="to" placeholder="To"/>
-	<button class="awesome blue" id="stockcontrol" style="margin-left:30%">Generate Report</button>
+	<button class="awesome blue" id="stockcontrol" style="margin-left:0%">Generate Report</button>
+	<?php $attributes = array( 'name' => 'myform', 'id'=>'myform');
+	 echo form_open('/',$attributes); ?>	
+<button id="downloader" class="btn" >Download PDF<i class="icon-circle-arrow-down" style="margin-left: 3px"></i></button>
+
+<?php  echo form_close();
+		?>
 	<input type="hidden"  value="<?php echo $facility_Code ?>" id="facilitycode" name="facilitycode" />
     </div>
     
@@ -193,9 +205,11 @@ background:url('<?php echo base_url()?>
 
 
 </div>
+
 <div class="reportDisplay">
 	
 </div>
+
 <script type="text/javascript">
 	$(function() {
 			
