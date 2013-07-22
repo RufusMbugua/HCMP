@@ -34,7 +34,7 @@ class Stock_Management extends auto_sms {
 	    $reset_facility_historical_stock_table->execute("DELETE FROM `historical_stock` WHERE  facility_code=$facility_code; ");
 		
 		
-		$this->session->set_flashdata('reset_message', 'Facility Stock Details Have Been Reset');
+		$this->session->set_flashdata('system_success_message', 'Facility Stock Details Have Been Reset');
 		redirect('Home_Controller');
 	}
 	

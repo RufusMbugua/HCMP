@@ -239,6 +239,37 @@ WHERE temp.drawingR !=  'NULL'
 return $q;
 }
 
+public static function get_county_drawing_rights($county_id){
+	
+		$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT SUM( f.`drawing_rights` ) AS initial_drawing_rights, SUM( f.`drawing_rights_balance` ) AS drawing_rights_balance, d.`district` 
+FROM facilities f, districts d, counties c
+WHERE f.district = d.id
+AND d.county = c.id
+AND c.id =$county_id
+GROUP BY d.id
+order by d.district asc
+");
+return $q;	
+
+}
+
+public static function get_orders_made_in_district($district_id){
+		$q_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT count( f.`id` ) AS total_no_of_facilities
+FROM facilities f, districts d
+WHERE f.district = d.id
+AND d.id =$district_id
+");
 
 
+		$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT COUNT( f.`id` ) AS orders_made_data
+FROM facilities f, districts d,ordertbl o
+WHERE f.district = d.id
+AND d.id =$district_id
+AND o.facilityCode=f.facility_code
+");
+
+
+return array('total_no_of_facilities'=>$q_1[0]['total_no_of_facilities'],'orders_made_data'=>$q[0]['orders_made_data']);	
+}
 }

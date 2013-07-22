@@ -19,7 +19,7 @@
         }
     });
     //default call
-    var url = "<?php echo base_url().'report_management/get_stock_status_ajax'?>"
+        var url = "<?php echo base_url().'report_management/get_stock_status_ajax'?>"
 		var div=".stockstatuschart";
 		ajax_request (url,div);
 
@@ -231,7 +231,7 @@
 	<h2>Stock Status</h2>
 	
 	<div class="stockstatus_dropdown">
-	<select id="desc" name="desc" class="drop">
+	<select id="desc" name="desc"  style="width: 100%">
     <option>Select Commodity Name</option>
 		<?php 
 		foreach ($drugs_array as $drugs) {

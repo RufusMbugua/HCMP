@@ -1865,6 +1865,7 @@ public function get_costofexpiries_chart_ajax($option=NULL,$location_id=NULL){
 		break;
 		
 		default:
+		 $data['county']='_';
 	$district=$this -> session -> userdata('district1');
 	$data['facilities']=Facilities::getFacilities($district);	
 			break;
@@ -2171,141 +2172,68 @@ echo $strXML;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public function County_orders_placed_chart(){
-$strXML ="<chart palette='3' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' caption='' yAxisName='Units' showValues='0' numVDivLines='10' divLineAlpha='30' useRoundEdges='1' legendBorderAlpha='0'>
+	public function get_county_drawing_rights_data(){
+		
+$district=$this -> session -> userdata('district');
 
-    <categories>
+$county_id=districts::get_county_id($district);
+$county_name=counties::get_county_name($county_id[0]['county']);	
+$chart_raw_data=facilities::get_county_drawing_rights($county_name[0]['id']);
 
-      <category label='Dagoretti' />
-      
-      <category label='Embakasi' />
-      
-      <category label='Kamukunji' />
-      
-      <category label='Kasarani' />
-      
-      <category label='Langata' />
-      
-      <category label='Makadara' />
-      <category label='Njiru' />
-      <category label='Starehe' />
-      <category label='Westlands' />
+$category_data='<categories>';
+$allocated_data="";
+$balance_data="";
+$chart_data='';		
+		
+$strXML ="<chart palette='3' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' caption='' yAxisName='Units' showValues='0' numVDivLines='10' divLineAlpha='30' useRoundEdges='1' legendBorderAlpha='0'>";
 
-    </categories>
-
-
-    <dataset seriesName='Allocated Drawing ' color='A66EDD' >
-
-        <set value='3500000' />
-
-        <set value='4200000' />
-
-        <set value='3100000' />
-
-        <set value='2800000' />
-
-        <set value='3400000' />
-
-        <set value='3000000' />
-        <set value='2000000' />
-
-        <set value='2600000' />
-
-        <set value='1900000' />
-
-    </dataset>
+foreach($chart_raw_data as $chart_data){
+	$category_data .="<category label='$chart_data[district]' />";
+	
+	$allocated_data .="<set value='$chart_data[initial_drawing_rights]' />";
+    $balance_data .="<set value='$chart_data[drawing_rights_balance]' />";
+}
+    
 
 
-    <dataset seriesName='Drawing right Bal' color='F6BD0F'>
-
-        <set value='2200000' />
-
-        <set value='2500000' />
-
-        <set value='1800000' />
-
-        <set value='2200000' />
-
-        <set value='1700000' />
-
-        <set value='1600000' />
-        <set value='1200000' />
-
-        <set value='1700000' />
-
-        <set value='1000000' />
-
-    </dataset>
-
+$strXML .=$category_data."</categories><dataset seriesName='Allocated Drawing ' color='A66EDD' >$allocated_data</dataset> <dataset seriesName='Drawing right Bal' color='F6BD0F'>$balance_data</dataset>
 
 </chart>";
+
 echo $strXML;
 
 }
-	public function county_ordering_rate_chart(){
-$strXML ="<chart stack100Percent='1' showPercentValues='1' palette='2' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' showLabels='1' showvalues='0'  numberPrefix=''  showSum='1' decimals='0' useRoundEdges='1' legendBorderAlpha='0'>
+	public function get_county_ordering_rate_chart(){
+$district=$this -> session -> userdata('district');
 
-    <categories>
+$county_id=districts::get_county_id($district);
+$county_name=counties::get_county_name($county_id[0]['county']);
 
-        <category label='Dagoretti' />
+$districts_in_this_county=districts::getDistrict($county_name[0]['id']);		
+	
+$category_data='<categories>';	
 
-        <category label='Embakasi' />
+$orders_made_data="";
+$total_no_of_facilities="";
+	
+		
+$strXML ="<chart stack100Percent='1' showPercentValues='1' palette='2' bgColor='FFFFFF' formatNumberScale='0' showBorder='0' showLabels='1' showvalues='0'  numberPrefix=''  showSum='1' decimals='0' useRoundEdges='1' legendBorderAlpha='0'>";
 
-        <category label='Kamukunji' />
+foreach($districts_in_this_county as $chart_data){
+	$category_data .="<category label='$chart_data->district' />";
+	
+	$district_data=facilities::get_orders_made_in_district($chart_data->id);
+	
+	$orders_made_data .="<set value='$district_data[orders_made_data]' />";
+	
+	$bal=$district_data['total_no_of_facilities']-$district_data['orders_made_data'];
+	
+	$total_no_of_facilities .="<set value='$bal'/>";
+	
 
-        <category label='Kasarani' />
+}
 
-        <category label='Langata' />
-        <category label='Makadara' />
-      <category label='Njiru' />
-      <category label='Starehe' />
-      <category label='Westlands' />
-
-    </categories>
-
-     <dataset seriesName='Orders Made' color='659EC7' showValues='0'>
-
-        <set value='15' />
-
-        <set value='19' />
-
-        <set value='27' />
-
-        <set value='16' />
-
-        <set value='26' />
-        <set value='22' />
-
-        <set value='21' />
-
-        <set value='14' />
-
-        <set value='30' />
-
-    </dataset>
-
-    <dataset seriesName='No of Facilities' color='E8E8E8' showValues='0'>
-
-        <set value='65' />
-
-        <set value='76' />
-
-        <set value='18' />
-
-        <set value='31' />
-
-        <set value='68' />
-        <set value='90' />
-
-        <set value='71' />
-
-        <set value='45' />
-
-        <set value='52' />
-
-    </dataset>
-
-</chart>";
+$strXML .=$category_data."</categories><dataset seriesName='Orders Made' color='659EC7' showValues='0'>$orders_made_data</dataset><dataset seriesName='No of Facilities' color='E8E8E8' showValues='0'>$total_no_of_facilities</dataset></chart>";
 echo $strXML;
 }
 

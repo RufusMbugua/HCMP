@@ -105,12 +105,12 @@
     chart.render("chart9");
     
     var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/StackedColumn2D.swf"?>", "ChartId9", "100%", "80%", "0", "0");
-    var url = '<?php echo base_url()."report_management/county_ordering_rate_chart"?>'; 
+    var url = '<?php echo base_url()."report_management/get_county_ordering_rate_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart10");
     
     var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/MSColumn2D.swf"?>", "ChartId10", "100%", "80%", "0", "0");
-    var url = '<?php echo base_url()."report_management/County_orders_placed_chart"?>'; 
+    var url = '<?php echo base_url()."report_management/get_county_drawing_rights_data"?>'; 
     chart.setDataURL(url);
     chart.render("chart11");
 
