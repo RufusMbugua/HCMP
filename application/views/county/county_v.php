@@ -146,6 +146,9 @@
 		border-right-style: inset;
 		
 	}
+	.multiple_chart_content label{
+		font-size:12px;
+	}
   
 </style>
   
@@ -168,8 +171,37 @@
 <div id="chart10"></div>
 	</div>
 	<div class="multiple_chart_content"  >
-<h2 >Allocated Drawing rights/Drawing rights Bal</h2>
-<div id="chart11"></div>
+<h2 >Notifications</h2>
+<div style="display: table-row;  ">
+    			<div style="display: table-cell;padding-bottom: 2em; ">
+      				<label style=" font-weight: ">Total No of Orders Placed </label>
+            			    				</div>
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="link" href="#" >14</a>
+    				</div>
+  				</div>
+  				
+  				<div style="display: table-row; ">
+    			<div style="display: table-cell;padding-bottom: 2em">
+      				<label style="font-weight: ">Total Value of Orders Placed </label>
+            		</div>
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="link" href="#" >1,221,001</a>
+    				</div>
+  				</div>
+  				
+  				<div style="display: table-row;">
+    			<div style="display: table-cell; padding-bottom: 2em">
+      				<label style="font-weight: ">Total District Drawing Rights Bal (2013/2014)</label>
+            		     				</div>
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="link" href="#" >6,000,000</a>
+    				</div>
+  				</div>
+  				
+  				
+  				
+  				
 	</div>
 	
 	
@@ -179,8 +211,8 @@
 </div>
 	
 	<div class="multiple_chart_content"  >
-<h2 >Drawing Rights Bal</h2>
-<div id="chart7"></div>
+<h2 >Allocated Drawing rights/Drawing rights Bal</h2>
+<div id="chart11"></div>
 </div>
 
 
