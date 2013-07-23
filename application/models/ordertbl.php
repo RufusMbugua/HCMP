@@ -211,5 +211,17 @@ public static function get_all_orders_moh(){
 		$order=$query->execute()->toArray();
 		return $order[0];
 	}
+	
+	public static function get_county_order_turn_around_time($county_id){
+			$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT CEIL( AVG( DATEDIFF( o.`orderDate` , o.`approvalDate` ) ) ) AS order_approval, CEIL( AVG( DATEDIFF( o.`deliverDate` , o.`approvalDate` ) ) ) AS approval_delivery, CEIL( AVG( DATEDIFF( o.`dispatch_update_date` , o.`deliverDate` ) ) ) AS delivery_update, CEIL( AVG( DATEDIFF( o.`dispatch_update_date` , o.`orderDate` ) ) ) AS t_a_t
+FROM ordertbl o, facilities f, districts d, counties c
+WHERE f.district = d.id
+AND d.county = c.id
+AND c.id = '$county_id'
+");
+return $q;
+
+	}
 
 }
