@@ -1610,11 +1610,39 @@ $strXML .= "<styles>
 }
 
 public function generate_costofordered_chart(){
+	 $district=$this -> session -> userdata('district1');
+	 
+	
+	$facilityDetails = Ordertbl::get_district_ordertotal($district);	
+	$rowcountname=count($facilityDetails);
+	$arrayQ1 = array();
+	$arrayQ2 = array();
+	$arrayQ3 = array();
+	$arrayQ4 = array();
+	for ($i=0; $i < $rowcountname ; $i++) { 
+	
+	if ($facilityDetails[$i]["month"] >= 1 && $facilityDetails[$i]["month"] <= 3) {
+			$arrayQ2[] = (int)$facilityDetails[$i]["OrderTotal"];
+			
+		}elseif($facilityDetails[$i]["month"] >= 4 && $facilityDetails[$i]["month"] <= 6){
+			$arrayQ3[] = (int)$facilityDetails[$i]["OrderTotal"];
+			
+		}elseif($facilityDetails[$i]["month"] >= 7 && $facilityDetails[$i]["month"] <=9 ){
+			$arrayQ4[] = (int)$facilityDetails[$i]["OrderTotal"];
+		}else
+		$arrayQ1[] = (int)$facilityDetails[$i]["OrderTotal"];
+	}
+	$Q1=array_sum($arrayQ1);
+	$Q2=array_sum($arrayQ2);
+	$Q3=array_sum($arrayQ3);
+	$Q4=array_sum($arrayQ4);
+	//exit;
+	
 $strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' caption='Cost Implication of Orders' subcaption='For the year 2012 to 2013' xAxisName='Months' yAxisName='Cost of Orders (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
-<set label='Oct-Dec (2012)' value='18000'/>
-<set label='Jan-Mar (2013)' value='16000'/>
-<set label='Apr-Jun (2013)' value='21800'/>
-<set label='Jul-Sep (2013)' value='19800'/>
+<set label='Oct-Dec (2012)' value='".$Q1."'/>
+<set label='Jan-Mar (2013)' value='".$Q2."'/>
+<set label='Apr-Jun (2013)' value='".$Q3."'/>
+<set label='Jul-Sep (2013)' value='".$Q4."'/>
 <styles>
 <definition>
 <style name='Anim1' type='animation' param='_xscale' start='0' duration='1'/>

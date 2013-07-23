@@ -212,4 +212,17 @@ public static function get_all_orders_moh(){
 		return $order[0];
 	}
 
+public static function get_district_ordertotal($district){
+     $year = date("Y");
+$district_ordertotal = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->fetchAll("SELECT districts.county, ordertbl.`facilityCode` , SUM( ordertbl.`orderTotal` ) AS OrderTotal, MONTH( ordertbl.`approvalDate` ) as month
+FROM ordertbl, facilities, districts
+WHERE ordertbl.facilityCode = facilities.facility_code
+AND (YEAR( ordertbl.`approvalDate` ) =$year
+OR YEAR( ordertbl.`approvalDate` ) =$year-1)
+AND districts.id =$district
+AND facilities.district = districts.id
+GROUP BY MONTH( ordertbl.`approvalDate` ) ");
+
+        return $district_ordertotal ;}
 }
