@@ -197,7 +197,7 @@
 	
 	<div class="multiple_chart_content"   >
 <h2 >Cost of Orders</h2>
-<div id=""></div>
+<div class="cost_orderschart"></div>
 </div>
 	
 	<div class="multiple_chart_content"  >
