@@ -2105,6 +2105,14 @@ echo $strXML;
 }
 //county charts  6
 public function cummulative_fill_rate_chart(){
+$district=$this -> session -> userdata('district');
+
+$county_id=districts::get_county_id($district);
+$county_name=counties::get_county_name($county_id[0]['county']);	
+$chart_raw_data=ordertbl::get_county_fill_rate($county_name[0]['id']);					
+			
+		
+	
 	$strXML ="<chart bgAlpha='0' bgColor='FFFFFF' lowerLimit='0' upperLimit='100' numberSuffix='%25' showBorder='0' basefontColor='#000000' chartTopMargin='25' chartBottomMargin='25' chartLeftMargin='25' chartRightMargin='25' toolTipBgColor='80A905' gaugeFillMix='{dark-10},FFFFFF,{dark-10}' gaugeFillRatio='3'>
 <colorRange>
 <color minValue='0' maxValue='45' code='FF654F'/>
@@ -2112,7 +2120,7 @@ public function cummulative_fill_rate_chart(){
 <color minValue='80' maxValue='100' code='8BBA00'/>
 </colorRange>
 <dials>
-<dial value='60' rearExtension='10' baseWidth='2'/>
+<dial value='".$chart_raw_data[0]['fill_rate']."' rearExtension='10' baseWidth='2'/>
 </dials>
 
 </chart>";

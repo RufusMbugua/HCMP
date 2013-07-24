@@ -236,5 +236,20 @@ AND districts.id =$district
 AND facilities.district = districts.id
 GROUP BY MONTH( ordertbl.`approvalDate` ) ");
 
-        return $district_ordertotal ;}
+        return $district_ordertotal ;
+        }
+        
+        public static function get_county_fill_rate($county_id){
+        	$district_ordertotal = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->fetchAll(" SELECT IFNULL(avg( IFNULL( o_d.`quantityRecieved` , 0 ) / IFNULL( o_d.`quantityOrdered` , 0 ) ),0) as fill_rate
+FROM  `ordertbl` o, facilities f, counties c, districts d, orderdetails o_d
+WHERE f.facility_code = o.facilityCode
+AND o.id = o_d.orderNumber
+AND f.district = d.id
+AND d.county = c.id
+AND c.id ='$county_id'");
+
+        return $district_ordertotal ;
+ 
+        }
 }

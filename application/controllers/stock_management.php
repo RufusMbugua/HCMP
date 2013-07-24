@@ -252,8 +252,8 @@ public function donation()
 		
 			}
 
-      $this->send_stock_donate_sms($other_facility_code);
-      $this->stock_level(); 	
+         $this->session->set_flashdata('system_success_message', "You have issued $count item(s)");
+		 redirect('issues_main');	
 	}
 
 
