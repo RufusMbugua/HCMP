@@ -278,4 +278,19 @@ AND c.id ='$county_id'");
  
         }
 
+        
+
+public static function get_county_ordertotal($county_id){
+     $year = date("Y");
+$county_ordertotal = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->fetchAll("SELECT districts.county, ordertbl.`facilityCode` , SUM( ordertbl.`orderTotal` ) AS OrderTotal, MONTH( ordertbl.`approvalDate` ) as month
+FROM ordertbl, facilities, districts
+WHERE ordertbl.facilityCode = facilities.facility_code
+AND (YEAR( ordertbl.`approvalDate` ) =$year
+OR YEAR( ordertbl.`approvalDate` ) =$year-1)
+AND districts.county =$county_id
+AND facilities.district = districts.id
+GROUP BY MONTH( ordertbl.`approvalDate` ) ");
+
+        return $county_ordertotal ;}
 }
