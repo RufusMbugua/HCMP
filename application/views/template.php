@@ -69,7 +69,7 @@ if ($access_level == "dpp") {
 <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script> 
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script>
-<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
+<!--<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>-->
 
 <script src="<?php echo base_url().'Scripts/validator.js'?>" type="text/javascript"></script>
 <script src="<?php echo base_url().'Scripts/jquery.validate.js'?>" type="text/javascript"></script> 

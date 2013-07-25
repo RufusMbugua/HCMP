@@ -55,6 +55,7 @@ else if($access_level == "super_admin"){
 }
 else if($access_level == "county_facilitator"){
 	
+	//$active_logs=Log::get_active_login($option,$option_id);
 	
 	
 	$data['content_view'] = "county/county_v";

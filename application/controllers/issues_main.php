@@ -190,10 +190,18 @@ public function InsertExt()
 
 			$q->execute();
 			///updating the trascation_table
-			$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection();
+			$inserttransaction_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("select  `adj` from `facility_transaction_table`WHERE `kemsa_code`= '$ids[$me]' and availability='1' and facility_code=$facility_c; ");
 			
-
-			$inserttransaction->execute("UPDATE `facility_transaction_table` SET adj = (SELECT (SUM(qty_issued)*-1) FROM facility_issues WHERE kemsa_code = '$ids[$me]' and issued_to='$facility_details'and availability='1')
+                                          
+			$inserttransaction_2 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT (SUM(qty_issued)*-1) as update_ FROM facility_issues WHERE kemsa_code = '$ids[$me]' and issued_to='$facility_details' and availability='1'");;
+									  
+			
+			 $new_value=$inserttransaction_1[0]['adj']+$inserttransaction_2[0]['update_'];
+			 
+		
+			
+			$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection();
+			$inserttransaction->execute("UPDATE `facility_transaction_table` SET adj =$new_value 
                                           WHERE `kemsa_code`= '$ids[$me]' and availability='1' and facility_code=$facilityCode; ");
 			
 			

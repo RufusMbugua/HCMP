@@ -107,6 +107,14 @@ function save_historical_stock(baseUrl, data_array){
             }
 
   $(document).ready(function() {
+  	
+  	
+  $( "#save" )
+			.button()
+			.click(function() {
+				
+			window.location="<?php echo base_url()."stock_management/fake_historical_response";?>";	
+			});
     
 
         var the_table = $('#main').dataTable( {
@@ -160,5 +168,9 @@ foreach($drug_categories as $category):?>
 endforeach;?>
 </tbody>
 </table>
+ 
+
 </div>
 <br />
+<button class="btn btn-primary" id="save">Save</button>
+

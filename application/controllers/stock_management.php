@@ -217,6 +217,7 @@ public function donation()
 			$qty=$infor->quantity1;
 			$kemsa_code_=$infor->kemsa_code;
 			
+			
 			$mydata3 = array('facility_code'=>$facility_c,
 			's11_No' => 'Physical Stock Count',
 			'kemsa_code'=>$kemsa_code_,
@@ -228,13 +229,28 @@ public function donation()
 			'issued_to' => 'N/A',
 			'issued_by' => $this -> session -> userdata('identity')
 			);
-			Facility_Issues::update_issues_table($mydata3);
+			//Facility_Issues::update_issues_table($mydata3);
 		   $facility_has_commodity=Facility_Transaction_Table::get_if_drug_is_in_table($facility_c,$kemsa_code_);
 		   
 		   if($facility_has_commodity>0){
-		   	$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection();
-			$inserttransaction->execute("UPDATE `facility_transaction_table` SET adj =$qty
+		   	$inserttransaction_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("select   `adj` from `facility_transaction_table`
                                           WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
+		
+			
+			$new_value=$inserttransaction_1[0]['adj']+$qty;
+			
+		   	$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection();
+			$inserttransaction->execute("UPDATE `facility_transaction_table` SET adj =$new_value
+                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
+                                          
+           $inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
+			
+
+			$inserttransaction1->execute("UPDATE `facility_transaction_table` SET closing_stock = (SELECT SUM(balance)
+			 FROM facility_stock WHERE kemsa_code = '$kemsa_code_' and availability='1' and facility_code='$facility_c')
+                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code ='$facility_c'; ");   
+                                          
+                                                               
 		   }
 		   else{
 		   	$mydata2=array('Facility_Code'=>$facility_c,
@@ -251,8 +267,14 @@ public function donation()
 		   
 		
 			}
+$inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
+			
 
          $this->session->set_flashdata('system_success_message', "You have issued $count item(s)");
+			 
+                                          
+                                       
+         $this->session->set_flashdata('system_success_message', "You have recieved $count item(s)");
 		 redirect('issues_main');	
 	}
 
@@ -425,6 +447,12 @@ public function historical_stock_take(){
 		$this -> load -> view("template", $data);
 
 	}
+
+public function fake_historical_response(){
+	$this->session->set_flashdata('system_success_message', "Historical Stock Details Have Been Saved");
+	redirect('home_controller');
+}
+
 	public function save_historical_stock(){
 		$data_array=$_POST['data_array'];
 		$h_stock=explode("|", $data_array);

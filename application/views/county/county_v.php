@@ -174,6 +174,10 @@
             			    				</div>
     				<div style="display: table-cell;padding-bottom: 2em">
       				<a class="link" href="<?php echo site_url('report_management/get_county_facility_mapping'); ?>" ><?php echo $stats['total_facilities']; ?></a>
+      				<label style=" font-weight: ">Total No of Facilities in The County </label>
+            			    				</div>
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="link" href="<?php echo site_url('report_management/get_county_facility_mapping'); ?>" > 10</a>
     				</div>
   				</div>
   				
@@ -183,6 +187,10 @@
             		</div>
     				<div style="display: table-cell;padding-bottom: 2em">
       				<a class="link" href="#" ><?php echo $stats['total_facilities']; ?></a>
+      				<label style="font-weight: ">Total No of Facilities in The County Using HCMP </label>
+            		</div>
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="link" href="#" >xxx</a>
     				</div>
   				</div>
   				
@@ -192,6 +200,10 @@
             		     				</div>
     				<div style="display: table-cell;padding-bottom: 2em">
       				<a class="link" href="#" ><?php echo $stats['no_of_users']; ?></a>
+      				<label style="font-weight: ">Total No of Users in The County</label>
+            		     				</div>
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="link" href="#" >10</a>
     				</div>
   				</div>
   				<div style="display: table-row;">
@@ -200,6 +212,10 @@
             		     				</div>
     				<div style="display: table-cell;padding-bottom: 2em">
       				<a class="link" href="#" ><?php echo $stats['no_of_users_last_7_days']; ?></a>
+      				<label style="font-weight: ">Total No of Users in The County Accessing HCMP in The last 7 days</label>
+            		     				</div>
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="link" href="#" >10</a>
     				</div>
   </div>
   				
