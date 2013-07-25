@@ -1609,28 +1609,29 @@ $strXML .= "<styles>
 	
 }
 
+
 public function generate_costofordered_chart(){
 	 $district=$this -> session -> userdata('district1');
-	 
+	 $year = date("Y");
 	
-	$facilityDetails = Ordertbl::get_district_ordertotal($district);	
-	$rowcountname=count($facilityDetails);
+	$orderDetails = Ordertbl::get_district_ordertotal($district);	
+	$rowcountname=count($orderDetails);
 	$arrayQ1 = array();
 	$arrayQ2 = array();
 	$arrayQ3 = array();
 	$arrayQ4 = array();
 	for ($i=0; $i < $rowcountname ; $i++) { 
 	
-	if ($facilityDetails[$i]["month"] >= 1 && $facilityDetails[$i]["month"] <= 3) {
-			$arrayQ2[] = (int)$facilityDetails[$i]["OrderTotal"];
+	if ($orderDetails[$i]["month"] >= 1 && $orderDetails[$i]["month"] <= 3) {
+			$arrayQ2[] = (int)$orderDetails[$i]["OrderTotal"];
 			
-		}elseif($facilityDetails[$i]["month"] >= 4 && $facilityDetails[$i]["month"] <= 6){
-			$arrayQ3[] = (int)$facilityDetails[$i]["OrderTotal"];
+		}elseif($orderDetails[$i]["month"] >= 4 && $orderDetails[$i]["month"] <= 6){
+			$arrayQ3[] = (int)$orderDetails[$i]["OrderTotal"];
 			
-		}elseif($facilityDetails[$i]["month"] >= 7 && $facilityDetails[$i]["month"] <=9 ){
-			$arrayQ4[] = (int)$facilityDetails[$i]["OrderTotal"];
+		}elseif($orderDetails[$i]["month"] >= 7 && $orderDetails[$i]["month"] <=9 ){
+			$arrayQ4[] = (int)$orderDetails[$i]["OrderTotal"];
 		}else
-		$arrayQ1[] = (int)$facilityDetails[$i]["OrderTotal"];
+		$arrayQ1[] = (int)$orderDetails[$i]["OrderTotal"];
 	}
 	$Q1=array_sum($arrayQ1);
 	$Q2=array_sum($arrayQ2);
@@ -1639,10 +1640,65 @@ public function generate_costofordered_chart(){
 	//exit;
 	
 $strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' caption='Cost Implication of Orders' subcaption='For the year 2012 to 2013' xAxisName='Months' yAxisName='Cost of Orders (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
-<set label='Oct-Dec (2012)' value='".$Q1."'/>
-<set label='Jan-Mar (2013)' value='".$Q2."'/>
-<set label='Apr-Jun (2013)' value='".$Q3."'/>
-<set label='Jul-Sep (2013)' value='".$Q4."'/>
+<set label='Oct-Dec (".($year-1).")' value='".$Q1."'/>
+<set label='Jan-Mar (".$year.")' value='".$Q2."'/>
+<set label='Apr-Jun (".$year.")' value='".$Q3."'/>
+<set label='Jul-Sep (".$year.")' value='".$Q4."'/>
+<styles>
+<definition>
+<style name='Anim1' type='animation' param='_xscale' start='0' duration='1'/>
+<style name='Anim2' type='animation' param='_alpha' start='0' duration='0.6'/>
+<style name='DataShadow' type='Shadow' alpha='40'/>
+</definition>
+<application>
+<apply toObject='DIVLINES' styles='Anim1'/>
+<apply toObject='HGRID' styles='Anim2'/>
+<apply toObject='DATALABELS' styles='Anim2'/>
+</application>
+</styles>
+</chart>";
+echo $strXML;
+	
+}
+
+public function generate_costofordered_County_chart(){
+	 $district=$this -> session -> userdata('district1');
+	// $county_id=districts::get_county_id($district);
+	 $county_id=14;
+	 //exit;
+	 $year = date("Y");
+	 
+	
+	$orderDetails = Ordertbl::get_county_ordertotal($county_id);	
+	$rowcountname=count($orderDetails);
+	$arrayQ1 = array();
+	$arrayQ2 = array();
+	$arrayQ3 = array();
+	$arrayQ4 = array();
+	for ($i=0; $i < $rowcountname ; $i++) { 
+	
+	if ($orderDetails[$i]["month"] >= 1 && $orderDetails[$i]["month"] <= 3) {
+			$arrayQ2[] = (int)$orderDetails[$i]["OrderTotal"];
+			
+		}elseif($orderDetails[$i]["month"] >= 4 && $orderDetails[$i]["month"] <= 6){
+			$arrayQ3[] = (int)$orderDetails[$i]["OrderTotal"];
+			
+		}elseif($orderDetails[$i]["month"] >= 7 && $orderDetails[$i]["month"] <=9 ){
+			$arrayQ4[] = (int)$orderDetails[$i]["OrderTotal"];
+		}else
+		$arrayQ1[] = (int)$orderDetails[$i]["OrderTotal"];
+	}
+	$Q1=array_sum($arrayQ1);
+	$Q2=array_sum($arrayQ2);
+	$Q3=array_sum($arrayQ3);
+	$Q4=array_sum($arrayQ4);
+	//exit;
+	
+$strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' caption='Cost Implication of Orders' subcaption='For the year 2012 to 2013' xAxisName='Months' yAxisName='Cost of Orders (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
+<set label='Oct-Dec (".($year-1).")' value='".$Q1."'/>
+<set label='Jan-Mar (".$year.")' value='".$Q2."'/>
+<set label='Apr-Jun (".$year.")' value='".$Q3."'/>
+<set label='Jul-Sep (".$year.")' value='".$Q4."'/>
 <styles>
 <definition>
 <style name='Anim1' type='animation' param='_xscale' start='0' duration='1'/>
@@ -1906,6 +1962,13 @@ public function get_costoforders_chart_ajax(){
 	$district=$this -> session -> userdata('district1');
 	$data['facilities']=Facilities::getFacilities($district);
 	$this->load->view("district/ajax_view/costoforders_v",$data);
+}
+public function get_costofordersCounty_chart_ajax(){
+	$district=$this -> session -> userdata('district1');
+	 $county_id=districts::get_county_id($district);
+	 //$county_id=14;
+	$data['facilities']=Facilities::getFacilities($district);
+	$this->load->view("county/ajax_view/costoforders_v",$data);
 }
 public function get_leadtime_chart_ajax(){
 	$district=$this -> session -> userdata('district1');

@@ -69,17 +69,13 @@
     chart.setDataURL(url);
     chart.render("chart1");
 
-    
-
-  
-
      var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "ChartId3", "100%", "70%", "0", "0");
     var url = '<?php echo base_url()."report_management/orders_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart4");
 
       var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "ChartId4", "100%", "80%", "0", "0");
-    var url = '<?php echo base_url()."report_management/cost_of_ordered_commodities_chart"?>'; 
+    var url = '<?php echo base_url()."report_management/get_costofordersCounty_chart_ajax"?>'; 
     chart.setDataURL(url);
     chart.render("chart5");
 
