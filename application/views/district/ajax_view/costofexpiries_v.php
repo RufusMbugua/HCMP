@@ -39,7 +39,7 @@ jQuery(document).ready(function() {
 			
 </script>
 
-		<div id="filter" align="center" >
+		<!--<div id="filter" align="center" >
 		<fieldset>
 	<label>Select Facility</label>
 	<select id="facilities">
@@ -54,7 +54,7 @@ jQuery(document).ready(function() {
 	</select>			
 	<input style="margin-left: 10px" type="button" id="filter-b" value="filter" />
 	</fieldset>
-	</div>
+	</div>-->
 	
 	<div id="chart-area" style="width: 100%; height: 100%;">
 	<div id="chart_exp" style="width: 100%; height: 100%;" >
