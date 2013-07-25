@@ -54,6 +54,9 @@ else if($access_level == "super_admin"){
 	$data['content_view'] = "super_admin/home_v";
 }
 else if($access_level == "county_facilitator"){
+	
+	
+	
 	$data['content_view'] = "county/county_v";
 	$data['banner_text'] = "Home";
 	$data['link'] = "home";

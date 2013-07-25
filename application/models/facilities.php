@@ -272,4 +272,16 @@ AND o.facilityCode=f.facility_code
 
 return array('total_no_of_facilities'=>$q_1[0]['total_no_of_facilities'],'orders_made_data'=>$q[0]['orders_made_data']);	
 }
+public static function get_no_of_facilities_in_county($county_id){
+$q_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT count( f.`id` ) AS total_no_of_facilities
+FROM facilities f, districts d, counties c
+WHERE f.district = d.id
+AND d.county =c.id
+AND c.id= $county_id
+");
+
+return $q_1;
+}
+
 }

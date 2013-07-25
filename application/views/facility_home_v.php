@@ -120,7 +120,7 @@ $(document).ready(function(){
 		<legend>Actions</legend>
 	     <?php
 	   //  $stock=1;
-	      if(count($stock)>0 && count($historical_stock)>0){?>
+	      if(count($stock)>0){?>
 	     	 
 		<!--<div class="activity update">
 	    <a href="<?php echo site_url('service_point/index');?>"><h2>Add Service Points</h2>	</a>
@@ -158,7 +158,7 @@ $(document).ready(function(){
 		<!--<div class="activity settings">
 	    <a href="<?php echo site_url('report_management/facility_settings');?>"><h2>Settings</h2>	</a>
 		</div>-->
-		    <?php } else if (count($stock)==0 && count($historical_stock)>0){?> 
+		    <?php } else if (count($stock)==0){?> 
 	    <div class="activity update">
 	    <a href="<?php echo site_url('stock_management/facility_first_run');?>"><h2>Update Stock Level</h2>	</a>
 		</div>

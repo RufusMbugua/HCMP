@@ -69,17 +69,13 @@
     chart.setDataURL(url);
     chart.render("chart1");
 
-    
-
-  
-
      var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "ChartId3", "100%", "70%", "0", "0");
     var url = '<?php echo base_url()."report_management/orders_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart4");
 
       var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "ChartId4", "100%", "80%", "0", "0");
-    var url = '<?php echo base_url()."report_management/cost_of_ordered_commodities_chart"?>'; 
+    var url = '<?php echo base_url()."report_management/get_costofordersCounty_chart_ajax"?>'; 
     chart.setDataURL(url);
     chart.render("chart5");
 
@@ -174,30 +170,38 @@
 <h2 >Notifications</h2>
 <div style="display: table-row;  ">
     			<div style="display: table-cell;padding-bottom: 2em; ">
-      				<label style=" font-weight: ">Total No of Orders Placed </label>
+      				<label style=" font-weight: ">Total No of Facilities in The <?php echo $stats['option']; ?> </label>
             			    				</div>
     				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="link" href="#" >14</a>
+      				<a class="link" href="<?php echo site_url('report_management/get_county_facility_mapping'); ?>" ><?php echo $stats['total_facilities']; ?></a>
     				</div>
   				</div>
   				
   				<div style="display: table-row; ">
     			<div style="display: table-cell;padding-bottom: 2em">
-      				<label style="font-weight: ">Total Value of Orders Placed </label>
+      				<label style="font-weight: ">Total No of Facilities in The <?php echo $stats['option']; ?> Using HCMP </label>
             		</div>
     				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="link" href="#" >1,221,001</a>
+      				<a class="link" href="#" ><?php echo $stats['total_facilities']; ?></a>
     				</div>
   				</div>
   				
   				<div style="display: table-row;">
     			<div style="display: table-cell; padding-bottom: 2em">
-      				<label style="font-weight: ">Total District Drawing Rights Bal (2013/2014)</label>
+      				<label style="font-weight: ">Total No of Users in The <?php echo $stats['option']; ?></label>
             		     				</div>
     				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="link" href="#" >6,000,000</a>
+      				<a class="link" href="#" ><?php echo $stats['no_of_users']; ?></a>
     				</div>
   				</div>
+  				<div style="display: table-row;">
+    			<div style="display: table-cell; padding-bottom: 2em">
+      				<label style="font-weight: ">Total No of Users in The <?php echo $stats['option']; ?> Accessing HCMP in The last 7 days</label>
+            		     				</div>
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="link" href="#" ><?php echo $stats['no_of_users_last_7_days']; ?></a>
+    				</div>
+  </div>
   				
   				
   				

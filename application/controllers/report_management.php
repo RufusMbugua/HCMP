@@ -1609,28 +1609,29 @@ $strXML .= "<styles>
 	
 }
 
+
 public function generate_costofordered_chart(){
 	 $district=$this -> session -> userdata('district1');
-	 
+	 $year = date("Y");
 	
-	$facilityDetails = Ordertbl::get_district_ordertotal($district);	
-	$rowcountname=count($facilityDetails);
+	$orderDetails = Ordertbl::get_district_ordertotal($district);	
+	$rowcountname=count($orderDetails);
 	$arrayQ1 = array();
 	$arrayQ2 = array();
 	$arrayQ3 = array();
 	$arrayQ4 = array();
 	for ($i=0; $i < $rowcountname ; $i++) { 
 	
-	if ($facilityDetails[$i]["month"] >= 1 && $facilityDetails[$i]["month"] <= 3) {
-			$arrayQ2[] = (int)$facilityDetails[$i]["OrderTotal"];
+	if ($orderDetails[$i]["month"] >= 1 && $orderDetails[$i]["month"] <= 3) {
+			$arrayQ2[] = (int)$orderDetails[$i]["OrderTotal"];
 			
-		}elseif($facilityDetails[$i]["month"] >= 4 && $facilityDetails[$i]["month"] <= 6){
-			$arrayQ3[] = (int)$facilityDetails[$i]["OrderTotal"];
+		}elseif($orderDetails[$i]["month"] >= 4 && $orderDetails[$i]["month"] <= 6){
+			$arrayQ3[] = (int)$orderDetails[$i]["OrderTotal"];
 			
-		}elseif($facilityDetails[$i]["month"] >= 7 && $facilityDetails[$i]["month"] <=9 ){
-			$arrayQ4[] = (int)$facilityDetails[$i]["OrderTotal"];
+		}elseif($orderDetails[$i]["month"] >= 7 && $orderDetails[$i]["month"] <=9 ){
+			$arrayQ4[] = (int)$orderDetails[$i]["OrderTotal"];
 		}else
-		$arrayQ1[] = (int)$facilityDetails[$i]["OrderTotal"];
+		$arrayQ1[] = (int)$orderDetails[$i]["OrderTotal"];
 	}
 	$Q1=array_sum($arrayQ1);
 	$Q2=array_sum($arrayQ2);
@@ -1639,10 +1640,65 @@ public function generate_costofordered_chart(){
 	//exit;
 	
 $strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' caption='Cost Implication of Orders' subcaption='For the year 2012 to 2013' xAxisName='Months' yAxisName='Cost of Orders (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
-<set label='Oct-Dec (2012)' value='".$Q1."'/>
-<set label='Jan-Mar (2013)' value='".$Q2."'/>
-<set label='Apr-Jun (2013)' value='".$Q3."'/>
-<set label='Jul-Sep (2013)' value='".$Q4."'/>
+<set label='Oct-Dec (".($year-1).")' value='".$Q1."'/>
+<set label='Jan-Mar (".$year.")' value='".$Q2."'/>
+<set label='Apr-Jun (".$year.")' value='".$Q3."'/>
+<set label='Jul-Sep (".$year.")' value='".$Q4."'/>
+<styles>
+<definition>
+<style name='Anim1' type='animation' param='_xscale' start='0' duration='1'/>
+<style name='Anim2' type='animation' param='_alpha' start='0' duration='0.6'/>
+<style name='DataShadow' type='Shadow' alpha='40'/>
+</definition>
+<application>
+<apply toObject='DIVLINES' styles='Anim1'/>
+<apply toObject='HGRID' styles='Anim2'/>
+<apply toObject='DATALABELS' styles='Anim2'/>
+</application>
+</styles>
+</chart>";
+echo $strXML;
+	
+}
+
+public function generate_costofordered_County_chart(){
+	 $district=$this -> session -> userdata('district1');
+	// $county_id=districts::get_county_id($district);
+	 $county_id=14;
+	 //exit;
+	 $year = date("Y");
+	 
+	
+	$orderDetails = Ordertbl::get_county_ordertotal($county_id);	
+	$rowcountname=count($orderDetails);
+	$arrayQ1 = array();
+	$arrayQ2 = array();
+	$arrayQ3 = array();
+	$arrayQ4 = array();
+	for ($i=0; $i < $rowcountname ; $i++) { 
+	
+	if ($orderDetails[$i]["month"] >= 1 && $orderDetails[$i]["month"] <= 3) {
+			$arrayQ2[] = (int)$orderDetails[$i]["OrderTotal"];
+			
+		}elseif($orderDetails[$i]["month"] >= 4 && $orderDetails[$i]["month"] <= 6){
+			$arrayQ3[] = (int)$orderDetails[$i]["OrderTotal"];
+			
+		}elseif($orderDetails[$i]["month"] >= 7 && $orderDetails[$i]["month"] <=9 ){
+			$arrayQ4[] = (int)$orderDetails[$i]["OrderTotal"];
+		}else
+		$arrayQ1[] = (int)$orderDetails[$i]["OrderTotal"];
+	}
+	$Q1=array_sum($arrayQ1);
+	$Q2=array_sum($arrayQ2);
+	$Q3=array_sum($arrayQ3);
+	$Q4=array_sum($arrayQ4);
+	//exit;
+	
+$strXML = "<chart palette='1' lineColor='FF5904' lineAlpha='85' showValues='1' rotateValues='1' valuePosition='auto' caption='Cost Implication of Orders' subcaption='For the year 2012 to 2013' xAxisName='Months' yAxisName='Cost of Orders (KES)' yAxisMinValue='15000' showValues='0' useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '60' showBorder='0' bgColor='FFFFFF'>
+<set label='Oct-Dec (".($year-1).")' value='".$Q1."'/>
+<set label='Jan-Mar (".$year.")' value='".$Q2."'/>
+<set label='Apr-Jun (".$year.")' value='".$Q3."'/>
+<set label='Jul-Sep (".$year.")' value='".$Q4."'/>
 <styles>
 <definition>
 <style name='Anim1' type='animation' param='_xscale' start='0' duration='1'/>
@@ -1907,6 +1963,13 @@ public function get_costoforders_chart_ajax(){
 	$data['facilities']=Facilities::getFacilities($district);
 	$this->load->view("district/ajax_view/costoforders_v",$data);
 }
+public function get_costofordersCounty_chart_ajax(){
+	$district=$this -> session -> userdata('district1');
+	 $county_id=districts::get_county_id($district);
+	 //$county_id=14;
+	$data['facilities']=Facilities::getFacilities($district);
+	$this->load->view("county/ajax_view/costoforders_v",$data);
+}
 public function get_leadtime_chart_ajax(){
 	$district=$this -> session -> userdata('district1');
 	$data['facilities']=Facilities::getFacilities($district);
@@ -2105,6 +2168,14 @@ echo $strXML;
 }
 //county charts  6
 public function cummulative_fill_rate_chart(){
+$district=$this -> session -> userdata('district');
+
+$county_id=districts::get_county_id($district);
+$county_name=counties::get_county_name($county_id[0]['county']);	
+$chart_raw_data=ordertbl::get_county_fill_rate($county_name[0]['id']);					
+			
+		
+	
 	$strXML ="<chart bgAlpha='0' bgColor='FFFFFF' lowerLimit='0' upperLimit='100' numberSuffix='%25' showBorder='0' basefontColor='#000000' chartTopMargin='25' chartBottomMargin='25' chartLeftMargin='25' chartRightMargin='25' toolTipBgColor='80A905' gaugeFillMix='{dark-10},FFFFFF,{dark-10}' gaugeFillRatio='3'>
 <colorRange>
 <color minValue='0' maxValue='45' code='FF654F'/>
@@ -2112,7 +2183,7 @@ public function cummulative_fill_rate_chart(){
 <color minValue='80' maxValue='100' code='8BBA00'/>
 </colorRange>
 <dials>
-<dial value='60' rearExtension='10' baseWidth='2'/>
+<dial value='".$chart_raw_data[0]['fill_rate']."' rearExtension='10' baseWidth='2'/>
 </dials>
 
 </chart>";
@@ -2168,19 +2239,32 @@ echo $strXML;
 
 //county charts  9
 public function lead_time_chart_county(){
+$district=$this -> session -> userdata('district');
+
+$county_id=districts::get_county_id($district);
+$county_name=counties::get_county_name($county_id[0]['county']);	
+$chart_raw_data=ordertbl::get_county_order_turn_around_time($county_name[0]['id']);			
+
+$step_data=0;	
+	
+	
 	$title='Lead Time';
 $str_xml_body="<value>1</value>";
 
 $strXML = '<Chart bgColor="FFFFFF" bgAlpha="0" showBorder="0" upperLimit="15" lowerLimit="0" gaugeRoundRadius="5" chartBottomMargin="10" ticksBelowGauge="1" showGaugeLabels="1" valueAbovePointer="1" pointerOnTop="1" pointerRadius="9" >
+<colorRange>';
 
-<colorRange>
-<color minValue="0" maxValue="5" label="5 days"  />
-<color minValue="5" maxValue="10" label="5 days"/>
-<color minValue="10" maxValue="15" label="5 days"/>
+$strXML .= "<color minValue='$step_data' maxValue='".$chart_raw_data[0]['order_approval']."' label='".$chart_raw_data[0]['order_approval']." days'  />";
+$step_data =$step_data+$chart_raw_data[0]['order_approval']+$chart_raw_data[0]['approval_delivery'];
+$strXML .= "<color minValue='".$chart_raw_data[0]['order_approval']."' maxValue='$step_data' label='".$chart_raw_data[0]['approval_delivery']." days'  />";
+$step_data =$step_data+$chart_raw_data[0]['delivery_update'];
+$step_data_=$step_data-$chart_raw_data[0]['delivery_update'];
+$strXML .= "<color minValue='$step_data_' maxValue='$step_data' label='".$chart_raw_data[0]['delivery_update']." days'  />";
 
+$strXML .='
 </colorRange>
 <pointers>
-   <pointer value="8.3" toolText="Total Turn Around Time" link="P-detailsWin,width=450,height=150,toolbar=no,scrollbars=no, resizable=no-provincialtatbreakdown.php?province=5%26mwaka=2012%26mwezi=07%26dcode=%26fcode=0" />
+   <pointer value="'.$chart_raw_data[0]['t_a_t'].'" toolText="Total Turn Around Time" link="P-detailsWin,width=450,height=150,toolbar=no,scrollbars=no, resizable=no-provincialtatbreakdown.php?province=5%26mwaka=2012%26mwezi=07%26dcode=%26fcode=0" />
  
 </pointers>
 
@@ -2261,7 +2345,7 @@ foreach($districts_in_this_county as $chart_data){
 
 }
 
-$strXML .=$category_data."</categories><dataset seriesName='Orders Made' color='659EC7' showValues='0'>$orders_made_data</dataset><dataset seriesName='No of Facilities' color='E8E8E8' showValues='0'>$total_no_of_facilities</dataset></chart>";
+$strXML .=$category_data."</categories><dataset seriesName='Orders Made' color='659EC7' showValues='0'>$orders_made_data</dataset><dataset seriesName='Orders not made' color='E8E8E8' showValues='0'>$total_no_of_facilities</dataset></chart>";
 echo $strXML;
 }
 

@@ -42,24 +42,18 @@ public function get_ddp_phone_numbers($district_id){
 	return $phone;
 }
 
-public function send_stock_donate_sms($other_facility_code=NULL){
-     		$facility_name = $this -> session -> userdata('full_name');
-		    $facility_c=$this -> session -> userdata('news');
-			
-	
-		$data=User::get_user_info($facility_c);
-		  $phone="";    
-		foreach ($data as $info) {
-			$usertype_id = $info->usertype_id;
-			$telephone =$info->telephone;
-			$district = $info->district;
-			$facility = $info->facility;
-			
+public function send_stock_donate_sms(){
 		
-		$phone .=$telephone.'+';	
+       $facility_name = $this -> session -> userdata('full_name');
+	   $facility_code=$this -> session -> userdata('news');
+	   $data=User::getUsers($facility_code)->toArray();
 
-		
-		}
+	   //$message= "Stock level for ".$facility_name." has been updated. HCMP";
+       
+	   $phone=$this->get_facility_phone_numbers($facility_code);
+	   $phone .=$this->get_ddp_phone_numbers($data[0]['district']);
+	
+ 
 	    $message= $facility_name." have been donated commodities. HCMP";
 		
 		
@@ -74,9 +68,9 @@ public function send_sms($phones,$message) {
    $message=urlencode($message);	
    $spam_sms='254720167245+254726534272';
  	# code...
- 	file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$spam_sms&text=$message");
+ 	//file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$spam_sms&text=$message");
 		
-	file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phones&text=$message");
+	//file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phones&text=$message");
 	}
 
 
