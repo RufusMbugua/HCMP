@@ -2,6 +2,16 @@
 $facility=$this -> session -> userdata('news');
 $access_level = $this -> session -> userdata('user_indicator');
 ?>
+<style>
+	  #right_content h2 {
+		background: #b6b6b6; /* Old browsers */
+		padding: 5px;
+		text-align: center;
+		margin: 0 0 0.625em 0;
+		border-right-style: inset;
+		
+	}
+</style>
 <SCRIPT LANGUAGE="Javascript" SRC="<?php echo base_url();?>Scripts/FusionCharts/FusionCharts.js"></SCRIPT>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -107,12 +117,24 @@ $(document).ready(function(){
                
           if (count($historical_stock)<163){?> 
 		<div class="message warning">
-			<h2>Incomplete Historical Stock</h2>
+<h2>Incomplete Historical Stock (<?php echo floor($percentage_complete[0]['percentage']); ?>% complete)</h2>
 			<p>
 				<a href="<?php 
 				echo site_url('stock_management/historical_stock_take');?>" <a class="link"> Please provide your historical stock information </a>
 			</p>
 		</div>
+		<?php }?>
+		 <?php 
+               
+          if (count($stock)<1){?> 
+	<div class="message warning">
+			<h2>No Stock</h2>
+			<p>
+				<a href="<?php 
+				echo site_url('stock_management/facility_first_run');?>" <a class="link"> Please update your stock details </a>
+			</p>
+		</div>
+	
 		<?php }?>
                
 		</fieldset>
@@ -165,31 +187,18 @@ $(document).ready(function(){
 		<div class="activity update">
 	    <a href="<?php echo site_url('stock_management/historical_stock_take');?>"><h2>Provide Historical Stock Data</h2></a>
 		</div>
-		<div class="message warning">
-			<h2>No Stock</h2>
-			<p>
-				<a href="<?php 
-				echo site_url('stock_management/facility_first_run');?>" <a class="link"> Please update your stock details </a>
-			</p>
-		</div>
-		<?php } else if (count($historical_stock)==0){?> 
+	<?php }else if (count($historical_stock)==0){?> 
 	
 		<div class="activity update">
 	    <a href="<?php echo site_url('stock_management/historical_stock_take');?>"><h2>Provide Historical Stock Data</h2></a>
 		</div>
-		<div class="message warning">
-			<h2>No Historical Stock</h2>
-			<p>
-				<a href="<?php 
-				echo site_url('stock_management/historical_stock_take');?>" <a class="link"> Please provide your historical stock information </a>
-			</p>
-		</div>
+	
 		<?php }?>
 		
 		</fieldset>
 	</div>
 	<div id="right_content">
-	
+	<h2 >Stock Level</h2>
 		<div id="stock_status" style="overflow: scroll; height: 80em; min-height:100%; margin: 0;"></div>
 	</div>
 	

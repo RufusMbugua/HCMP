@@ -13,93 +13,120 @@
 		</style>
 
 		<script type="text/javascript" charset="utf-8">
-			
-			$(document).ready(function() {
-				/* Build the DataTable with third column using our custom sort functions */
-				$('#example_main').dataTable( {
-					"bJQueryUI": true,
-					"bPaginate": false
-				} );
-	
-						$(".ajax_call_1").click(function(){
-							var id  = $(this).attr("id"); 
-							
-							if(id=="county_facility"){
-								
-  	                         var url= $(this).attr("name"); 
-  	
-  	                     ajax_request_special (url);
-  	                  return;
-                        }
-	
-	});
-	
-	
-		function ajax_request_special (url){
-	var url =url;
-	 $.ajax({
-          type: "POST",
-          url: url,
-          beforeSend: function() {
-            $("#dialog").html("");
-          },
-          success: function(msg) {
+					
 
-        	
-        	$('#dialog').html(msg);
-            $( "#dialog" ).dialog({
-			height: 650,
-			width:900,
-			modal: true
-		});
-          }
-        }); 
-}
-		
-		
-		
+$(document).ready(function() {
 
-				
-				
-	
-			$( "#filter-b" )
-			.button()
-			.click(function() {
-				
+$( "#counties" ).change(function() {
+//	var value = $("#county").selected.val();
+	var value  = $('#counties').attr("value");
+//	alert(value);
+
+	var url = 'http://localhost/HCMP/cd4_management/loaddistricts/'
+
+	$.ajax({
+			  type: "POST",
+			  url: url+value,
+			  success: function(msg){	
+
+
+					$('#dist').html(msg);
+					
+			  },
+			  error: function(XMLHttpRequest, textStatus, errorThrown) {
+			       if(textStatus == 'timeout') {}
+			   }
+			})
 });	
 
+$('#dist').change(function(){
+
+//	var value = $("#county").selected.val();
+	var value  = $('#dist').attr("value");
+//	alert(value);
+
+	var url = 'http://localhost/HCMP/cd4_management/loadfacilities/'
+
+	$.ajax({
+			  type: "POST",
+			  url: url+value,
+			  success: function(msg){	
+
+
+					$('#facil').html(msg);
+					
+			  },
+			  error: function(XMLHttpRequest, textStatus, errorThrown) {
+			       if(textStatus == 'timeout') {}
+			   }
+			})
+});
+
+$('#facil').change(function(){
+
+//	var value = $("#county").selected.val();
+	var value  = $('#facil').attr("value");
+//	alert(value);
+
+	var url = 'http://localhost/HCMP/cd4_management/loaddevices/'
+
+	$.ajax({
+			  type: "POST",
+			  url: url+value,
+			  success: function(msg){	
+
+
+					$('#devices').html(msg);
+					
+			  },
+			  error: function(XMLHttpRequest, textStatus, errorThrown) {
+			       if(textStatus == 'timeout') {}
+			   }
+			})
+});
+
 	});
+ 
+
 	</script>
 	<style>
-	.chart_content{
-		margin:0 auto;
-		margin-left: 0px;
+	#devices{margin: 20px;}
+	#select-menu{
+	position: relative; background: #FAFAFA; width: 95%; -webkit-box-shadow: 0 0px 1px 0px #000; padding: 12px; margin-top: 0px; z-index: 1;margin-left: 22px;	
 	}
-	.multiple_chart_content{
-		float:left; 
-	}
+
 </style>
 
-	
-		<div id="dialog"></div> 
-	
-	
-						<table  style="margin-left: 0;" id="example_main" width="100%">
-					<thead>
-					<tr>
-						<th><b>MFL</b></th>
-						<th><b>Facility Name</b></th>
-						<th><b>Owner</b></th>								    
-					</tr>
-					</thead>
-					<tbody>
-			<?php foreach($facility as $facility_detail){
-			echo "<tr><td><a class='ajax_call_1' id='county_facility' name='".base_url()."cd4_management/get_cd4_facility_detail/$facility_detail[facility_code]' href='#'>$facility_detail[facility_code]</a></td><td>$facility_detail[facility_name]</td><td>$facility_detail[facility_owner]</td>";
-			
-		} ?>
-							
-				</tbody>
-	
-				</table>
- 
+
+<div id="select-menu">	
+
+Select County:	
+<select id="counties" name="county">
+<option>--Select County--</option>
+<?php foreach ($counties as $countynames) {
+echo '<option value="'.$countynames.'">'.$countynames.'</option>';	
+} ?></select>
+Select District:	
+<select id="dist">
+ <option>-------------------------</option>
+</select>
+Select Facility:	
+<select id="facil">
+ <option>-------------------------</option>
+</select>
+</div>
+
+<div id="devices">
+
+<fieldset style="
+    position: absolute;
+    margin-top: 112px;
+    font-size: 2em;
+    border: solid 1px #DDE2BB;
+    padding: 79px;
+    color: rgb(221, 154, 154);
+    background: snow;
+    /* margin-left: 80px; */
+"> <h1>Select Facility to allocate</h1></fieldset>
+</div>
  

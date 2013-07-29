@@ -1735,14 +1735,14 @@ public function get_stock_status($option=NULL,$facility_code=NULL){
 	$title=$county_name[0]["county"]." County";
         switch ($facility_code) {
 			   case 'r_h':
-			 $commodity_array=facility_stock::get_county_drug_stock_level(1,8);	
+			 $commodity_array=facility_stock::get_county_drug_stock_level($county_id[0]['id'],8);	
 				break;
 				case 'malaria':
-			 $commodity_array=facility_stock::get_county_drug_stock_level(1,1);	
+			 $commodity_array=facility_stock::get_county_drug_stock_level($county_id[0]['id'],1);	
 				break;
 
 			default:
-				 $commodity_array=facility_stock::get_county_drug_stock_level(1);
+				 $commodity_array=facility_stock::get_county_drug_stock_level($county_id[0]['id']);
 				break;
 		}
         
@@ -2177,7 +2177,8 @@ echo $strXML;
 //county charts  9
 public function lead_time_chart_county(){
 $district=$this -> session -> userdata('district');
-
+$chart_raw_data[0]['t_a_t']=0;
+$chart_raw_data[0]['delivery_update']=0;
 $county_id=districts::get_county_id($district);
 $county_name=counties::get_county_name($county_id[0]['county']);	
 $chart_raw_data=ordertbl::get_county_order_turn_around_time($county_name[0]['id']);			

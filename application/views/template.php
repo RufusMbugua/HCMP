@@ -359,15 +359,23 @@ if ($current == "home_controller") {echo "active";
 	}
 ?>">Facility Mapping</a></li>
 	<?php } ?>
-
 <?php if($user_is_dpp){
 	?>
-	<li class="active"><a data-clone="Home" href="<?php echo base_url(); ?>home_controller">Home </a></li>
-
-	<?php } ?>
+	<li class="active"><a data-clone="Home" href="<?php echo base_url();?>home_controller">Home </a></li>
+	<li class="active"><a data-clone="Orders" href="<?php echo base_url();?>rtk_management/rtk_orders">Orders</a></li>
+	<li><a data-clone="Facility Mapping" href="<?php echo site_url('rtk_management/rtk_mapping/dpp');?>"  class="<?php
+	if ($quick_link == "kemsa_order_v") {echo "active";
+	}
+?>">Facility Mapping</a></li>
+	<?php
+}
+?>
 <?php if($user_is_allocation_committee){
 	?>
-	<li class="active"><a data-clone="Home" href="<?php echo base_url(); ?>home_controller">Home </a></li>
+	<li class="active"><a data-clone="RTK Home" href="<?php echo base_url();?>home_controller">RTK</a></li>
+<!--	<li><a  data-clone="RTK Allocation" href="<?php echo base_url();?>rtk_management/national_allocation">Allocation</a></li>
+	<li><a  data-clone="CD4 Home" href="<?php echo base_url();?>cd4_management/">CD4</a></li>-->
+	<li><a  data-clone="CD4 Allocation" href="<?php echo base_url();?>cd4_management/allocated">Allocation</a></li>
 	<?php } ?>
 <?php if($user_is_moh){
 	?>
@@ -408,7 +416,7 @@ if ($current == "home_controller") {echo "active";
 </nav>
 </div>
   	
-	<div style="font-size:15px; float:right; padding: 1em "><?php echo date('l, dS F Y'); ?>&nbsp;<div id="clock" style="font-size:15px; float:right; " ></div>
+	<div style="font-size:15px; float:right; padding: 1em "><?php date_default_timezone_set('Europe/Moscow'); echo date('l, dS F Y'); ?>&nbsp;<div id="clock" style="font-size:15px; float:right; " ></div>
 	 </div><div style="width :53em;height: 4.2em; margin: auto; ;" ></div>
 	 <div >
 <?php $flash_success_data = NULL;
