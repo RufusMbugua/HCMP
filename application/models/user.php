@@ -130,7 +130,19 @@ public static function check_user_exist($email){
 		return count($level);
 }
 
-
+public static function get_all_moh_users(){
+	$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT SUM(  `qty_requested` )  as qty_requested  , SUM(  `distributed` ) as distributed  , SUM(  `allocated` ) as allocated  , c.county
+FROM rtk_stock_status r, facilities f, counties c, districts d
+WHERE r.`facility_code` = f.`facility_code` 
+AND f.`district` = d.`id` 
+AND d.`county` = c.`id` 
+AND r.`commodity` =  '$commodity'
+AND r.allocated >0
+GROUP BY c.id
+ORDER BY c.id ASC ");
+return $q;
+}
 
 
 }
