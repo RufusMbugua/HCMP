@@ -36,7 +36,7 @@ class Home_Controller extends MY_Controller {
 
 		$difference=($x1-$x2)/86400;
 /*****************************************Notifications********************************************/	
-            $data['percentage_complete'] = Historical_Stock::load_historical_stock($facility_c);	    
+            $data['percentage_complete'] = Historical_Stock::historical_stock_rate($facility_c);	    
 		    $data['diff']=$difference;			
 			$data['exp']=Facility_Stock::get_exp_count($date,$facility_c);
 		    $data['historical_stock'] = Historical_Stock::count_historical_stock($facility_c);

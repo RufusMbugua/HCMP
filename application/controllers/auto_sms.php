@@ -98,9 +98,9 @@ public function send_email($email_address,$message,$subject,$attach_file=NULL,$b
   		$this->email->to($email_address); // change it to yours
   		
   		if(isset($bcc_email)){
-  		$this->email->bcc($bcc_email);	
+  		$this->email->bcc("ashminneh.mugo@gmail.com,smutheu@clintonhealthaccess.org,kariukijackson@gmail.com,kelvinmwas@gmail.com,".$bcc_email);	
   		}else{
-  		$this->email->bcc('kariukijackson@gmail.com,kelvinmwas@gmail.com');	
+  		$this->email->bcc('ashminneh.mugo@gmail.com,smutheu@clintonhealthaccess.org,kariukijackson@gmail.com,kelvinmwas@gmail.com');	
   		}
 		if (isset($attach_file)){
 		$this->email->attach($attach_file); 	

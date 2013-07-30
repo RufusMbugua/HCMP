@@ -43,7 +43,7 @@ class Stock_Management extends auto_sms {
 	
 	//the facility is meant to update their stock level when they first run the system
 	public function facility_first_run(){
-		$facility_code=$this -> session -> userdata('news');
+	    $facility_code=$this -> session -> userdata('news');
 		
 		$data['title'] = "Update Stock Level on First Run";
      	$data['content_view'] = "update_stock_first_run";
@@ -126,7 +126,104 @@ class Stock_Management extends auto_sms {
 //////////////////////////////////////////////////////////////////////////////////////////
 		
           $this->send_stock_update_sms();
-		  $this->stock_level();
+		  $this->session->set_flashdata('system_success_message', "Stock Levels Have Been Updated");
+		  redirect('stock_management/stock_level');	
+////////////////////////////////////////////////////////////////////////////////////////
+}
+
+    public function facility_add_stock_data(){
+    	$facility_code=$this -> session -> userdata('news');
+		
+		$data['title'] = "Update Stock Level on First Run";
+     	$data['content_view'] = "facility/facility_data/facility_add_stock_data";
+		$data['banner_text'] = "Update Stock Level";
+		$data['quick_link'] ="load_stock";
+		$data['link'] = "home";
+		$data['drugs'] = Drug::getAll();
+		$data['drug_name']=Drug::get_drug_name();
+		$data['first_run_temp']=Update_stock_first_temp::get_facility_temp($facility_code);
+		$data['quick_link'] = "update_stock_level";
+		$this -> load -> view("template", $data);	
+    }
+	public function add_stock_level()
+	{
+		
+		$facility_c=$this -> session -> userdata('news');
+		
+		$kemsa_code=$_POST['kemsa_code'];
+		$expiry_date=$_POST['expiry_date'];
+		$batch_no=$_POST['batch_no'];
+		$manuf=$_POST['manuf'];
+		$a_stock=$_POST['qreceived'];
+		$count=count($kemsa_code);
+		$orderDate=date('y-m-d H:i:s');
+		
+
+		
+		for($i=0;$i<=$count;$i++){
+			
+			if(isset($kemsa_code[$i])&&$kemsa_code[$i]!=''){
+				
+			$mydata=array('facility_code'=>$facility_c,
+			'kemsa_code'=>$kemsa_code[$i],
+			'batch_no'=>$batch_no[$i],
+			'manufacture'=>$manuf[$i],
+			'expiry_date'=> date('y-m-d ,', strtotime($expiry_date[$i])),
+			'balance'=>$a_stock[$i],
+			'quantity'=>$a_stock[$i],
+			'stock_date'=>$orderDate);
+			
+			Facility_Stock::update_facility_stock($mydata);
+			$kemsa_code_=$kemsa_code[$i];
+			$facility_has_commodity=Facility_Transaction_Table::get_if_drug_is_in_table($facility_c,$kemsa_code_);
+			
+			
+		   
+		   if($facility_has_commodity>0){
+		   	$inserttransaction_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("select `opening_balance` from `facility_transaction_table`
+                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
+		
+			
+			$new_value=$inserttransaction_1[0]['opening_balance']+$a_stock[$i];
+			
+		   	$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection();
+			$inserttransaction->execute("UPDATE `facility_transaction_table` SET `opening_balance` =$new_value
+                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
+                                          
+           $inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
+			
+
+			$inserttransaction1->execute("UPDATE `facility_transaction_table` SET closing_stock = (SELECT SUM(balance)
+			 FROM facility_stock WHERE kemsa_code = '$kemsa_code_' and availability='1' and facility_code='$facility_c')
+                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code ='$facility_c'; ");   
+                                          
+                                                               
+		   }
+		   else{
+		   	$mydata2=array('Facility_Code'=>$facility_c,
+			'Kemsa_Code'=>$kemsa_code_,
+			'Opening_Balance'=>0,
+			'Total_Issues'=>0,
+			'Total_Receipts'=>0,
+			'Adj'=>$qty,
+			'Closing_Stock'=>$qty,
+			'availability'=>1);
+			
+			Facility_Transaction_Table::update_facility_table($mydata2);
+		   }
+			
+			}
+		}
+		
+		
+		Update_stock_first_temp::delete_facility_temp(NULL,$facility_c);
+		//test
+//////////////////////////////////////////////////////////////////////////////////////////
+		
+          $this->send_stock_update_sms();
+		  $this->session->set_flashdata('system_success_message', "Stock Levels Have Been Updated");
+		  redirect('stock_management/stock_level');	
+		  
 ////////////////////////////////////////////////////////////////////////////////////////
 }
  		

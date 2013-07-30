@@ -29,10 +29,26 @@ class Historical_Stock extends Doctrine_Record {
 		
 		return $stocktake;
 	}
+	public static function historical_stock_rate($facility_code){
+	
+		
+			$query = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT d.unit_size, d.id, h.`drug_id` , d.kemsa_code, d_c.category_name, d.drug_name, h.`consumption_level` , h.`unit_count` , h.`selected_option`,(count(consumption_level)/163)*100 as percentage
+FROM drug_category d_c, drug d
+LEFT JOIN  `historical_stock` h ON d.id = h.drug_id
+AND h.facility_code =$facility_code
+WHERE d.drug_category = d_c.id");
+		
+
+		
+		return $query;
+	}
 	public static function load_historical_stock($facility_code){
-		$query = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT d.id, h.`drug_id`, h.`consumption_level`, h.`unit_count`, h.`selected_option`, (count(h.`consumption_level`)/163)*100 as percentage
-			FROM drug d LEFT JOIN `historical_stock` h ON d.id=h.drug_id
-			AND h.facility_code=$facility_code");
+		$query = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT d.unit_size, d.id, h.`drug_id` , d.kemsa_code, d_c.category_name, d.drug_name, h.`consumption_level` , h.`unit_count` , h.`selected_option` 
+FROM drug_category d_c, drug d
+LEFT JOIN  `historical_stock` h ON d.id = h.drug_id
+AND h.facility_code =$facility_code
+WHERE d.drug_category = d_c.id");
+		
 		
 		return $query;
 	}
