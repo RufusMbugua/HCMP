@@ -12,6 +12,7 @@ class User extends Doctrine_Record {
 		$this->hasColumn('district', 'varchar', 255);
 		$this->hasColumn('facility', 'varchar', 255);
 		$this->hasColumn('status', 'int', 11);
+		$this->hasColumn('county_id', 'int', 11);
 		
 	}
 	
@@ -132,15 +133,15 @@ public static function check_user_exist($email){
 
 public static function get_all_moh_users(){
 	$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
-SELECT SUM(  `qty_requested` )  as qty_requested  , SUM(  `distributed` ) as distributed  , SUM(  `allocated` ) as allocated  , c.county
-FROM rtk_stock_status r, facilities f, counties c, districts d
-WHERE r.`facility_code` = f.`facility_code` 
-AND f.`district` = d.`id` 
-AND d.`county` = c.`id` 
-AND r.`commodity` =  '$commodity'
-AND r.allocated >0
-GROUP BY c.id
-ORDER BY c.id ASC ");
+SELECT u.id, a.level, u.status, c.county, d.district, u.fname, u.lname, u.email, u.telephone, f.facility_name
+FROM access_level a, user_type_definition u_t, user u
+LEFT JOIN facilities f ON u.facility = f.facility_code
+LEFT JOIN districts d ON u.district = d.id
+LEFT JOIN counties c ON u.county_id = c.id
+WHERE u.usertype_id = a.id
+AND a.type = u_t.id
+AND u_t.id =1
+ORDER BY f.facility_name ASC ");
 return $q;
 }
 

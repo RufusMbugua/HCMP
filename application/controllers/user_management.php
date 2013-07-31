@@ -276,22 +276,44 @@ else{
 		$password='123456';
 		$redirect=false;
 		$district_redirect=false;
+		$county_redirect=false;
+		$user_level="";
+		$access_level="";
+		$user_delegation="";
+		$facility_code=$this -> session -> userdata('news');
+		
+		
+		$access_level=access_level::get_access_level_name($this->input->post('user_type'));
+		
+		$access_level=$access_level['level'];
+		
+		if($facility_code!=null){
+		$facility_code=$facility_code;
+		$redirect=TRUE;	
+		
+		$facility_name=facilities::get_facility_name_($facility_code);
+		
+		$user_delegation="Facility: $facility_name[facility_name]";
+		$user_level="Facility Level";
+		
+		}
+		
 		if($this->input->post('facility_code')){
 			$facility_code=$this->input->post('facility_code');
 			$district_redirect=true;
+			$facility_name=facilities::get_facility_name_($facility_code);
+		
+		    $user_delegation="Facility: $facility_name[facility_name]";
+		    $user_level="Facility Level";
 		}
-		else{
-		$facility_code=$this -> session -> userdata('news');
-			$redirect=TRUE;	
-		}
-      
+
         if($this->input->post('user_name')){
-$user_name=$this->input->post('email');
-}		
-else{
-$user_name=$this->input->post('user_name');
-}
-		$district=$this -> session -> userdata('district1');
+            $user_name=$this->input->post('email');
+                  }		
+             else{
+            $user_name=$this->input->post('user_name');
+          }
+		
 		$f_name= $this->input->post('f_name');
 		$other_name=$this->input->post('o_name');
 		$phone=$this->input->post('phone_no');
@@ -299,6 +321,17 @@ $user_name=$this->input->post('user_name');
 		$email=$this->input->post('email');
 		
 		$u = new User();
+		if($this->input->post('district')){
+$u->district =$this->input->post('district');
+$u->county_id =$this->input->post('county');
+$county_redirect=true;
+$district_name=districts::get_district_name_($this->input->post('district'));
+$user_level="District Level";		
+$user_delegation="District: $district_name[district]";
+}		
+else{
+$u->district =$this -> session -> userdata('district1');
+}
 		$u->fname=$f_name;
 		$u->lname=$other_name;
 		$u->email = $email;
@@ -306,13 +339,30 @@ $user_name=$this->input->post('user_name');
 		$u->password = $password;
 		$u->usertype_id =$this->input->post('user_type') ;
 		$u->telephone =$phone;
-		$u->district = $district;
+		
 		$u->facility = $facility_code;
 		
 		$u->save();
 		
 		$message='Hello '.$f_name.',You have been registered. Check your email for login details. HCMP';
-		$message_1='Hello '.$f_name.', You have been registered.Your username is '.$email.' and your password is '.$password.' Please reset your password after you login ';
+		$message_1='Hello '.$f_name.', <br> <br> Thank you for registering on the Health Commodities Management Platform (HCMP).
+		<br>
+		<br>
+		Please find your log in credentials below:
+		<br>'.$user_delegation.'
+		UserLevel: '.$user_level.'
+		<br>
+		<br>
+		UserType: '.$access_level.'
+		<br>
+		<br>
+		Username:'.$email.' 
+		<br>
+		<br>
+		Password: '.$password.'
+		<br>
+		Kindly reset your password after logging in onto the system';
+		
 	    $subject="User Registration :".$f_name." ".$other_name;
 	
 	
@@ -322,12 +372,21 @@ $user_name=$this->input->post('user_name');
 
 
   if($redirect){
-  	$this->users_manage("$f_name,$other_name has been registerd");
+  	$this->session->set_flashdata('system_success_message', "$f_name,$other_name has been registerd");
+	redirect("User_Management/users_manage");
+  	
   }
 
   
   elseif($district_redirect){
-  	$this->dist_manage("$f_name,$other_name has been registerd");
+  	$this->session->set_flashdata('system_success_message', "$f_name,$other_name has been registerd");
+	redirect("User_Management/dist_manage");
+  
+  }
+   elseif($county_redirect){
+   	$this->session->set_flashdata('system_success_message', "$f_name,$other_name has been registerd");
+	redirect("User_Management/moh_manage");
+  	
   }
   else{
   	echo "$f_name $other_name has been registerd, your password is $password";
@@ -429,11 +488,16 @@ $user_name=$this->input->post('user_name');
 	}
 
 	public function moh_manage(){
+		
 		$data['title'] = "Manage Users";
-		$data['content_view'] = "moh_user_manage_v";
-		$data['banner_text'] = "Manage Facility Users";
+		$data['moh_users']=user::get_all_moh_users();
+		$data['user_type'] = Access_level::getAll();
+		$data['counties'] = Counties::getAll();
+		$data['content_view'] = "moh/user_management/moh_hcmp_users";
+		$data['banner_text'] = "Manage System Users";
 		$this -> load -> view("template", $data);
 	}
+	
 	public function user_details(){
 		$use_id=$this->uri->segment(3);
 		$data['title'] = "View Users";
