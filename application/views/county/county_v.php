@@ -69,17 +69,13 @@
     chart.setDataURL(url);
     chart.render("chart1");
 
-    
-
-  
-
      var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "ChartId3", "100%", "70%", "0", "0");
     var url = '<?php echo base_url()."report_management/orders_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart4");
 
       var chart = new FusionCharts("<?php echo base_url()."scripts/FusionCharts/Line.swf"?>", "ChartId4", "100%", "80%", "0", "0");
-    var url = '<?php echo base_url()."report_management/cost_of_ordered_commodities_chart"?>'; 
+    var url = '<?php echo base_url()."report_management/get_costofordersCounty_chart_ajax"?>'; 
     chart.setDataURL(url);
     chart.render("chart5");
 
@@ -174,8 +170,9 @@
 <h2 >Notifications</h2>
 <div style="display: table-row;  ">
     			<div style="display: table-cell;padding-bottom: 2em; ">
-      				<label style=" font-weight: ">Total No of Facilities in The County </label>
+      				<label style=" font-weight: ">Total No of Facilities in The  </label>
             			    				</div>
+    				
     				<div style="display: table-cell;padding-bottom: 2em">
       				<a class="link" href="<?php echo site_url('report_management/get_county_facility_mapping'); ?>" > 10</a>
     				</div>
@@ -183,8 +180,9 @@
   				
   				<div style="display: table-row; ">
     			<div style="display: table-cell;padding-bottom: 2em">
-      				<label style="font-weight: ">Total No of Facilities in The County Using HCMP </label>
+      				<label style="font-weight: ">Total No of Facilities in The  Using HCMP </label>
             		</div>
+    				
     				<div style="display: table-cell;padding-bottom: 2em">
       				<a class="link" href="#" >xxx</a>
     				</div>
@@ -192,16 +190,18 @@
   				
   				<div style="display: table-row;">
     			<div style="display: table-cell; padding-bottom: 2em">
-      				<label style="font-weight: ">Total No of Users in The County</label>
+      				<label style="font-weight: ">Total No of Users in The </label>
             		     				</div>
+    				
     				<div style="display: table-cell;padding-bottom: 2em">
       				<a class="link" href="#" >10</a>
     				</div>
   				</div>
   				<div style="display: table-row;">
     			<div style="display: table-cell; padding-bottom: 2em">
-      				<label style="font-weight: ">Total No of Users in The County Accessing HCMP in The last 7 days</label>
+      				<label style="font-weight: ">Total No of Users in The  Accessing HCMP in The last 7 days</label>
             		     				</div>
+    				
     				<div style="display: table-cell;padding-bottom: 2em">
       				<a class="link" href="#" >10</a>
     				</div>

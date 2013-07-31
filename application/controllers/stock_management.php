@@ -367,6 +367,7 @@ public function donation()
 $inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
 			
 
+         $this->session->set_flashdata('system_success_message', "You have issued $count item(s)");
 			 
                                           
                                        

@@ -3,13 +3,14 @@ $facility=$this -> session -> userdata('news');
 $access_level = $this -> session -> userdata('user_indicator');
 ?>
 <style>
+
 	  #right_content h2 {
 		background: #b6b6b6; /* Old browsers */
 		padding: 5px;
 		text-align: center;
 		margin: 0 0 0.625em 0;
 		border-right-style: inset;
-		
+
 	}
 </style>
 <SCRIPT LANGUAGE="Javascript" SRC="<?php echo base_url();?>Scripts/FusionCharts/FusionCharts.js"></SCRIPT>
@@ -198,8 +199,18 @@ $(document).ready(function(){
 		</fieldset>
 	</div>
 	<div id="right_content">
+<<<<<<< HEAD
 	<h2 >Stock Level</h2>
 		<div id="stock_status" style="overflow: scroll; height: 80em; min-height:100%; margin: 0;"></div>
+=======
+		<h2 style="margin-bottom: 1.5em">Commodity Stock Level</h2>
+
+	
+		<div id="stock_status" style="overflow: scroll; height: 80em; min-height:100%; margin: 0;">
+				
+			
+		</div>
+>>>>>>> 041e3949cc67eaf3d998a11e900c03d4db913031
 	</div>
 	
 </div>

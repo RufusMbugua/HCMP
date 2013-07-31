@@ -73,6 +73,16 @@ public static function get_county_received($county){
 			AND d.id='$district' GROUP BY d.district");
 		return $query;
 	}
+	public static function get_county_order_details($county){
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='Pending') as pending_orders, (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='delivered') as delivered_orders, (SELECT COUNT(o.facilityCode) FROM ordertbl o WHERE o.orderStatus='approved') as approved_orders
+			FROM ordertbl o, facilities f, districts d, counties c
+			WHERE o.orderStatus='delivered'
+			AND o.facilityCode=f.facility_code
+			AND f.district=d.id
+			AND d.county=c.id
+			AND c.id='$county'");
+		return $query;
+	}
 
 	public static function get_county_p_stockouts($date,$county,$date1){
 		//echo $date.'<br>',$facility.'<br>',$date1.'<br>';
@@ -97,5 +107,18 @@ public static function get_county_received($county){
 		$stockouts = $query -> execute();
 		return $stockouts;
 	}
-
+	
+	public static function get_county_expiries($date,$county){
+		$query=Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT COUNT(DISTINCT stock.facility_code) as facility_count, COUNT(DISTINCT stock.batch_no) as batches, d.id as district_id, d.district, stock.facility_code, stock.balance,stock.quantity,stock.status,stock.stock_date,stock.sheet_no, f.facility_name
+			FROM districts d, counties c, facilities f
+            INNER JOIN facility_stock stock
+            ON stock.facility_code=f.facility_code
+			AND stock.expiry_date<=CURDATE()
+			AND stock.status=1
+            WHERE f.district=d.id
+			AND d.county=c.id
+			AND c.id=$county
+			GROUP BY d.district");	
+		return $query;
+	}
 }
