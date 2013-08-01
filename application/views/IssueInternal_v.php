@@ -267,7 +267,6 @@ $('.del').live('click',function(){
 			$('#Exp').html(drop);
 
 	$("input[name^=kemsaCode]").each(function(index, value) {
-  //alert(batch);
 			if($(this).val()==(code_array[0]) && $(document.getElementsByName("batchNo["+index+"]")).val()==batch){ 
 
 				drug_total +=parseInt($(document.getElementsByName("Qtyissued["+index+"]")).val());
