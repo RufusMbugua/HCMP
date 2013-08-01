@@ -264,10 +264,12 @@ function update_transaction(baseUrl,data_array){
 							'<input class="user2" type="text" name="losses['+new_count+']" value="0"   />' ,
 							'<input class="user2" type="text" name="closing['+new_count+']" value="0"   />',
 							 '<input class="user2" type="text" name="days['+new_count+']" value="0"   />',
+							 '<input class="user2" type="text" name="historical['+new_count+']" value="0"   />',
+							 '<input class="user2" type="text" value="0" readonly="yes"  />',
 							'<input class="user2" type="text" name="quantity['+new_count+']" value="0"  onkeyup="checker('+new_count+','+txz+')"/>',
 							'<input class="user" type="text" id="actual_quantity['+new_count+']" name="actual_quantity['+new_count+']" value="0" readonly="yes" />',
 							'<input id="cost[]" class="user" type="text" name="cost['+new_count+']" value="0" readonly="yes" />',
-							'<input type="text" name="comment['+new_count+']" value="N/A"/>'
+							'<input type="text" class="user2" name="comment['+new_count+']" value="N/A"/>'
 						 ]); 
 						
 						$( this ).dialog( "close" );
