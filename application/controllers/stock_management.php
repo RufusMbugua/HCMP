@@ -81,7 +81,7 @@ class Stock_Management extends auto_sms {
 			'kemsa_code'=>$kemsa_code[$i],
 			'batch_no'=>$batch_no[$i],
 			'manufacture'=>$manuf[$i],
-			'expiry_date'=> date('y-m-d ,', strtotime($expiry_date[$i])),
+			'expiry_date'=> date('y-m-d', strtotime($expiry_date[$i])),
 			'balance'=>$a_stock[$i],
 			'quantity'=>$a_stock[$i],
 			'stock_date'=>$orderDate);
@@ -516,14 +516,17 @@ public function update_facility_stock_details(){
 	 $manufacturer=$_POST['manufacturer'];
 	 $expiry_date=$_POST['expiry_date'];
 	 
+	
+	 
 	 foreach ( $id as $key => $value) {
+	 	 $expiry_date[$key]=str_replace(",", " ", $expiry_date[$key]);
 		 $myobj = Doctrine::getTable('Facility_Stock')->find($id[$key]);
          $myobj->batch_no=$batch_no[$key] ;
 		 $myobj->manufacture=$manufacturer[$key];
 		 $myobj->expiry_date=date('y-m-d',strtotime($expiry_date[$key]));
          $myobj->save(); 
 	 }
-	 
+
 	$this->session->set_flashdata('system_success_message', 'Stock Details Have Been Updated');
 	redirect('stock_management/get_facility_stock_details');
 	 

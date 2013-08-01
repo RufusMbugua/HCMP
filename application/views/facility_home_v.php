@@ -199,10 +199,7 @@ $(document).ready(function(){
 		</fieldset>
 	</div>
 	<div id="right_content">
-<<<<<<< HEAD
-	<h2 >Stock Level</h2>
-		<div id="stock_status" style="overflow: scroll; height: 80em; min-height:100%; margin: 0;"></div>
-=======
+
 		<h2 style="margin-bottom: 1.5em">Commodity Stock Level</h2>
 
 	
@@ -210,7 +207,7 @@ $(document).ready(function(){
 				
 			
 		</div>
->>>>>>> 041e3949cc67eaf3d998a11e900c03d4db913031
+
 	</div>
 	
 </div>

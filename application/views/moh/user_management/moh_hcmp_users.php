@@ -270,6 +270,7 @@ color: #B70000;
 	       <thead>
 			<tr>			
 				<th>User Type</th>
+				<th>Facility Name</th>
 				<th>County</th>
 				<th>District</th> 
 				<th><strong>First Name</strong></th>
@@ -285,6 +286,7 @@ color: #B70000;
 				if($row['status']==1){
 					 echo '<tr id="'.$row['id'].'" >
 				<td>'.$row['level'].'</td>
+				<td>'.$row['facility_name'].'</td>
 				<td>'.$row['county'].'</td>
 				<td>'.$row['district'].'</td>
 				<td>'.$row['fname'].'</td><td> '.$row['lname'].' </td>
@@ -308,6 +310,7 @@ color: #B70000;
 			}else{
 				echo '<tr id="'.$row['id'].'"  style="background-color:#D3D3D3">
 				<td>'.$row['level'].'</td>
+				<td>'.$row['facility_name'].'</td>
 				<td>'.$row['county'].'</td>
 				<td>'.$row['district'].'</td>
 				<td>'.$row['fname'].'</td><td> '.$row['lname'].' </td>

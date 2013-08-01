@@ -55,12 +55,13 @@ public function submit() {
 		$namer=$n['fname'];
 		$id_d=$n['id'];
 		$inames=$n['lname'];		
-		$county_id=$n['county'];
 		$disto=$n['district'];
 		$faci=$n['facility'];
 		$phone=$n['telephone'];
 	    $user_id=$n['id'];
 		$user_email=$n['email'];
+		$county_id=$n['county_id'];
+
 		if($faci>0){
 		$myobj = Doctrine::getTable('facilities')->findOneByfacility_code($faci);
         $facility_name=$myobj->facility_name ;	
@@ -85,35 +86,35 @@ public function submit() {
 		$dpp="District Lab Technologist";
 		
        if ($myvalue ==1) {
-       		$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$moh ,'user_id'=>$user_id,'user_indicator'=>"moh",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'county_id'=>$county_id, 'county_name'=>$county_name);	
+       		$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$moh ,'user_id'=>$user_id,'user_indicator'=>"moh",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'county_name'=>$county_name);	
 		} else if($myvalue==4){
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$moh_user ,'user_id'=>$user_id,'user_indicator'=>"moh_user",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'county_id'=>$county_id, 'county_name'=>$county_name);
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$moh_user ,'user_id'=>$user_id,'user_indicator'=>"moh_user",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'county_name'=>$county_name);
 		}else if($myvalue==5){
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$facility_name ,'user_id'=>$user_id,'user_indicator'=>"fac_user",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'drawing_rights'=>$drawing_rights, 'county_id'=>$county_id, 'county_name'=>$county_name);
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$facility_name ,'user_id'=>$user_id,'user_indicator'=>"fac_user",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'drawing_rights'=>$drawing_rights, 'county_name'=>$county_name);
 		}else if($myvalue ==3){
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$dist ,'user_id'=>$user_id,'user_indicator'=>"district",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci, 'district'=>$n['district'],'district1'=>$disto, 'county_id'=>$county_id, 'county_name'=>$county_name);
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$dist ,'user_id'=>$user_id,'user_indicator'=>"district",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci, 'district'=>$n['district'],'district1'=>$disto, 'county_name'=>$county_name);
 		}else if($myvalue ==6){
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$kemsa,'user_id'=>$user_id,'user_indicator'=>"kemsa",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'county_id'=>$county_id, 'county_name'=>$county_name);
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'full_name' =>$kemsa,'user_id'=>$user_id,'user_indicator'=>"kemsa",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto, 'county_name'=>$county_name);
 		}	
 		else if($myvalue ==2)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$facility_name,'user_id'=>$user_id,'user_indicator'=>"facility",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>$drawing_rights, 'county_id'=>$county_id, 'county_name'=>$county_name);
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$facility_name,'user_id'=>$user_id,'user_indicator'=>"facility",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>$drawing_rights, 'county_name'=>$county_name);
 		}
 		else if($myvalue ==9)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$super_admin,'user_id'=>$user_id,'user_indicator'=>"super_admin",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$super_admin,'user_id'=>$user_id,'user_indicator'=>"super_admin",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>0,  'county_name'=>$county_name);
 		}
 		else if($myvalue ==8)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$rtk,'user_id'=>$user_id,'user_indicator'=>"rtk_manager",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$rtk,'user_id'=>$user_id,'user_indicator'=>"rtk_manager",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$faci,'district1'=>$disto,'drawing_rights'=>0, 'county_name'=>$county_name);
 		}	
 		else if($myvalue ==10)  {
 
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$county,'user_id'=>$user_id,'user_indicator'=>"county_facilitator",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>0,'district'=>'6','drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$county,'user_id'=>$user_id,'user_indicator'=>"county_facilitator",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>0,'district'=>'6','drawing_rights'=>0, 'county_name'=>$county_name);
 
 		}
 		else if($myvalue ==11)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$allocation,'user_id'=>$user_id,'user_indicator'=>"allocation_committee",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>0,'district'=>'6','drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$allocation,'user_id'=>$user_id,'user_indicator'=>"allocation_committee",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>0,'district'=>'6','drawing_rights'=>0, 'county_name'=>$county_name);
 		}
 		else if($myvalue ==12)  {
-			$session_data = array('phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$dpp,'user_id'=>$user_id,'user_indicator'=>"dpp",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$county,'district1'=>$disto,'drawing_rights'=>0, 'county_id'=>$county_id, 'county_name'=>$county_name);			
+			$session_data = array('county_id'=>$county_id,'phone_no'=>$phone,'user_email'=>$user_email,'user_db_id'=>$user_id,'full_name' =>$dpp,'user_id'=>$user_id,'user_indicator'=>"dpp",'names'=>$namer,'inames'=>$inames,'identity'=>$id_d,'news'=>$county,'district1'=>$disto,'drawing_rights'=>0, 'county_name'=>$county_name);			
 		
 		}				
 		$this -> session -> set_userdata($session_data);
@@ -288,6 +289,7 @@ else{
 		$user_level="";
 		$access_level="";
 		$user_delegation="";
+		$county_id="";
 		$facility_code=$this -> session -> userdata('news');
 		
 		
@@ -296,6 +298,7 @@ else{
 		$access_level=$access_level['level'];
 		
 		if($facility_code!=null){
+		$county_id=$this->input->post('county_id');
 		$facility_code=$facility_code;
 		$redirect=TRUE;	
 		
@@ -307,6 +310,7 @@ else{
 		}
 		
 		if($this->input->post('facility_code')){
+			$county_id=$this->input->post('county_id');
 			$facility_code=$this->input->post('facility_code');
 			$district_redirect=true;
 			$facility_name=facilities::get_facility_name_($facility_code);
@@ -338,8 +342,10 @@ $user_level="District Level";
 $user_delegation="District: $district_name[district]";
 }		
 else{
-$u->district =$this -> session -> userdata('district1');
+    $u->district =$this -> session -> userdata('district1');
+	$u->county_id =$county_id;
 }
+        
 		$u->fname=$f_name;
 		$u->lname=$other_name;
 		$u->email = $email;
@@ -357,17 +363,18 @@ $u->district =$this -> session -> userdata('district1');
 		<br>
 		<br>
 		Please find your log in credentials below:
-		<br>'.$user_delegation.'
-		UserLevel: '.$user_level.'
 		<br>
 		<br>
-		UserType: '.$access_level.'
+		'.$user_delegation.'
+		<br> 
+		User Level: '.$user_level.'
 		<br>
+		User Type: '.$access_level.'
 		<br>
-		Username:'.$email.' 
-		<br>
+		User Name: '.$email.' 
 		<br>
 		Password: '.$password.'
+		<br>
 		<br>
 		Kindly reset your password after logging in onto the system';
 		

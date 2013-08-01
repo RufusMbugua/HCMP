@@ -1,6 +1,6 @@
 <?php
 class User extends Doctrine_Record {
-
+/////
 	public function setTableDefinition() {
 		$this->hasColumn('fname', 'varchar', 255);
 		$this->hasColumn('lname', 'varchar', 255);
@@ -9,7 +9,6 @@ class User extends Doctrine_Record {
 		$this->hasColumn('password', 'string', 255);
 		$this->hasColumn('usertype_id', 'integer', 11);
 		$this->hasColumn('telephone', 'varchar', 255);
-		$this->hasColumn('county', 'varchar', 255);
 		$this->hasColumn('district', 'varchar', 255);
 		$this->hasColumn('facility', 'varchar', 255);
 		$this->hasColumn('status', 'int', 11);
