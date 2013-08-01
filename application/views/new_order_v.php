@@ -240,7 +240,7 @@ function update_transaction(baseUrl,data_array){
 						
 /******************************parameters to update the transaction table*********************************/		
 			
-					var data_array=$('input:text[name=k_code]').val();
+					var data_array=$('input:hidden[name=drug_id]').val();
 					json_obj={"url":"<?php echo site_url("order_management/update_facility_transaction_t");?>",}
 			        var baseUrl=json_obj.url;
 			        
