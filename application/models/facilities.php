@@ -6,7 +6,7 @@ class Facilities extends Doctrine_Record {
 		$this -> hasColumn('district', 'varchar',30);
 		$this->hasColumn('drawing_rights','text');
 	}
-
+///////////
 	public function setUp() {
 		$this -> setTableName('facilities');
 		$this -> hasOne('facility_code as Code', array('local' => 'facility_code', 'foreign' => 'facilityCode'));

@@ -179,10 +179,10 @@ $( "#dialog1" ).dialog({
                         <?php  $count=$count+1; }?>
                         </tbody>
                 </table>
-                <input class="button" id="update"  value="Update">
+             
                 <?php
      echo form_close(); ?>   
-           
+           <button class="btn btn-primary" id="update"> Update</button>  
         </div>
 </div><!-- End demo -->
 <br />

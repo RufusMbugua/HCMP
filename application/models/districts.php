@@ -35,6 +35,12 @@ class Districts extends Doctrine_Record {
 		$drugs = $query -> execute();
 		return $drugs;	
 	}
+public static function get_district_name_($district){
+	$query = Doctrine_Query::create() -> select("district") -> from("districts")->where("id='$district'");
+		$drugs = $query -> execute();
+		$drugs=$drugs->toArray();
+		return $drugs[0];
+	}
 
 
 	public static function get_district_expiries($date,$district){

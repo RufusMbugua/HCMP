@@ -13,6 +13,7 @@ class User extends Doctrine_Record {
 		$this->hasColumn('district', 'varchar', 255);
 		$this->hasColumn('facility', 'varchar', 255);
 		$this->hasColumn('status', 'int', 11);
+		$this->hasColumn('county_id', 'int', 11);
 		
 	}
 	
@@ -131,7 +132,19 @@ public static function check_user_exist($email){
 		return count($level);
 }
 
-
+public static function get_all_moh_users(){
+	$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT u.id, a.level, u.status, c.county, d.district, u.fname, u.lname, u.email, u.telephone, f.facility_name
+FROM access_level a, user_type_definition u_t, user u
+LEFT JOIN facilities f ON u.facility = f.facility_code
+LEFT JOIN districts d ON u.district = d.id
+LEFT JOIN counties c ON u.county_id = c.id
+WHERE u.usertype_id = a.id
+AND a.type = u_t.id
+AND u_t.id =1
+ORDER BY f.facility_name ASC ");
+return $q;
+}
 
 
 }

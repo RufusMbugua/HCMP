@@ -139,8 +139,6 @@
   case '250g':
   return  1;
   break;
-  case '100 Vials':
-  return  100;
   break;
   case '500mL':
   return  1;
@@ -163,6 +161,12 @@
   case 'pack':
    return  1;
   case 'Piece':
+   return  1;
+  break;
+  case 'Pair':
+   return  1;
+  break;
+   case 'pair':
    return  1;
   break;
   case 'tube':
@@ -192,19 +196,7 @@
   case '5L':
    return  1;
   break;
-  case 'Blister(6)':
-   return  1;
-  break;
-  case 'Blister(12)':
-   return  1;
-  break;
-  case 'Blister(18)':
-   return  1;
-  break;
-  case 'Blister(24)':
-   return  1;
-  break;
-  case 'Satchets':
+    case 'Satchets':
    return  1;
   break;
   case 'Tablets':
@@ -221,6 +213,15 @@
   break;
    case "Pack of 3's":
    return  3;
+   break;
+    case "3x21":
+   return  3;
+   break;
+    case "3x35":
+   return  3;
+   break;
+   case "4*5L":
+   return  4;
   break;
   case 'Box of 10':
    return  10;
@@ -237,6 +238,18 @@
   case 'Box of 25':
    return  25;
   break;
+   case 'Blister(6)':
+   return  30;
+  break;
+  case 'Blister(12)':
+   return  30;
+  break;
+  case 'Blister(18)':
+   return  30;
+  break;
+  case 'Blister(24)':
+   return  30;
+  break;
   case '50 pairs':
   return  50;
   break;
@@ -246,10 +259,23 @@
    case 'Pack of 50': 
    return  50;
   break;
+   case 'Pack of 50 pairs': 
+   return  50;
+  break;
+  case '100 Vials':
+  return  100;
   case 'Box of 100':
    return  100;
   break;
     case 'Kit(100vials)':
+   return  100;
+    case '100mL*100':
+   return  100;
+  break;
+   case '100*50mL':
+   return  100;
+  break;
+   case '100*30mL':
    return  100;
   break;
   case 'Pack of 100': 

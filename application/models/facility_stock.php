@@ -60,7 +60,7 @@ class Facility_Stock extends Doctrine_Record {
 	}
 //get if the facility has stock
 public static function count_facility_stock_first($facility_code){
-		$query = Doctrine_Query::create() -> select("kemsa_code,SUM(balance) AS quantity1") -> from(" facility_stock") -> where("facility_code=$facility_code")->groupby( "kemsa_code");
+		$query = Doctrine_Query::create() -> select("kemsa_code,SUM(balance) AS quantity1") -> from(" facility_stock") -> where("facility_code=$facility_code AND STATUS ='1'")->groupby( "kemsa_code");
 		$stocktake = $query ->execute();
 		
 		return $stocktake;
@@ -166,6 +166,7 @@ FROM facility_stock fs, drug d, facilities f
 WHERE fs.facility_code = f.facility_code
 AND f.district =  '$distict'
 AND d.id = fs.kemsa_code
+AND fs.STATUS ='1'
 GROUP BY fs.kemsa_code
 ORDER BY d.drug_name ASC  ");
 
@@ -180,6 +181,7 @@ FROM facility_stock fs, drug d, facilities f
 WHERE fs.facility_code = f.facility_code
 AND f.facility_code =  '$distict'
 AND d.id = fs.kemsa_code
+AND fs.STATUS ='1'
 GROUP BY fs.kemsa_code
 ORDER BY d.drug_name ASC  ");
 
@@ -207,6 +209,7 @@ ORDER BY d.drug_name ASC ");
 FROM facility_stock fs, drug d, facilities f, districts di, counties c
 WHERE fs.facility_code = f.facility_code
 AND f.district = di.id
+AND fs.STATUS ='1'
 AND di.county = c.id
 AND c.id =  '$county_id'
 AND d.drug_category =  '$category_id'
@@ -220,6 +223,7 @@ else{
 FROM facility_stock fs, drug d, facilities f, districts di, counties c
 WHERE fs.facility_code = f.facility_code
 AND f.district = di.id
+AND fs.STATUS ='1'
 AND di.county = c.id
 AND c.id =  '$county_id'
 AND d.id = fs.kemsa_code

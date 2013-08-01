@@ -122,5 +122,9 @@ $(document).ready(function(){
 			<div class="activity update">
 	    <a href="<?php echo site_url('stock_management/reset_facility_details');?>"><h2>Reset Facility Stock Data</h2></a>
 		</div>
+		
+			<div class="activity update">
+	    <a href="<?php echo site_url('stock_management/facility_add_stock_data');?>"><h2>Add Facility Stock Data</h2></a>
+		</div>
 		</fieldset>
 	</div>

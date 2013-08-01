@@ -621,15 +621,18 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
  //pull required emails ready to attach and send
  $pull_emails=User::getemails($facility);
  //echo $pull_emails;
+ $address="";
 	foreach ($pull_emails as $emails) {
-		$address= $emails['email'];
+		$address .= $emails['email'].',';
 		
-		 $this->load->library('email', $config);
+	}
+		$address = substr($address,0,-1);
+  $this->load->library('email', $config);
   $this->email->set_newline("\r\n");
   $this->email->from('hcmpkenya@gmail.com'); // change it to yours
   $this->email->to("$address"); 
   $this->email->bcc('ashminneh.mugo@gmail.com');
-  $this->email->subject('Order Report For '.$facility);
+  $this->email->subject('Decommission Report For '.$facility);
  
   $this->email->attach('./pdf/'.$report_name.'.pdf'); 
   $this->email->message($html_title.$html_body);
@@ -644,9 +647,9 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 }
  
 		
-	}
+	
  
-  
+    $this->session->set_flashdata('system_success_message', 'Stocks Have Been Decommissioned');
 	redirect("/");				
   }
 			
