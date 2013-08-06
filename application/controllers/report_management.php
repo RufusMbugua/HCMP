@@ -1470,7 +1470,7 @@ public function generate_costofexpiries_chart($option=NULL,$location_id=NULL){
 		
 	    $strXML = "<chart formatNumberScale='0'
 	    lineColor='000000' lineAlpha='40' showValues='1' rotateValues='1' valuePosition='auto'
-	     palette='1' caption='Monthly Cost of Expired Commodities' subcaption='For the year $year' xAxisName='Months' yAxisName='Cost of Commodities (KES)' yAxisMinValue='15000' showValues='0'  useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '0' showBorder='0' bgColor='FFFFFF'>";
+	     palette='1' subcaption='For the year $year' xAxisName='Months' yAxisName='Cost of Commodities (KES)' yAxisMinValue='15000' showValues='0'  useRoundEdges='1' alternateHGridAlpha='20' divLineAlpha='50' canvasBorderColor='666666' canvasBorderAlpha='40' baseFontColor='666666' lineColor='AFD8F8' chartRightMargin = '0' showBorder='0' bgColor='FFFFFF'>";
 
 	    for($i=0;$i<12;$i++){
 
@@ -1757,6 +1757,7 @@ public function get_stock_status($option=NULL,$facility_code=NULL){
 	$chart =NULL;
 	$title=NULL;
 	$district=$this -> session -> userdata('district');
+	$county_id=$this -> session -> userdata('county_id');
 	$district_name=districts::get_district_name($district)->toArray();
 
 
@@ -1786,19 +1787,19 @@ public function get_stock_status($option=NULL,$facility_code=NULL){
 		}
 		
 	elseif($option=="ajax-request_county") {
-	$county_id=districts::get_county_id($district);
-	$county_name=counties::get_county_name($county_id[0]['county']);
+	//$county_id=districts::get_county_id($district);
+	$county_name=counties::get_county_name($county_id);
 	$title=$county_name[0]["county"]." County";
         switch ($facility_code) {
 			   case 'r_h':
-			 $commodity_array=facility_stock::get_county_drug_stock_level($county_id[0]['id'],8);	
+			 $commodity_array=facility_stock::get_county_drug_stock_level($county_id,8);	
 				break;
 				case 'malaria':
-			 $commodity_array=facility_stock::get_county_drug_stock_level($county_id[0]['id'],1);	
+			 $commodity_array=facility_stock::get_county_drug_stock_level($county_id,1);	
 				break;
 
 			default:
-				 $commodity_array=facility_stock::get_county_drug_stock_level($county_id[0]['id']);
+				 $commodity_array=facility_stock::get_county_drug_stock_level($county_id);
 				break;
 		}
         
@@ -1809,8 +1810,7 @@ public function get_stock_status($option=NULL,$facility_code=NULL){
 
 
 
-
-$chart .="<chart palette='2' chartLeftMargin='0' useEllipsesWhenOverflow='1' plotSpacePercent='100' yAxisNamePadding='0'yAxisValuesPadding='0' bgColor='FFFFFF' showBorder='0' caption='Commodity Stock Level :$title' shownames='1' showvalues='1'   showSum='1' decimals='0' useRoundEdges='1'>";
+$chart .="<chart palette='2' chartLeftMargin='0' useEllipsesWhenOverflow='1' plotSpacePercent='100' yAxisNamePadding='0'yAxisValuesPadding='0' bgColor='FFFFFF' showBorder='0' shownames='1' showvalues='1'   showSum='1' decimals='0' useRoundEdges='1'>";
 foreach($commodity_array as $commodity_detail){
 $chart .="<set label='".preg_replace("/[^A-Za-z0-9 ]/", "", $commodity_detail['drug_name'])."' value='$commodity_detail[total]' />";
 }

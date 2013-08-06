@@ -265,7 +265,7 @@ else
 				
 		$( "#datepicker" ).datepicker({
 			showOn: "button",
-			dateFormat: 'd M, yy', 
+			dateFormat: 'd M yy', 
 			buttonImage: baseUrl,
 			buttonImageOnly: true
 		});
@@ -283,7 +283,7 @@ else
         return [false, ''];
     },
 					
-					dateFormat: 'd M, yy', 
+					dateFormat: 'd M yy', 
 					changeMonth: true,
 			        changeYear: true,
 			        buttonImage: baseUrl,
@@ -351,7 +351,7 @@ $('.del').live('click',function(){
 
         return [false, ''];
     },
-        	dateFormat: 'd M, yy', 
+        	dateFormat: 'd M yy', 
         	        buttonImage: baseUrl,
 					changeMonth: true,
 			        changeYear: true
@@ -369,7 +369,7 @@ $('.del').live('click',function(){
 		<tr>
 			<td><h4>Stock level as of</h4></td>
 			<td>			 
-				<?php $today= ( date('d M, Y')); //get today's date in full?>
+				<?php $today= ( date('d M Y')); //get today's date in full?>
 				<input type="text" name="datepicker" readonly="readonly" value="<?php echo $today;?>" id="datepicker"/>			
 			</td>
 		</tr>

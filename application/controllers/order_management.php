@@ -457,10 +457,23 @@ $this -> load -> view("template", $data);
 		$update_array=$_POST['data_array'];
 		$facilityCode=$facility_c=$this -> session -> userdata('news');
 		
-		$data1=array('Facility_Code' => $facilityCode,'Kemsa_Code' => $update_array,'Cycle_date'=>'0000-00-11'); 
+		$facility_has_commodity=Facility_Transaction_Table::get_if_drug_is_in_table($facilityCode,$update_array);
+			
+			
+		   
+		   if($facility_has_commodity>0){
+
+		   }
+else{
+	$data1=array('Facility_Code' => $facilityCode,'Kemsa_Code' => $update_array,'Cycle_date'=>'0000-00-11'); 
 		$o = new Facility_Transaction_Table();
 	    $o->fromArray($data1);
 		$o->save();
+	
+}
+		
+		
+		
 		echo 'success';
 	}
 	public function update_facility_transaction_t2(){

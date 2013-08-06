@@ -24,32 +24,10 @@ $(document).ready(function(){
 			});
     //default ca
     //default call
-    var url = "<?php echo base_url().'rtk_management/get_rtk_allocation_kenyan_map' ?>"
+    var url = "<?php echo base_url().'cd4_management/get_cd4_allocation_kenyan_map' ?>"
     
     ajax_request (url);
 
-$(".ajax-call").click(function(){
-var id  = $(this).attr("id"); 
-
-  if(id=='reporting_rate'){
-  	 var url = "<?php echo base_url().'rtk_management/get_reporting_rate' ?>";
-       	
- }
-  if(id=='county'){
-  	var url = "<?php echo base_url().'rtk_management/get_rtk_county_distribution_allocation_detail' ?>";
-       
-  }
-  
-  if(id=="fcdrr"){
-  	var url = "<?php echo base_url().'rtk_management/get_report/fcdrr' ?>";
-  }
-  if(id=="lab_commodities"){
-  	var url = "<?php echo base_url().'rtk_management/get_report/lab_commodities' ?>";
-  }
-
-  ajax_request (url);
-    
-});
 function ajax_request (url){
 	var url =url;
 	var loading_icon="<?php echo base_url().'Images/loader.gif' ?>";

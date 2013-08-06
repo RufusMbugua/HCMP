@@ -15,6 +15,50 @@ class cd4_Management extends MY_Controller {
 		$data['banner_text']="b";
 		$this->load->view('template',$data);
 	}
+	public function get_cd4_allocation_kenyan_map(){
+
+	$this->load->view("allocation_committee/ajax_view/cd4_allocation_county_map");
+}
+	// currently using county details from RTK/HCMP will load from cd4_  as next step
+	public function map_chart(){
+	$map="";
+	$map .="<map showBevel='0' caption='CD4 county allocation: Click to view facilities in county' showMarkerLabels='1' fillColor='F1f1f1' borderColor='000000' hoverColor='efeaef' canvasBorderColor='FFFFFF' baseFont='Verdana' baseFontSize='10' markerBorderColor='000000' markerBgColor='FF5904' markerRadius='6' legendPosition='bottom' useHoverColor='1' showMarkerToolTip='1'  showExportDataMenuItem='1' >";
+	$map .="<data>";
+	$colors=array("FFFFCC"=>"1","E2E2C7"=>"2","FFCCFF"=>"3","F7F7F7"=>"5","FFCC99"=>"6","B3D7FF"=>"7","CBCB96"=>"8","FFCCCC"=>"9");
+	
+	$counties=Counties::get_county_map_data();
+   	foreach( $counties as $county_detail){
+   	$countyid=$county_detail->id;
+	$county_map_id=$county_detail->kenya_map_id;
+   	$countyname=trim($county_detail->county);
+   	
+	$county_detail=hcmp_stock_status::get_county_reporting_rate ($countyid);
+	$total_facilities=$county_detail[0]['total_facilities'];
+	$reporting_facilities=$county_detail[0]['reported'];
+	$reporting_rate=round((($reporting_facilities/$total_facilities)*100),1);
+ 	$map .="<entity  link='".base_url()."cd4_management/county_allocation_details/$county_map_id' id='$county_map_id' displayValue ='$countyname' color='".array_rand($colors,1)."'  toolText='County :$countyname&lt;BR&gt; Total Facilities :".$total_facilities."&lt;BR&gt; Facilities Reporting  :".$reporting_facilities."&lt;BR&gt; Facility Reporting Rate :".$reporting_rate." %'/>";
+   		}
+
+	$map .="</data>
+		<styles>
+		<definition>
+   		<style name='TTipFont' type='font' isHTML='1'  color='FFFFFF' bgColor='666666' size='11'/>
+   		<style name='HTMLFont' type='font' color='333333' borderColor='CCCCCC' bgColor='FFFFFF'/>
+   		<style name='myShadow' type='Shadow' distance='1'/>
+		</definition>
+		<application>
+		<apply toObject='MARKERS' styles='myShadow' /> 
+		<apply toObject='MARKERLABELS' styles='HTMLFont,myShadow' />
+		<apply toObject='TOOLTIP' styles='TTipFont' />
+		</application>
+		</styles>
+		</map>";
+
+		echo $map;
+	}
+
+
+
 	public function get_kenyan_county_map(){
 	$data['content_view']="cd4/ajax_view/kenyan_county_v";
 	$data['title'] = "CD4";
@@ -31,6 +75,7 @@ class cd4_Management extends MY_Controller {
 		$map .="<map showBevel='0' showMarkerLabels='1' fillColor='F1f1f1' borderColor='000000' hoverColor='efeaef' canvasBorderColor='FFFFFF' baseFont='Verdana' baseFontSize='10' markerBorderColor='000000' markerBgColor='FF5904' markerRadius='6' legendPosition='bottom' useHoverColor='1' showMarkerToolTip='1'  showExportDataMenuItem='1' >";
 		$map .="<data>";
 		$colors=array("FFFFCC"=>"1","E2E2C7"=>"2","FFCCFF"=>"3","F7F7F7"=>"5","FFCC99"=>"6","B3D7FF"=>"7","CBCB96"=>"8","FFCCCC"=>"9");
+
 	    $counties=Counties::get_county_map_data();
    		   foreach( $counties as $county_detail){
    		$countyid=$county_detail->id;
@@ -109,16 +154,155 @@ $colors=array("FFFFCC"=>"1","E2E2C7"=>"2","FFCCFF"=>"3","F7F7F7"=>"5","FFCC99"=>
 	   $total_facilities_allocated_in_county=$county_detail['total_facilities_allocated_in_county'];
 
 	  @$allocation_rate=round((($total_facilities_allocated_in_county/$total_facilities_in_county)*100),1);
-     $map .="<entity  link='".base_url()."rtk_management/allocation_county_detail_zoom/$countyid' id='$county_map_id' displayValue ='$countyname' color='".array_rand($colors,1)."' toolText='County :$countyname&lt;BR&gt; Total Facilities Reporting:".$total_facilities_in_county."&lt;BR&gt; Facilities Allocated  :".$total_facilities_allocated_in_county."&lt;BR&gt; Facility Allocation Rate :".$allocation_rate." %'/>";
+     $map .="<entity  link='".base_url()."cd4_management/allocation_county_detail_zoom/$countyid' id='$county_map_id' displayValue ='$countyname' color='".array_rand($colors,1)."' toolText='County :$countyname&lt;BR&gt; Total Facilities Reporting:".$total_facilities_in_county."&lt;BR&gt; Facilities Allocated  :".$total_facilities_allocated_in_county."&lt;BR&gt; Facility Allocation Rate :".$allocation_rate." %'/>";
 
    		}
- echo  $this->kenyan_map($map,"RTK County allocation: Click to view facilities in county");
+ echo  $this->kenyan_map($map,"CD4 County allocation: Click to view facilities in county");
 	
 	
 }
 
+public function county_allocation_details($county_id){
 
+
+	$data['content_view']='cd4/ajax_view/county_allocation_v';
+	
+
+
+	
+$htm='';
+
+
+	$facilities =$this->db->query('SELECT DISTINCT AutoID,fname,MFLCode,countyname
+			FROM cd4_facility, cd4_facilityequipments, cd4_districts
+			WHERE cd4_facility.AutoID = cd4_facilityequipments.facility
+			AND cd4_facility.district = cd4_districts.ID
+			AND equipment  <=3
+			AND county = "'.$county_id.'"');
+
+			
+
+
+		if ($facilities->num_rows() > 0){
+
+			// checks whether any equipments 
+//			$htm.='<table class=" "  style="position:fixed; width:300px">';
+//			$htm.='<tr><thead><th>Facility</th><!--<th>Device</th>--><th></th></thead></tr>';
+			$htm.='<ul class="facility-list">';
+		foreach ($facilities->result_array() as $facilitiessarr) 
+		{
+			$countyname = $facilitiessarr['countyname'];
+
+
+
+			$facility= $facilitiessarr['AutoID'];
+			$facility_name = $facilitiessarr['fname'];
+			$facility_mfl = $facilitiessarr['MFLCode'];
+			$facilitiessarr['equipmentname'] ='';
+//			echo $facility_name .' - '.$facility;
+		
+
+//			echo"<pre>";
+// 			var_dump($facilitiessarr);
+//			echo"</pre>";	
+//	 		
+		//	$htm.='<tr><!--Facility --><td>'.$facilitiessarr['fname'].'</td><!-- MFLCode '.$facilitiessarr['MFLCode'].' equipment <td>'.$facilitiessarr['equipmentname'].'</td>--><td><a href="#'.$facility.'" class="allocate" onClick="showpreview('.$facility.')" >Allocate</a></td></tr>';
+			$htm .='<li><a href="#'.$facility.'" class="allocate" onClick="showpreview('.$facility.')" >'.$facilitiessarr['fname'].'</a></li>';
+
+//			echo 'Facility '.$facilitiessarr['fname'].' MFLCode '.$facilitiessarr['MFLCode']
+//			.' equipment '.$facilitiessarr['equipment']		;
+
+	 
+
+		}$htm.='</ul>';
+		//$htm.='</table>';
+
+		}
+		$data['htm'] = $htm;
+			$data['banner_text']='Allocate '.$countyname;
+			$data['title']='CD4 Allocation '.$countyname;
+			$data['countyname'] =$countyname;
+
+	$this->load->view('template',$data);
+
+		  
+ 
+
+}
+
+function facility_allocate($facility){
+	$htm = '';
+
+	$equipments  = $this->db->query('SELECT * 
+FROM cd4_facilityequipments, cd4_equipments, cd4_reagentcategory, cd4_reagents
+WHERE cd4_facilityequipments.equipment = cd4_equipments.ID
+AND cd4_reagentcategory.equipmentType = cd4_equipments.ID
+AND cd4_reagents.categoryID = cd4_equipments.ID
+AND cd4_equipments.ID = cd4_equipments.ID
+AND facility= '.$facility.'');
+
+			if ($equipments->num_rows()>0){
+
+				$facility_details = $this->db->query('SELECT * 
+								FROM cd4_facilityequipments, cd4_equipments, cd4_reagentcategory, cd4_reagents
+								WHERE cd4_facilityequipments.equipment = cd4_equipments.ID
+								AND cd4_reagentcategory.equipmentType = cd4_equipments.ID
+								AND cd4_reagents.categoryID = cd4_equipments.ID
+								AND cd4_equipments.ID = cd4_equipments.ID
+								AND facility ='.$facility.'
+								LIMIT 0 , 1');
+				foreach ($facility_details->result_array() as $facility_details_arr) {	 
+					$facility_equipment =$facility_details_arr['equipmentname'];
+					$facility_name  = $facility_details_arr['fname'];
+					$facility_mfl  = $facility_details_arr['fname'];
+
+			 $htm .= '<fieldset style="font-size: 14px;background: #FCF8F8;padding: 10px;">
+			<span><b>DEVICE :</b>'.$facility_equipment.'</span><br>
+			<span><b>FACILITY :</b> '.$facility_name.'</span><br>
+			</fieldset>';
+
+}
+		$htm .=  "<table class='data-table' style='font-size: 0.9em;'>";
+		$htm .=  "<thead>
+		<!--<th>Equipment Name</th> -->
+		<th> Description(Unit)</th>
+		<th>Quantity Received(3 months av)</th>
+		<th>Quantity Received(3 months av)</th>
+		<th>End Balance(June)</th>
+		<th>Requested</th>
+		<th>Allocated</th></thead>";
+				foreach ($equipments->result_array() as $equipmentsarr) {
+
+				$reagentname = $equipmentsarr['reagentname'];
+				$equipmentname = $equipmentsarr['equipmentname'];
+				$unit = $equipmentsarr['unit'];
+
+//				echo "<pre>";
+ //				var_dump($equipmentsarr);
+
+			 	$htm .= '<tr><!--<td>'.$equipmentname.'</td>--><td>'.$reagentname.'<br />('.$unit.')</td><td>1</td><td>1</td><td>1</td><td>3</td><td><input type="text" value="0" /></td></tr>';
+
+//				echo "</pre>";
+			}
+			$htm.="</table>";
+			$htm.='<input class="button ui-button ui-widget ui-state-default ui-corner-all" id="allocate" value="Allocate" role="button" aria-disabled="false">';
+
+			}
+			else{ 
+		echo '<fieldset style="
+		    position: absolute;
+		    margin-top: 112px;
+		    font-size: 2em;
+		    border: solid 1px #DDE2BB;
+		    padding: 79px;
+		    color: rgb(221, 154, 154);
+		    background: snow;
+		    /* margin-left: 80px; */
+		"> <h1>No data has been submitted yet</h1></fieldset>';;}
+			echo $htm;
+}
 public function county_detail_zoom($county_id){
+
     $data['facility'] =Facilities::get_total_facilities_cd4_in_county($county_id);
 	$data['table_body']="Hello World"; 
 	$data['title'] = "County View";
@@ -364,9 +548,9 @@ AND facility = '.$facility.'');
 
 		}
 		echo "</table/>";
-		//echo '<input class="button ui-button ui-widget ui-state-default ui-corner-all" id="allocate" value="Allocate" role="button" aria-disabled="false">';
+//		echo '<input class="button ui-button ui-widget ui-state-default ui-corner-all" id="allocate" value="Allocate" role="button" aria-disabled="false">';
 		echo "<br /><br /><br />";
- 
+
 	}
 
 
@@ -395,7 +579,7 @@ AND facility = '.$facility.'');
 
 		}
 		echo "</table/>";
-		//echo '<input class="button ui-button ui-widget ui-state-default ui-corner-all" id="allocate" value="Allocate" role="button" aria-disabled="false">';
+//		echo '<input class="button ui-button ui-widget ui-state-default ui-corner-all" id="allocate" value="Allocate" role="button" aria-disabled="false">';
 		echo "<br /><br /><br />";
 	}
 
@@ -425,7 +609,7 @@ AND facility = '.$facility.'');
 
 		}
 		echo "</table/>";
-		//echo '<input class="button ui-button ui-widget ui-state-default ui-corner-all" id="allocate" value="Allocate" role="button" aria-disabled="false">';
+//		echo '<input class="button ui-button ui-widget ui-state-default ui-corner-all" id="allocate" value="Allocate" role="button" aria-disabled="false">';
 		echo "<br /><br /><br />";
 		}
 

@@ -188,40 +188,7 @@
 	<h2 style="margin-bottom: 1.5em">Statistics & Notification</h2>
 	<div class="notifications_container">
 		 
-  			<div style="display: table-row;  ">
-    			<div style="display: table-cell;padding-bottom: 3em; ">
-      				<label style=" font-weight: 600">Total No of Orders Placed </label>
-            			<a class="badge success" href="#" >14</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row; ">
-    			<div style="display: table-cell;padding-bottom: 3em">
-      				<label style="font-weight: 600">Total Value of Orders Placed </label>
-            		<a class="badge success" href="#" >1,221,001</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row;">
-    			<div style="display: table-cell; padding-bottom: 3em">
-      				<label style="font-weight: 600">Total District Drawing Rights Bal (2013/2014)</label>
-            		 <a class="badge success" href="#" >6,000,000</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row;">
-    			<div style="display: table-cell; padding-bottom: 3em">
-      				<label style="font-size: 1.6em;font-weight: 600">Total Cost of Expired Commodities </label>
-            		<a class="badge success" href="#" >457,100</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row;">
-    			<div style="display: table-cell;padding-bottom: 3em">
-      				<label style="font-size: 1.6em;font-weight: 600">Orders Lead Time</label>
-            		<a class="badge success" href="#" >12 days</a>
-    				</div>
-  				</div>
+
 			
 	</div>
 	

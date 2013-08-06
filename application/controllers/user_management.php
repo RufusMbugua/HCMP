@@ -361,6 +361,7 @@ else{
 		$message='Hello '.$f_name.',You have been registered. Check your email for login details. HCMP';
 		$message_1='Hello '.$f_name.', <br> <br> Thank you for registering on the Health Commodities Management Platform (HCMP).
 		<br>
+		Web link: http://health-cmp.or.ke/
 		<br>
 		Please find your log in credentials below:
 		<br>

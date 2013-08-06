@@ -375,7 +375,7 @@ if ($current == "home_controller") {echo "active";
 	<li class="active"><a data-clone="RTK Home" href="<?php echo base_url();?>home_controller">RTK</a></li>
 <!--	<li><a  data-clone="RTK Allocation" href="<?php echo base_url();?>rtk_management/national_allocation">Allocation</a></li>
 	<li><a  data-clone="CD4 Home" href="<?php echo base_url();?>cd4_management/">CD4</a></li>-->
-	<li><a  data-clone="CD4 Allocation" href="<?php echo base_url();?>cd4_management/allocated">Allocation</a></li>
+	<li><a  data-clone="CD4 Allocation" href="<?php echo base_url();?>cd4_management">CD4</a></li>
 	<?php } ?>
 <?php if($user_is_moh){
 	?>

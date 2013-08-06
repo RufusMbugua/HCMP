@@ -156,7 +156,15 @@ foreach($historical_data as $data_item):?>
             <td><?php echo $data_item['kemsa_code'];?></td>
             <td><?php echo $data_item['unit_size'];?></td>
             <input type="hidden" name ='drug_id[<?php echo $count?>]' value="<?php echo $data_item['id']?>"> 
-             <input type="hidden" name ='u_size[<?php echo $count?>]' value="<?php echo $data_item['unit_size'];?>">
+             <input type="hidden" name ='u_size[<?php echo $count?>]' value="<?php 
+             if($data_item['unit_size']==NULL){
+             	echo 1;
+             }
+			 else{
+			 echo $data_item['unit_size'];	
+			 }
+             
+             ?>">
        <?php
 
                   	

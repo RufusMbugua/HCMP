@@ -203,21 +203,7 @@ ORDER BY d.drug_name ASC ");
 	 
 	       ////////////// getting county stock level
      public static function get_county_drug_stock_level($county_id,$category_id=NULL){
-     		if(isset($category_id)){
-    $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
-		->fetchAll("SELECT d.drug_name, CEIL( SUM( fs.balance / d.total_units ) ) AS total
-FROM facility_stock fs, drug d, facilities f, districts di, counties c
-WHERE fs.facility_code = f.facility_code
-AND f.district = di.id
-AND fs.STATUS ='1'
-AND di.county = c.id
-AND c.id =  '$county_id'
-AND d.drug_category =  '$category_id'
-AND d.id = fs.kemsa_code
-GROUP BY fs.kemsa_code
-ORDER BY d.drug_name ASC  "); 			
-     		}
-else{
+     		if($category_id==NULL){
 	$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
 		->fetchAll("SELECT d.drug_name, CEIL( SUM( fs.balance / d.total_units ) ) AS total
 FROM facility_stock fs, drug d, facilities f, districts di, counties c
@@ -228,7 +214,22 @@ AND di.county = c.id
 AND c.id =  '$county_id'
 AND d.id = fs.kemsa_code
 GROUP BY fs.kemsa_code
-ORDER BY d.drug_name ASC  ");
+ORDER BY d.drug_name ASC  ");		
+     		}
+else{    $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->fetchAll("SELECT d.drug_name, CEIL( SUM( fs.balance / d.total_units ) ) AS total
+FROM facility_stock fs, drug d, facilities f, districts di, counties c
+WHERE fs.facility_code = f.facility_code
+AND f.district = di.id
+AND fs.STATUS ='1'
+AND di.county = c.id
+AND c.id =  '$county_id'
+AND d.drug_category =  '$category_id'
+AND d.id = fs.kemsa_code
+GROUP BY fs.kemsa_code
+ORDER BY d.drug_name ASC  "); 	
+		
+	
 }
      	
      

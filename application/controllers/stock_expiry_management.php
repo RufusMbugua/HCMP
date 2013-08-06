@@ -251,8 +251,7 @@ public function county_expiries() {
 		$data['content_view'] = "county/county_expiries_v";
 		$data['banner_text'] = "Expired Products";
 		$data['potential_expiries']=Counties::get_potential_expiry_summary($county);
-		$data['expired2']=Counties::get_county_expiries($date,$county);
-		
+		$data['expired2']=Counties::get_county_expiries($date,$county);		
 		$data['link'] = "county_expiries_v";
 		$data['quick_link'] = "county_expiries_v";
 

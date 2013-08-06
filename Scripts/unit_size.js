@@ -128,10 +128,27 @@
    
     function get_unit_quantity(value){
     	
+    	
+    	if(value=="Box of 25"){
+    		return 25;
+    	}
+    	if(value=="Box of 100"){
+    		return 100;
+    	}
+    	if(value==null){
+    		return 1;
+    	}
     	var new_value=value+"x";
+    	
     	var array_value=new_value.split("x");
     	var array_0=array_value[0];
+    	
+    	
+
+    	
     	var array_1=array_0.replace( /[\s\n\r]+/g, '' );
+    	
+    	
     	
     	switch(array_1)    
 	 
@@ -139,6 +156,8 @@
   case '250g':
   return  1;
   break;
+  case ' ':
+  return  1;
   break;
   case '500mL':
   return  1;
@@ -163,6 +182,9 @@
   case 'Piece':
    return  1;
   break;
+  case 'piece':
+   return  1;
+  break;
   case 'Pair':
    return  1;
   break;
@@ -172,7 +194,16 @@
   case 'tube':
    return  1;
   break;
+  case 'tubes':
+   return  1;
+  break;
+   case 'Tubes':
+   return  1;
+  break;
   case 'Roll':
+   return  1;
+  break;
+   case 'roll':
    return  1;
   break;
   case 'Ampoule':
@@ -211,7 +242,7 @@
   case 'Vials':
    return  1;
   break;
-   case "Pack of 3's":
+   case "Packof3's":
    return  3;
    break;
     case "3x21":
@@ -223,10 +254,13 @@
    case "4*5L":
    return  4;
   break;
-  case 'Box of 10':
+  case 'Boxof10':
    return  10;
   break;
-    case '10 sets':
+     case 'Packof10':
+  return  10;
+  break;
+    case '10sets':
   return  10;
   break;
    case 'Pack(10)':
@@ -235,19 +269,19 @@
    case 'Dozen':
    return  12;
   break;
-  case 'Box of 25':
-   return  25;
+  case 'Boxof25':
+  return  25;
   break;
-   case 'Blister(6)':
+   case "Blistersof6's":
    return  30;
   break;
-  case 'Blister(12)':
+  case "Blistersof12's":
    return  30;
   break;
-  case 'Blister(18)':
+  case "Blistersof18's":
    return  30;
   break;
-  case 'Blister(24)':
+  case "Blistersof24's":
    return  30;
   break;
   case '50 pairs':
@@ -256,15 +290,15 @@
   case '50 sets':
   return  50;
   break;
-   case 'Pack of 50': 
+   case 'Packof50': 
    return  50;
   break;
-   case 'Pack of 50 pairs': 
+   case 'Packof50pairs': 
    return  50;
   break;
   case '100 Vials':
   return  100;
-  case 'Box of 100':
+  case 'Boxof100':
    return  100;
   break;
     case 'Kit(100vials)':
@@ -278,16 +312,13 @@
    case '100*30mL':
    return  100;
   break;
-  case 'Pack of 100': 
-   return  100;
-  break;
-  case 'Pack of 50 pairs':
-   return  100;
-  break;
-  case 'Pack of 100':
+  case 'Packof100':
    return  100;
   break;
   case 'Pack(200)':
+   return  200;
+  break;
+  case 'Packof200':
    return  200;
   break;
   

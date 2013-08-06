@@ -65,6 +65,8 @@ else if($access_level == "county_facilitator"){
 		
 
 }
+/* go to application/controllers/home_controller.php and check for this if statement */
+
 else if($access_level == "dpp"){
 		$district=$this->session->userdata('district1');
 	    $data['facilities'] = Facilities::get_total_facilities_rtk_in_district($district);
@@ -99,14 +101,11 @@ else if($access_level == "dpp"){
           }
 
       $table_body .="</td>";
-
-
-		
 			
 		}
 
 	$data['table_body']=$table_body;
-	$data['content_view'] = "rtk/dpp/dpp_home";
+	$data['content_view'] = "rtk/dpp/dpp_home_with_table";
 	$data['banner_text'] = "Home";
 	$data['link'] = "home";
 		
