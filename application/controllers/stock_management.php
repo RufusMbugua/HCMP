@@ -33,6 +33,9 @@ class Stock_Management extends auto_sms {
 		$reset_facility_historical_stock_table = Doctrine_Manager::getInstance()->getCurrentConnection();
 	    $reset_facility_historical_stock_table->execute("DELETE FROM `historical_stock` WHERE  facility_code=$facility_code; ");
 		
+		$reset_facility_update_stock_first_temp = Doctrine_Manager::getInstance()->getCurrentConnection();
+	    $reset_facility_update_stock_first_temp->execute("DELETE FROM `update_stock_first_temp` WHERE  facility_code=$facility_code; ");
+		
 		
 		$this->session->set_flashdata('system_success_message', 'Facility Stock Details Have Been Reset');
 		redirect('Home_Controller');
@@ -228,20 +231,32 @@ class Stock_Management extends auto_sms {
 }
  		
 public function autosave_update(){
-	$facility_c=$this -> session -> userdata('news');
+	$facility_code=$this -> session -> userdata('news');
 	
-	    $kemsa_code=$_POST['kemsa_code'];
+	    if($this->input->post('category')){
+	    $kemsa_code=$_POST['kemsa_code'];	
+	    $category=$_POST['category'];
+		$description=$_POST['description'];
+		$unit_size=$_POST['unit_size'];	
+	    }
+	    
 		$expiry_date=$_POST['expiry_date'];
 		$batch_no=$_POST['batch_no'];
 		$manuf=$_POST['manu'];
-		$stock_level=$_POST['stock_level'];
+		$stock_level=$_POST['stock_level'];				
 		$unit_count=$_POST['unit_count'];
-		$category=$_POST['category'];
-		$unit_size=$_POST['unit_size'];
-		$facility_code=$facility_c;
 		$drug_id=$_POST['drug_id'];
-        $description=$_POST['description'];
-	
+        
+		
+		$does_facility_have_this_drug_in_temp_table=Update_stock_first_temp::check_if_facility_has_drug_in_temp($drug_id, $facility_code);
+	    
+		
+		if($does_facility_have_this_drug_in_temp_table>0){
+			
+		Update_stock_first_temp::update_facility_temp_data($expiry_date,$batch_no,$manuf,$stock_level,$unit_count,$drug_id,$facility_code);	
+		 echo "UPDATE SUCCESS  BATCH NO: $batch_no ";	
+			
+		}else{
 			$mydata=array('facility_code'=>$facility_code,
 			'kemsa_code'=>$kemsa_code,
 			'batch_no'=>$batch_no,
@@ -254,11 +269,15 @@ public function autosave_update(){
 			'drug_id'=>$drug_id,
 			'description'=>$description);
 			
-			Update_stock_first_temp::update_temp($mydata);
+			 Update_stock_first_temp::update_temp($mydata);
 			
-	echo "SUCCESS ".$description." ".$manuf;
+	        echo "SUCCESS  BATCH NO: $batch_no";	
+		}
+	
+	
+		
 }
-public static function delete_temp_autosave(){
+public  function delete_temp_autosave(){
 		if (isset($_POST['drugid'])) {
 			$facilitycode=$_POST['facilitycode'];
 			$drugid=$_POST['drugid'];			
@@ -572,8 +591,12 @@ public function historical_stock_take(){
 						$q->execute();
 
 		} else if (count($stocktake)==0) {
+			$data=$h_stock[2];
+			
+			$data='"'.$data.'"';
 			$insert = Doctrine_Manager::getInstance()->getCurrentConnection();
-		$insert->execute("INSERT INTO historical_stock (`facility_code`, `drug_id`, `unit_size`, `consumption_level`, `unit_count`, `selected_option`) VALUES ('".$facilityCode."', '".$h_stock[0]."', '".$h_stock[2]."', '".$h_stock[1]."', '".$h_stock[3]."', '".$h_stock[4]."')");
+		$insert->execute("INSERT INTO historical_stock (`facility_code`, `drug_id`, `unit_size`, `consumption_level`, `unit_count`, `selected_option`) 
+		VALUES ('".$facilityCode."', '".$h_stock[0]."', ".$data.", '".$h_stock[1]."',".$h_stock[3].", '".$h_stock[4]."')");
 		}
 		
 		echo 'success consumption_level= '.$h_stock[1].'unit_count= '.$h_stock[3].'drug_id= '.$h_stock[0].'selected_option= '.$h_stock[4];

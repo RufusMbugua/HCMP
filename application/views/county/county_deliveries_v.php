@@ -9,23 +9,24 @@
 width: 22%;
 height:auto;
 float: left;
+padding-left: 1em;
 }
 .multiple_chart_content{
 float:left;
 box-shadow: 0 0 5px #888888;
 border-radius: 5px;
 width:98%; 
-height:40%; 
+height:20%; 
 padding:0.2em;
 margin-top:0.5em;
 }
 .main{
-width: 76%;
+width: 74%;
 min-height:500px;
 float: right;
-border-left: 1px solid #ccc;
-margin-left:2em;
+margin-left:1em;
 margin-bottom:5em;
+padding-right: 1em;
 }
 .accordion {
 margin: 0;
@@ -102,7 +103,7 @@ table.data-table td {
     });
 	
 	$(document).ready(function() {
-	var chart = new FusionCharts("<?php echo base_url()."scripts/FusionWidgets/HLinearGauge.swf"?>", "ChartId", "100%", "50%", "0", "0");
+	var chart = new FusionCharts("<?php echo base_url()."scripts/FusionWidgets/HLinearGauge.swf"?>", "ChartId", "100%", "20%", "0", "0");
     var url = '<?php echo base_url()."report_management/lead_time_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart1");
@@ -139,28 +140,19 @@ table.data-table td {
 
 			<?php foreach ($delivered as $item) {?>	
 	<tr>
-		<th>District Name</th>
-		<th>No. of Facilities with Deliveries</th>
-		<th>Order Value</th>
-		<th>Action</th>
-	</tr>			
-		<tbody>
-			<tr>
-			<td><?php echo $item['district']; ?></td>
-			<td><?php echo $item['facility_count']; ?></td>
-			<td><?php echo $item['orderTotal']; ?></td>
-			<td><a href="" id="pop_up" type='view-deliveries' name="<?php echo $item['district_id']?>" class="link">View</a></td>
+		<th colspan="4" style="text-align:center; font-weight:bold; font-size:15px;" >District: <?php echo $item['district']; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No. of Facilities with Deliveries: <?php echo $item['facility_count']; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Order Value: Ksh. <?php echo $item['orderTotal']; ?></th>
+	</tr>
+				<td style="font-weight:bold; font-size:14px;">Facility Name</td>
+				<td style="font-weight:bold; font-size:14px;">MFL Code</td>
+				<td style="font-weight:bold; font-size:14px;">Order Value</td>
+				<td style="font-weight:bold; font-size:14px;">Action</td>
 			</tr>
-			<tr><th>MFL Code</th>
-				<th>Facility Name</th>
-				<th>Order Value</th>
-				<th>Action</th>
-			</tr>
-			<tr><td><?php echo $item['facility_code']; ?></td>
-			<td><?php echo $item['facility_name']; ?></td>
-			<td><?php echo $item['orderTotal']; ?></td>
+			<tbody>
+			<tr><td><?php echo $item['facility_name']; ?></td>
+				<td><?php echo $item['facility_code']; ?></td>			
+			<td>Ksh. <?php echo $item['orderTotal']; ?></td>
 			<td><a href="<?php echo site_url('order_management/moh_order_details/'.$item['id']);?>"class="link">View</a></td></tr>
-			<tr><td></td><td></td><td></td><td></td></tr>
+			<tr><td colspan="4"></td></tr>
 			<?php } ?>
 			
 		</tbody>		 

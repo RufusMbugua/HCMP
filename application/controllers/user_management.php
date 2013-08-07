@@ -12,6 +12,7 @@ class User_Management extends auto_sms {
 public function change_password(){
 	$this -> load -> view("ajax_view/change_password");
 }
+////////////////////////////
 	public function index() {
 		$data = array();
 		$data['title'] = "Login";
@@ -25,17 +26,12 @@ public function change_password(){
 	}
 	public function logout(){
 		$data = array();
-		$u1=new Log();
-		$action='Logged Out';
-		$u1->user_id=$this -> session -> userdata('identity');
-		$u1->action=$action;
-		$u1->save();
+		
+		Log::update_log_out_action($this -> session -> userdata('identity'));
 		
 		$this->session->sess_destroy();
 		
-		$data['title'] = "Login";
-		
-		
+		$data['title'] = "Login";		
 		$this -> load -> view("login_v", $data);
 	}
 
@@ -361,7 +357,9 @@ else{
 		$message='Hello '.$f_name.',You have been registered. Check your email for login details. HCMP';
 		$message_1='Hello '.$f_name.', <br> <br> Thank you for registering on the Health Commodities Management Platform (HCMP).
 		<br>
+		<br>
 		Web link: http://health-cmp.or.ke/
+		<br>
 		<br>
 		Please find your log in credentials below:
 		<br>
@@ -537,11 +535,59 @@ else{
 	public function password_recovery(){
 		
 		$email=$_POST['username'];
+		
 		$password='123456';
+		
 		$mycount= User::check_user_exist($email);
+		$account_details=User::get_user_details($email)->toArray();
+		
+		
+		$access_level=access_level::get_access_level_name($account_details[0]['usertype_id']);
+		$access_level=$access_level['level'];
+		
+		switch ($account_details[0]['usertype_id']) {
+			case 2 || 5:
+		$facility_name=facilities::get_facility_name_($account_details[0]['facility']);		
+		$user_delegation="Facility: $facility_name[facility_name]";
+		$user_level="Facility Level";	
+				break;
+			case 3:
+		$district_name=districts::get_district_name_($account_details[0]['district']);
+        $user_level="District Level";		
+        $user_delegation="District: $district_name[district]";		
+				break;	
+			
+			default:
+				
+				break;
+		}
+		
 		
 		$subject="Password reset";
-		$message="You requested for a password reset. Your new password is 123456. Please login and change this password.";
+		
+		
+		$message_1='Hello '.$account_details[0]['fname'].', <br> <br> You requested for a password reset on the Health Commodities Management Platform (HCMP).
+		<br>
+		<br>
+		Web link: http://health-cmp.or.ke/
+		<br>
+		<br>
+		Please find your log in credentials below:
+		<br>
+		<br>
+		'.$user_delegation.'
+		<br> 
+		User Level: '.$user_level.'
+		<br>
+		User Type: '.$access_level.'
+		<br>
+		User Name: '.$email.' 
+		<br>
+		Password: '.$password.'
+		<br>
+		<br>';
+		
+		
 		if ($mycount>0) {
 			//hash then reset password
 			$salt = '#*seCrEt!@-*%';
@@ -550,12 +596,12 @@ else{
 			$updatep = Doctrine_Manager::getInstance()->getCurrentConnection();
 			
 
-			$updatep->execute("UPDATE user SET password='$value'  WHERE username='$email'; ");
+			$updatep->execute("UPDATE user SET password='$value'  WHERE username='$email' or email='$email'; ");
 			
 			//send mail
 			
 			
-			$response=$this->send_email($email,$message,$subject);
+			$response=$this->send_email($email,$message_1,$subject);
 			
 			
 			 $data['popup'] = "Successpopup";

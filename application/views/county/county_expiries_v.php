@@ -7,22 +7,24 @@
 width: 22%;
 height:auto;
 float: left;
+padding-left: 1em;
 }
 .multiple_chart_content{
+float:left;
 box-shadow: 0 0 5px #888888;
 border-radius: 5px;
 width:98%; 
-height:80%; 
+height:70%; 
 padding:0.2em;
 margin-top:0.5em;
 }
 
 .main{
-width: 76%;
+width: 74%;
 min-height:500px;
 float: right;
-border-left: 1px solid #ccc;
-margin-left:2em;
+margin-top:0.5em;
+margin-right:1em;
 margin-bottom:5em;
 }
 .accordion {
@@ -113,70 +115,69 @@ table.data-table td {
     var url = '<?php echo base_url()."report_management/cost_of_expired_commodities_chart"?>'; 
     chart.setDataURL(url);
     chart.render("chart2");
- });
-	
-			
-    $("#3months").click(function(){
-      var url = "<?php echo base_url().'stock_expiry_management/county_get_potential_expiries'?>";
-      var id  = $(this).attr("id");
-      //alert (id);
-        $.ajax({
-          type: "POST",
-          data: {'id':  $(this).attr("id"),},
-          url: url,
-          beforeSend: function() {
-            $(".tab-1 tbody").html("");
-          },
-          success: function(msg) {
-            $(".tab-1 tbody").html(msg);
+
+    // $("#3months").click(function(){
+    //   var url = "<?php echo base_url().'stock_expiry_management/county_get_potential_expiries'?>";
+    //   var id  = $(this).attr("id");
+    //   // alert(id);
+    //     $.ajax({
+    //       type: "POST",
+    //       data: {'id':  $(this).attr("id"),},
+    //       url: url,
+    //       beforeSend: function() {
+    //         $(".tab-1 tbody").html("");
+    //       },
+    //       success: function(msg) {
+    //         alert(msg);
+    //         $(".tab-1 tbody").html(msg);
             
-             }
-         });
-    });
-    $("#6months").click(function(){
-      var url = "<?php echo base_url().'stock_expiry_management/county_get_potential_expiries'?>";
-      var id  = $(this).attr("id");
-      //alert (id);
-        $.ajax({
-          type: "POST",
-          data: {'id':  $(this).attr("id"),},
-          url: url,
-          beforeSend: function() {
-            $(".tab-1 tbody").html("");
-          },
-          success: function(msg) {
-            $(".tab-1 tbody").html(msg);
+    //          }
+    //      });
+    // });
+    // $("#6months").click(function(){
+    //   var url = "<?php echo base_url().'stock_expiry_management/county_get_potential_expiries'?>";
+    //   var id  = $(this).attr("id");
+    //   // alert(id);
+    //     $.ajax({
+    //       type: "POST",
+    //       data: {'id':  $(this).attr("id"),},
+    //       url: url,
+    //       beforeSend: function() {
+    //         $(".tab-1 tbody").html("");
+    //       },
+    //       success: function(msg) {
+    //         $(".tab-1 tbody").html(msg);
             
-             }
-         });
-    });
-    $("#12months").click(function(){
-      var url = "<?php echo base_url().'stock_expiry_management/county_get_potential_expiries'?>";
-      var id  = $(this).attr("id");
-      //alert (id);
-        $.ajax({
-          type: "POST",
-          data: {'id':  $(this).attr("id"),},
-          url: url,
-          beforeSend: function() {
-            $(".tab-1 tbody").html("");
-          },
-          success: function(msg) {
-            $(".tab-1 tbody").html(msg);
+    //          }
+    //      });
+    // });
+    // $("#12months").click(function(){
+    //   var url = "<?php echo base_url().'stock_expiry_management/county_get_potential_expiries'?>";
+    //   var id  = $(this).attr("id");
+    //   // alert(id);
+    //     $.ajax({
+    //       type: "POST",
+    //       data: {'id':  $(this).attr("id"),},
+    //       url: url,
+    //       beforeSend: function() {
+    //         $(".tab-1 tbody").html("");
+    //       },
+    //       success: function(msg) {
+    //         $(".tab-1 tbody").html(msg);
             
-             }
-         });
+    //          }
+    //      });
+    //      });
     });
        
 
 	
 </script>
 
-<div id="dialog-form"></div>
-
 <div class="leftpanel"><h3 class="accordion" id="leftpanel">Expiries<span></span></h3>
 <div class="multiple_chart_content" id="chart1"></div>
-<div class="multiple_chart_content" id="chart2"></div></div>
+<div class="multiple_chart_content" id="chart2"></div>
+</div>
 
 <div id="tabs" class="main">
 	<ul>
@@ -189,41 +190,29 @@ table.data-table td {
 	</ul>
 <?php if (count($potential_expiries>0)) :?>
 
-<div id="tab-1">	 
-<fieldset>
-	<h2>Commodities Expiring in the Next:</h2>  
-	<button id="3months" class="awesome blue" style="margin-left:1%; margin-top: 0.5em;";> Next 3 Months</button> 
-	<button id="6months" class="awesome blue" style="margin-left:1%; margin-top: 0.5em;";> Next 6 Months</button>
-	<button id="12months" class="awesome blue" style="margin-left:1%; margin-top: 0.5em;";> Next 12 Months</button>  
-</fieldset>
-	
+<div id="tab-1">
+
+	<h3 id="notification">Commodities Expiring between <?php echo date('jS F, Y'); ?> and <?php echo date('jS F, Y', strtotime('+6 months')); ?></h3>
+
 <table class="data-table">	
 
   <?php foreach ($potential_expiries as $item) {?>
 	<tr>
-		<th>District Name</th>
-		<th>No. of Facilities with Potential Expiries</th>
-		<th>Cost of Potential Expiries</th>
-		<th>Action</th>
+		<td colspan="4" style="text-align:center; font-weight:bold; font-size:15px;">District Name: <?php echo $item['district']; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No. of Facilities with Potential Expiries: <?php echo $item['facility_count']; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total Cost of Potential Expiries: Ksh. <?php echo $item['balance']; ?></td>
 	</tr>			
 		<tbody>
-			<tr>
-			<td><?php echo $item['district']; ?></td>
-			<td><?php echo $item['facility_count']; ?></td>
-			<td><?php echo $item['balance']; ?></td>
-			<td><a href="" id="pop_up" type='view-potential' name="<?php echo $item['district_id']?>" class="link">View</a></td>
-			</tr>
-       <tr>
-    <th>MFL Code</th>
+  <tr>
     <th>Facility Name</th>
+    <th>MFL Code</th>
     <th>Cost of Expiries</th>
     <th>Action</th>
   </tr>
-  <tr><td><?php echo $item['facility_code'];?></td>
-      <td><?php echo $item['facility_name'];?></td>
-      <td><?php echo $item['balance'];?></td>
+  <tr><td><?php echo $item['facility_name'];?></td>
+      <td><?php echo $item['facility_code'];?></td>
+      <td>Ksh. <?php echo $item['balance'];?></td>
       <td><a href=".site_url('stock_expiry_management/county_potential_expiries/'.$item['facility_code'])." class='link'>View</a></td>
       </tr>
+      <tr><td colspan="4"></td></tr>
 			<?php } ?>
 		</tbody>
 		 
@@ -239,36 +228,30 @@ table.data-table td {
 
   <?php foreach ($expired2 as $item) {?>	
 	<tr>
-		<th>District Name</th>
-		<th>No. of Facilities with Expired Stock</th>
-		<th>Cost of Expiries</th>
-		<th>Action</th>
+		<td colspan="4" style="text-align:center; font-weight:bold; font-size:15px;">District: <?php echo $item['district']; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No. of Facilities with Expired Stock: <?php echo $item['facility_count']; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total Cost of Expiries: Ksh. <?php echo $item['balance']; ?></td>
 	</tr>			
 		<tbody>
-			<tr>
-			<td><?php echo $item['district']; ?></td>
-			<td><?php echo $item['facility_count']; ?></td>
-			<td><?php echo $item['balance']; ?></td>
-			<td><a href="" id="pop_up" type='view-expiries' name='<?php echo $item['district_id']?>' class="link">View</a></td>
-			</tr>
       <tr>
-    <th>MFL Code</th>
     <th>Facility Name</th>
-    <th>Cost of Expiries</th>
+    <th>MFL Code</th>
+    <th>Cost of Potential Expiries</th>
     <th>Action</th>
   </tr> 
 			<tr>
-      <td><?php echo $item['facility_code'];?></td>
       <td><?php echo $item['facility_name'];?></td>
+      <td><?php echo $item['facility_code'];?></td>
       <td><?php echo $item['balance'];?></td>
       <td><a href=".site_url('stock_expiry_management/expired/'.$item['facility_code'])." class='link'>View</a></td>
       </tr>
-      <tr><td></td><td></td><td></td><td></td></tr>
+      <tr><td colspan="4"></td></tr>
        <?php } ?>
 		</tbody>		 
 </table>
 </div>
 </div>
+
+<div id="dialog-form"></div>
+
 <?php 
  else:
   	echo "<div id='notification'>No Records Found</div>";

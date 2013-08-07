@@ -46,7 +46,7 @@ json_obj = {
         return [false, ''];
     },
 					
-					dateFormat: 'd M, yy', 
+					dateFormat: 'd M yy', 
 					changeMonth: true,
 			        changeYear: true,
 			        buttonImage: baseUrl,
@@ -169,7 +169,7 @@ $( "#dialog1" ).dialog({
                             <td><input class='my_date' type="text"<?php echo 'name="expiry_date['.$count.']"'?> value="<?php
                             
                             	$fechaa = new DateTime($drug->expiry_date);
-                               $datea= $fechaa->format(' d M, Y');
+                               $datea= $fechaa->format(' d M Y');
                             
                              echo $datea;?>" /></td>
                             <td><input class="user" readonly="readonly" type="text"<?php echo 'name="stock_level['.$count.']"'?> value="<?php echo $drug->balance;?>"  /></td>

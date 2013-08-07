@@ -66,16 +66,13 @@ input[type=radio]:checked + label:before {
   function calculate_a_stock (argument) {
   	
   	
-  	var radiocheck =($("input[type='radio'][name='unitissue']:checked").val());
+  
+  	var x= argument;
   	
   	
-  	
-  	if (radiocheck == 'Unit_Size'){
+ 
     //do this
 
-     	var x= argument;
-  
-  	
     //checking if the quantity is a number 	    
 	var num = document.getElementsByName("a_stock["+x+"]")[0].value.replace(/\,/g,'');
 if(!isNaN(num)){
@@ -90,24 +87,31 @@ alert('Enter only numbers');
 document.getElementsByName("a_stock["+x+"]")[0].value= document.getElementsByName("a_stock["+x+"]")[0].value.substring(0,document.getElementsByName("a_stock["+x+"]")[0].value.length-1);
 return;
 }
-  var actual_unit_size=get_unit_quantity(document.getElementsByName("u_size["+x+"]")[0].value);
+ var actual_unit_size=get_unit_quantity(document.getElementsByName("u_size["+x+"]")[0].value);
 
  var total_a_stock=actual_unit_size*num;
  
    document.getElementsByName("qreceived["+x+"]")[0].value=total_a_stock; 
     
-    
-  
-  }
-else{
-	//do this other
-	$(function() {
-		
-		$("#qreceived").val($("#a_stock").val());
-		
-		
-	});
-}
+   var url = "<?php echo base_url().'stock_management/autosave_update'?>";
+        $.ajax({
+          type: "POST",
+          data: "batch_no="+document.getElementsByName("batch_no["+x+"]")[0].value+
+          "&manu="+document.getElementsByName("manuf["+x+"]")[0].value+
+          "&expiry_date="+document.getElementsByName("expiry_date["+x+"]")[0].value+
+          "&stock_level="+document.getElementsByName("a_stock["+x+"]")[0].value+
+          "&unit_count="+document.getElementsByName("qreceived["+x+"]")[0].value+
+          "&drug_id="+document.getElementsByName("kemsa_code["+x+"]")[0].value,
+          url: url,
+          beforeSend: function() {
+           // console.log("data to send :"+data);
+          },
+          success: function(msg) {
+            console.log(msg);
+            
+             }
+         });  
+
    }
    /*********************getting the last day of the month***********/
   function getLastDayOfYearAndMonth(year, month)
@@ -297,7 +301,8 @@ else
    	
    	var dTable= $('#main').dataTable( {
          "bJQueryUI": true,
-          "bPaginate": false
+          "bPaginate": false,
+           "bFilter":false
 				} );
    	
  
@@ -460,6 +465,7 @@ $('.del').live('click',function(){
 						<td>$data->category</td>
 						<td>$data->kemsa_code
 						<input type='hidden' name='kemsa_code[".$count."]' value='$data->drug_id' id='h_v' />
+						<input type='hidden' name='u_size[".$count."]' value='$data->unit_size' id='h_v' />
 						</td>
 						<td>$data->description</td>
 						<td><input class='user1' readonly='readonly' type ='text' name='unit_size[".$count."]' value='$data->unit_size'></td>

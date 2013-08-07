@@ -100,7 +100,7 @@ public function send_email($email_address,$message,$subject,$attach_file=NULL,$b
   		if(isset($bcc_email)){
   		$this->email->bcc("kyalocatherine@gmail.com,ashminneh.mugo@gmail.com,smutheu@clintonhealthaccess.org,kariukijackson@gmail.com,kelvinmwas@gmail.com,".$bcc_email);	
   		}else{
-  		$this->email->bcc('kyalocatherine@gmail.com,ashminneh.mugo@gmail.com,smutheu@clintonhealthaccess.org,kariukijackson@gmail.com,kelvinmwas@gmail.com');	
+  		$this->email->bcc('kariukijackson@gmail.com');	
   		}
 		if (isset($attach_file)){
 		$this->email->attach($attach_file); 	

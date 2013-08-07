@@ -6,7 +6,7 @@ class Facilities extends Doctrine_Record {
 		$this -> hasColumn('district', 'varchar',30);
 		$this->hasColumn('drawing_rights','text');
 	}
-///////////
+//////////////
 	public function setUp() {
 		$this -> setTableName('facilities');
 		$this -> hasOne('facility_code as Code', array('local' => 'facility_code', 'foreign' => 'facilityCode'));
@@ -272,16 +272,47 @@ AND o.facilityCode=f.facility_code
 
 return array('total_no_of_facilities'=>$q_1[0]['total_no_of_facilities'],'orders_made_data'=>$q[0]['orders_made_data']);	
 }
-public static function get_no_of_facilities_in_county($county_id){
-$q_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
-SELECT count( f.`id` ) AS total_no_of_facilities
+public static function get_no_of_facilities_hcmp($county_id=NULL,$district_id=NULL){
+
+if($district_id!=NULL){
+		$q_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT COUNT( f.id ) AS total_no_of_facilities
+FROM facilities f, districts d
+WHERE f.district = d.id
+AND d.id ='$district_id'
+");
+
+		$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT COUNT( DISTINCT u.`facility` ) AS total_no_of_facilities
+FROM facilities f, districts d, user u
+WHERE f.district = d.id
+AND u.facility = f.facility_code
+AND u.status =  '1'
+AND d.id= '$district_id'
+");
+	
+}else{
+	$q_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT count(f.`id`) AS total_no_of_facilities
 FROM facilities f, districts d, counties c
 WHERE f.district = d.id
 AND d.county =c.id
-AND c.id= $county_id
+AND c.id= '$county_id'
 ");
 
-return $q_1;
+$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT COUNT( DISTINCT u.`facility` ) AS total_no_of_facilities
+FROM facilities f, districts d, counties c, user u
+WHERE f.district = d.id
+AND u.facility = f.facility_code
+AND d.county = c.id
+AND u.status =  '1'
+AND c.id= '$county_id'
+");
 }
+
+return array('total_no_of_facilities'=>$q_1[0]['total_no_of_facilities'],'total_no_of_facilities_using_hcmp'=>$q[0]['total_no_of_facilities']);
+}
+
 
 }

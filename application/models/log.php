@@ -1,8 +1,13 @@
 <?php
 class Log extends Doctrine_Record {
 	public function setTableDefinition() {
-		$this -> hasColumn('user_id', 'varchar',255);	
-		$this -> hasColumn('action', 'varchar',255);	
+		$this -> hasColumn('id', 'int',50);	
+		$this -> hasColumn('user_id', 'int',50);	
+		$this -> hasColumn('action', 'varchar',50);
+		$this -> hasColumn('action_id', 'int',50);
+		$this -> hasColumn('start_time_of_event', 'date');
+		$this -> hasColumn('end_time_of_event', 'date');
+	
 		
 		
 	}
@@ -35,4 +40,11 @@ AND c.id =$option_id");
 		}
 		
 	}
+//	
+	public static function update_log_out_action($user_id){
+$q = Doctrine_Manager::getInstance()->getCurrentConnection()->execute("
+update log set `end_time_of_event`=NOW(),action='Logged Out' where `user_id`='$user_id' and UNIX_TIMESTAMP( `end_time_of_event`) =0
+");	
+}
+	
 }

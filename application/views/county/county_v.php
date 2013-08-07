@@ -168,48 +168,8 @@
 	</div>
 	<div class="multiple_chart_content"  >
 <h2 >Notifications</h2>
-<div style="display: table-row;  ">
-    			<div style="display: table-cell;padding-bottom: 2em; ">
-      				<label style=" font-weight: ">Total No of Facilities in The  </label>
-            			    				</div>
-    				
-    				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="link" href="<?php echo site_url('report_management/get_county_facility_mapping'); ?>" > 10</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row; ">
-    			<div style="display: table-cell;padding-bottom: 2em">
-      				<label style="font-weight: ">Total No of Facilities in The  Using HCMP </label>
-            		</div>
-    				
-    				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="link" href="#" >xxx</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row;">
-    			<div style="display: table-cell; padding-bottom: 2em">
-      				<label style="font-weight: ">Total No of Users in The </label>
-            		     				</div>
-    				
-    				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="link" href="#" >10</a>
-    				</div>
-  				</div>
-  				<div style="display: table-row;">
-    			<div style="display: table-cell; padding-bottom: 2em">
-      				<label style="font-weight: ">Total No of Users in The  Accessing HCMP in The last 7 days</label>
-            		     				</div>
-    				
-    				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="link" href="#" >10</a>
-    				</div>
-  </div>
-  				
-  				
-  				
-  				
+	<?php echo $stats; ////// ?>			
+			
 	</div>
 	
 	

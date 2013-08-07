@@ -12,6 +12,84 @@ class Home_Controller extends MY_Controller {
 		$this -> home();
 	}
 
+
+public function get_dash_board_stats($dash_board_indicator){
+
+	$county_id = $this -> session -> userdata('county_id');
+	$district_id = $this -> session -> userdata('district1');
+	$district_id = $this -> session -> userdata('district');
+	$indicator='';
+	switch ($dash_board_indicator) {
+		case 'county':
+	$indicator ="County";
+	$facility_data=facilities::get_no_of_facilities_hcmp($county_id);
+	$user_data=user::get_no_of_users_using_hcmp($county_id);
+	
+	
+	 break;
+	 case 'district':
+		 $indicator ='District';
+	$facility_data=facilities::get_no_of_facilities_hcmp($county_id,$district_id);
+	$user_data=user::get_no_of_users_using_hcmp($county_id,$district_id);	
+	
+	
+			break;		
+		
+		default:
+			return NULL;
+			break;
+	}
+	$stats_data='<div>
+<div style="display: table-row;  ">
+    			<div style="display: table-cell;padding-bottom: 2em; ">
+      				<label style=" font-weight: ">Total No of Facilities in The '.$indicator.' </label>
+            	</div>   				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge" >'.$facility_data['total_no_of_facilities'].'</a>
+    				</div>
+  				</div>
+  				
+  				<div style="display: table-row; ">
+    			<div style="display: table-cell;padding-bottom: 2em">
+      				<label style="font-weight: ">Total No of Facilities in The '.$indicator.'  Using HCMP </label>
+            		</div>   				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge">'.$facility_data['total_no_of_facilities_using_hcmp'].'</a>
+    				</div>
+  				</div>
+  				
+  				<div style="display: table-row;">
+    			<div style="display: table-cell; padding-bottom: 2em">
+      				<label style="font-weight: ">Total No of Users in The '.$indicator.' </label>
+            		     				</div>   				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge" >'.$user_data['total_no_of_users'].'</a>
+    				</div>
+  				</div>
+  				<div style="display: table-row;">
+    			<div style="display: table-cell; padding-bottom: 2em">
+      				<label style="font-weight: ">Total No of Users in The '.$indicator.'  Accessing HCMP last 7 days</label>
+            		     				</div>   				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge" >'.$user_data['total_no_of_users_7_days'].'</a>
+    				</div>
+    				<div style="display: table-row;">
+    				<div style="display: table-cell; padding-bottom: 2em">
+      				<label style="font-weight: ">Users online in The '.$indicator.'</label>
+            		     				</div>  
+            		     				
+					 				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge" >'.$user_data['active_users'].'</a>
+    				</div>	 				
+    				</div>
+					
+  </div>
+  </div>';		
+return $stats_data;
+	
+}
+
 	public function home($pop_up=NULL) {
 
 		$data['title'] = "Home";
@@ -58,7 +136,7 @@ else if($access_level == "county_facilitator"){
 	
 	//$active_logs=Log::get_active_login($option,$option_id);
 	
-	
+	$data['stats']=$this->get_dash_board_stats("county");
 	$data['content_view'] = "county/county_v";
 	$data['banner_text'] = "Home";
 	$data['link'] = "home";
@@ -414,7 +492,7 @@ $data['strXML_e1']=$strXML_e1;
 		$x1=strtotime($date1);
 		$x2=strtotime($date2);
 		
-		//expired products
+		//expired products////
 			$date= date('Y-m-d');
 
 		$difference=($x1-$x2)/86400;
@@ -434,6 +512,7 @@ $data['strXML_e1']=$strXML_e1;
 			$data['content_view'] = "moh/moh_user_v";
 		}
 		else if($access_level == "district"){
+			$data['stats']=$this->get_dash_board_stats("district");
 			$district =$this -> session -> userdata('district1');
 			
 	
