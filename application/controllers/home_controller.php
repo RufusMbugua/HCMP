@@ -117,7 +117,7 @@ return $stats_data;
             $data['percentage_complete'] = Historical_Stock::historical_stock_rate($facility_c);	    
 		    $data['diff']=$difference;			
 			$data['exp']=Facility_Stock::get_exp_count($date,$facility_c);
-		    $data['historical_stock'] = Historical_Stock::count_historical_stock($facility_c);
+		
 			$data['exp_count']=Facility_Stock::get_exp_count($date,$facility_c);
 			$data['stock']=Facility_Stock::count_facility_stock_first($facility_c);
 		    $data['pending_orders'] = Ordertbl::get_pending_count($facility_c);
@@ -171,7 +171,7 @@ else if($access_level == "dpp"){
 
            if($lab_count>0){
            	//".site_url('rtk_management/get_report/'.$facility_detail['facility_code'])."
-           $table_body .="Lab&nbsp;Commodities  <img src='".base_url()."/Images/check_mark_resize.png'></img><a href='#' class='link'>Edit</a></td>";
+           $table_body .="Lab&nbsp;Commodities  <img src='".base_url()."/Images/check_mark_resize.png'></img><!--<a href='#' class='link'>Edit</a>--></td>";
           }
           else{
   $table_body .="<a href=".site_url('rtk_management/get_report/'.$facility_detail['facility_code'])." class='link'>Lab&nbsp;Commodities</a></td>";
@@ -215,13 +215,14 @@ $counties=Counties::getAll();
 
 	  $total_facilities=$total_facilities+$total_facilities_in_county;
 	  $total_allocated= $total_allocated+ $total_facilities_allocated_in_county;
-	   
-	   $table_data .="<tr><td><a href=".site_url()."rtk_management/allocation_county_detail_zoom/$countyid> $countyname</a></td>  <td> $total_facilities_in_county | $total_facilities_allocated_in_county</td></tr>";
+ 
+	   $table_data .="<tr><td><a href=".site_url()."rtk_management/allocation_county_detail_zoom/$countyid> $countyname</a> </td><td>$total_facilities_in_county | $total_facilities_allocated_in_county</td></tr>";
 	   
 	   }
-    $table_data_="<tr><td>TOTAL </td>  <td> $total_facilities | $total_allocated</td><tr>";
+    $table_data .="<tr><td>TOTAL </td><td> $total_facilities | $total_allocated</td><tr>";
+ 
    
-	$data['table_data']=$table_data_.$table_data;
+	$data['table_data']=$table_data;
 	$data['pop_up']=$pop_up;
 	$data['counties']= $counties=Counties::getAll();
 	$data['content_view'] = "allocation_committee/home_v";

@@ -36,8 +36,12 @@ public function change_password(){
 	}
 
 public function submit() {
-		$username=$_POST['username'];
-		$password=$_POST['password'];
+	if($this->input->post('username')){
+	   $username=$_POST['username'];
+		$password=$_POST['password'];	
+	}
+	
+		
 		if ($this->_submit_validate() === FALSE) {
 			$this->index();
 			return;

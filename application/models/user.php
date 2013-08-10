@@ -219,6 +219,4 @@ AND u.county_id ='$county_id'
 return array('total_no_of_users'=>$q[0]['total_no_of_users'],'total_no_of_users_7_days'=>$q_1[0]['total_no_of_users'],"active_users"=>$q_2[0]['users_logged_in']);
 }
 
-
-
 }

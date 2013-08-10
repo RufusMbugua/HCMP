@@ -2009,31 +2009,96 @@ public function facility_settings(){
 		$data['title'] = "Facility Mapping";
 		$data['banner_text'] = "Facility Mapping";
 		$data['content_view'] = "county/facility_mapping_v";	
-		$owner_array=array("GOK","CBO","FBO","NGO","Private","Other");
-		$counties=districts::getDistrict(1);
-		$table_body='';
-		
-		foreach($counties as $county_detail){
-			$id=$county_detail->id;
-			$table_body .="<tr><td><a class='ajax_call_1' id='county_facility' name='get_rtk_county_detail/$id' href='#'> $county_detail->district</a></td>";
-			
-			$county_detail=facilities::get_total_facilities_in_district($id);
-			
-			$table_body .="<td>".$county_detail[0]['total_facilities']."</td>";
-			foreach($owner_array as $key => $value){
-				
-				$owner_count=facilities::get_total_facilities_district_ownership($id, $value);
-				
-				
-				$table_body .="<td>".$owner_count[0]['ownership_count']."</td>";
-			}
-			$table_body .="</tr>";
-			
-		}
+		$county_id=$this -> session -> userdata('county_id');
 
-		$data['table_body']=$table_body;
+	    $data['district_data']=districts::getDistrict($county_id);
 	  
 	  $this -> load -> view("template",$data);
+	}
+	
+	public function get_district_facility_mapping_($district_id){
+	$facility_data=facilities::getFacilities($district_id);	
+	$table_body="";
+	$dpp_details=user::get_dpp_details($distirct_id);
+	$indicator="District";
+	$no_of_facility_users=0;
+	$no_of_facility_users_online=0;
+	$no_of_facilities=0;
+	
+	foreach($facility_data as $facility_detail){
+	$no_of_facility_users=$no_of_facility_users+$facility_extra_data[0]['number_of_users'];
+	$no_of_facility_users_online=$no_of_facility_users_online+$facility_extra_data[0]['number_of_users_online'];
+		
+	$facility_code=$facility_detail->facility_code;
+	$facility_extra_data=facilities::get_facility_status_no_users_status($facility_code);	
+	
+	
+	$table_body .="<tr>";
+	
+   $table_body .="<td>$facility_code</td>
+	              <td>$facility_detail->facility_name</td>
+	              <td>$facility_detail->owner</td>
+	              <td>".$facility_extra_data[0]['status']."</td>
+	              <td>".$facility_extra_data[0]['number_of_users']."</td>
+	              <td>".$facility_extra_data[0]['number_of_users_online']."</td>";
+	              
+	$table_body .="</tr>";			  
+		
+	}
+	
+	
+		$stats_data='<div>
+<div style="display: table-row;  ">
+    			<div style="display: table-cell;padding-bottom: 2em; ">
+      				<label style=" font-weight: ">Total No of Facilities in The '.$indicator.' </label>
+            	</div>   				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge" >'.$facility_data['total_no_of_facilities'].'</a>
+    				</div>
+  				</div>
+  				
+  				<div style="display: table-row; ">
+    			<div style="display: table-cell;padding-bottom: 2em">
+      				<label style="font-weight: ">Total No of Facilities in The '.$indicator.'  Using HCMP </label>
+            		</div>   				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge">'.$facility_data['total_no_of_facilities_using_hcmp'].'</a>
+    				</div>
+  				</div>
+  				
+  				<div style="display: table-row;">
+    			<div style="display: table-cell; padding-bottom: 2em">
+      				<label style="font-weight: ">Total No of Users in The '.$indicator.' </label>
+            		     				</div>   				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge" >'.$user_data['total_no_of_users'].'</a>
+    				</div>
+  				</div>
+  				<div style="display: table-row;">
+    			<div style="display: table-cell; padding-bottom: 2em">
+      				<label style="font-weight: ">Total No of Users in The '.$indicator.'  Accessing HCMP last 7 days</label>
+            		     				</div>   				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge" >'.$user_data['total_no_of_users_7_days'].'</a>
+    				</div>
+    				<div style="display: table-row;">
+    				<div style="display: table-cell; padding-bottom: 2em">
+      				<label style="font-weight: ">Users online in The '.$indicator.'</label>
+            		     				</div>  
+            		     				
+					 				
+    				<div style="display: table-cell;padding-bottom: 2em">
+      				<a class="badge" >'.$user_data['active_users'].'</a>
+    				</div>	 				
+    				</div>
+					
+  </div>
+  </div>';	
+	
+	
+	$data['table_body']=$table_body;
+	$this->load->view("county/ajax_view/facility_mapping_v",$data);
+	
 	}
 	
 	/////////county

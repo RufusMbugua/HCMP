@@ -4,6 +4,7 @@ class Facilities extends Doctrine_Record {
 		$this -> hasColumn('facility_code', 'varchar',30);
 		$this -> hasColumn('facility_name', 'varchar',30);
 		$this -> hasColumn('district', 'varchar',30);
+		$this -> hasColumn('owner', 'varchar',30);
 		$this->hasColumn('drawing_rights','text');
 	}
 //////////////
@@ -314,5 +315,24 @@ AND c.id= '$county_id'
 return array('total_no_of_facilities'=>$q_1[0]['total_no_of_facilities'],'total_no_of_facilities_using_hcmp'=>$q[0]['total_no_of_facilities']);
 }
 
+public static function get_facility_status_no_users_status($facility_code){
+$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll('
+SELECT COUNT( DISTINCT u.id ) AS number_of_users, COUNT(DISTINCT l.user_id ) AS number_of_users_online, 
+CASE 
+WHEN EXISTS (
+SELECT u.id 
+FROM user
+WHERE user.facility ="'.$facility_code.'")
+THEN "Active"
+ELSE "Inactive"
+END AS 
+status
+ FROM user u
+LEFT JOIN log l ON u.id = l.user_id AND l.action = "Logged In"
+WHERE u.facility ="'.$facility_code.'"
+');	
+
+return $q;
+}
 
 }

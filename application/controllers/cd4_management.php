@@ -265,12 +265,20 @@ AND facility= '.$facility.'');
 		$htm .=  "<table class='data-table' style='font-size: 0.9em;'>";
 		$htm .=  "<thead>
 		<!--<th>Equipment Name</th> -->
-		<th> Description(Unit)</th>
-		<th>Quantity Received(3 months av)</th>
-		<th>Quantity Received(3 months av)</th>
-		<th>End Balance(June)</th>
-		<th>Requested</th>
-		<th>Allocated</th></thead>";
+ 
+		<th ROWSPAN=2> Description(Unit)</th>
+		<th COLSPAN=3>Quantity Received(3 months av)</th>
+		<th COLSPAN=3>Quantity Received(3 months av)</th>
+		<th ROWSPAN=2>End Balance(June)</th>
+		<th ROWSPAN=2>Requested</th>
+		<th ROWSPAN=2>Allocated</th>
+		</tr>
+		<tr>
+		<th>May</th><th>June</th><th>July</th>
+		<th>May</th><th>June</th><th>July</th>
+		</tr></thead>
+		";
+  
 				foreach ($equipments->result_array() as $equipmentsarr) {
 
 				$reagentname = $equipmentsarr['reagentname'];
@@ -280,7 +288,9 @@ AND facility= '.$facility.'');
 //				echo "<pre>";
  //				var_dump($equipmentsarr);
 
-			 	$htm .= '<tr><!--<td>'.$equipmentname.'</td>--><td>'.$reagentname.'<br />('.$unit.')</td><td>1</td><td>1</td><td>1</td><td>3</td><td><input type="text" value="0" /></td></tr>';
+ 
+			 	$htm .= '<tr> <td>'.$reagentname.'<br />('.$unit.')</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>3</td><td>3</td><td><input type="text" value="0" /></td></tr>';
+ 
 
 //				echo "</pre>";
 			}
@@ -298,7 +308,9 @@ AND facility= '.$facility.'');
 		    color: rgb(221, 154, 154);
 		    background: snow;
 		    /* margin-left: 80px; */
-		"> <h1>No data has been submitted yet</h1></fieldset>';;}
+ 
+		"> <h1>No data has been submitted yet</h1></fieldset>';}
+ 
 			echo $htm;
 }
 public function county_detail_zoom($county_id){
