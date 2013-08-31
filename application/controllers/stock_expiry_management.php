@@ -510,16 +510,17 @@ public function Decommission() {
 	//Change status of commodities to decommissioned
 	$date= date('Y-m-d');
 	$facility=$this -> session -> userdata('news');
-		$q = Doctrine_Query::create()
+		
+			
+			//Create PDF of Expired Drugs that are to be decommisioned.
+			$decom=Facility_Stock::get_facility_expired_stuff($date,$facility);
+			
+			$q = Doctrine_Query::create()
 			->update('Facility_Stock')
 				->set('status', '?', 2)
 					->where("facility_code='$facility' and expiry_date<='$date'");
 
 			$q->execute();
-			
-			//Create PDF of Expired Drugs that are to be decommisioned.
-			$decom=Facility_Stock::getexp($date,$facility);
-			
 			//create the report title
 		$html_title="<div ALIGN=CENTER><img src='".base_url()."Images/coat_of_arms.png' height='70' width='70'style='vertical-align: top;' > </img></div>
       <div style='text-align:center; font-size: 14px;display: block;font-weight: bold;'>Expiries</div>
@@ -547,6 +548,7 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 			<th><strong>Expiry Date</strong></th>
 			<th><strong>Unit Size</strong></th>
 			<th><strong>Stock Expired(Unit Size)</strong></th>
+			<th><strong>Cost of Expired</strong></th>
 			
 			
 
@@ -555,26 +557,60 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 /*******************************begin adding data to the report*****************************************/
 
 	foreach($decom as $drug){
-			
-				foreach($drug->Code as $d){
-								$name=$d->Drug_Name;
-								$code=$d->Kemsa_Code;
-					            $unitS=$d->Unit_Size; 
-								$unitC=$d->Unit_Cost;
-								$calc=$drug->balance;
-								$thedate=$drug->expiry_date;
+		                        $drug_id=$drug['drug_id'];
+		                        $batch=$drug['batch_no'];
+								$mau=$drug['manufacture'];
+								$name=$drug['drug_name'];
+								$code=$drug['kemsa_code'];
+					            $unitS=$drug['unit_size'];
+								$unitC=$drug['unit_cost'];
+								$calc=$drug['balance'];
+								$thedate=$drug['expiry_date'];
 								$formatme = new DateTime($thedate);
-								 $myvalue= $formatme->format('d M Y');					    
-							    }
+								$cost=$calc*$unitC;
+								$myvalue= $formatme->format('d M Y');	
+								
+			$facility_stock=Facility_Stock::get_facility_drug_total($facility,$drug_id)->toArray();					
+								
+			$mydata3 = array('facility_code'=>$facility,
+			's11_No' => 'Expired',
+			'kemsa_code'=>$drug_id,
+			'batch_no' => $batch,
+			'expiry_date' => $thedate,
+			'receipts' => $calc,
+			'balanceAsof'=>$facility_stock[0]['balance'],
+			'date_issued' => date('y-m-d'),
+			'issued_to' => 'N/A',
+			'issued_by' => $this -> session -> userdata('identity')
+			);
+			
+			Facility_Issues::update_issues_table($mydata3);
+			
+			$inserttransaction_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("select   `losses` from `facility_transaction_table`
+                                          WHERE `kemsa_code`= '$drug_id' and availability='1' and facility_code=$facility; ");
+		
+			
+			$new_value=$inserttransaction_1[0]['losses']+$calc;
+			
+		   	$inserttransaction= Doctrine_Manager::getInstance()->getCurrentConnection();
+			$inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
+			
+			$inserttransaction->execute("UPDATE `facility_transaction_table` SET losses =$new_value
+                                          WHERE `kemsa_code`= '$drug_id' and availability='1' and facility_code=$facility; ");	
+                                          
+            $inserttransaction1->execute("UPDATE `facility_transaction_table` SET closing_stock = (SELECT SUM(balance)
+			 FROM facility_stock WHERE kemsa_code = '$drug_id' and status='1' and facility_code='$facility')
+                                          WHERE `kemsa_code`= '$drug_id' and availability='1' and facility_code ='$facility'; ");                               								    
+							    
 							
-		 $html_body .='<tr><td>'.$code.'</td>
+		    $html_body .='<tr><td>'.$code.'</td>
 							<td>'.$name.'</td>
-							<td>'.$drug->batch_no.'</td>
-							<td>'.$drug->manufacture.'</td>
+							<td>'. $batch.'</td>
+							<td>'.$mau.'</td>
 							<td>'.$myvalue.'</td>
 							<td >'.$unitS.'</td>
-							<td >'.$drug->quantity.'</td>
-							
+							<td >'.$calc.'</td>
+							<td >'.$cost.'</td>
 							
 							</tr>';
 
@@ -582,7 +618,6 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 					
 		  }
 		$html_body .='</tbody></table>'; 
-		
 		
 		
 		//now ganerate an expiry pdf from the generated report
@@ -599,57 +634,23 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 			
 			
 			
-			if( !write_file( './pdf/'.$report_name.'.pdf',$this->mpdf->Output('$report_name','S'))
-			)
+			if(!write_file( './pdf/'.$report_name.'.pdf',$this->mpdf->Output('$report_name','S')))
 			{
-    	$msg="An error occured";
-  $this->district_orders($msg);
+    	 $this->session->set_flashdata('system_error_message', 'An error occured, when creating a PDF contact system ADMIN');
+	     redirect("/");	
              }
                   else{
-                  	$config = Array(
-  'protocol' => 'smtp',
-  'smtp_host' => 'ssl://smtp.googlemail.com',
-  'smtp_port' => 465,
-  'smtp_user' => 'ashminneh.mugo@gmail.com', // change it to yours
-  'smtp_pass' => 'ashwoodnfire', // change it to yours
-  'mailtype' => 'html',
-  'charset' => 'iso-8859-1',
-  'wordwrap' => TRUE
-);
- 
- //pull required emails ready to attach and send
- $pull_emails=User::getemails($facility);
- //echo $pull_emails;
- $address="";
-	foreach ($pull_emails as $emails) {
-		$address .= $emails['email'].',';
-		
-	}
-		$address = substr($address,0,-1);
-  $this->load->library('email', $config);
-  $this->email->set_newline("\r\n");
-  $this->email->from('hcmpkenya@gmail.com'); // change it to yours
-  $this->email->to("$address"); 
-  $this->email->bcc('ashminneh.mugo@gmail.com');
-  $this->email->subject('Decommission Report For '.$facility);
- 
-  $this->email->attach('./pdf/'.$report_name.'.pdf'); 
-  $this->email->message($html_title.$html_body);
- 
-  if($this->email->send())
- {
- delete_files('./pdf/');
- }
- else
-{
- show_error($this->email->print_debugger());
-}
- 
-		
-	
- 
-    $this->session->set_flashdata('system_success_message', 'Stocks Have Been Decommissioned');
-	redirect("/");				
+   if($this->send_stock_decommission_email($html_body,'Decommission Report For '.$facility,'./pdf/'.$report_name.'.pdf')){
+   	delete_files('./pdf/'.$report_name.'.pdf');
+   	$this->session->set_flashdata('system_success_message', 'Stocks Have Been Decommissioned');
+	redirect("/");
+   }
+   else{
+   	
+    $this->session->set_flashdata('system_error_message', 'An error occured, the items were decommissioned but there was a problem in sending an email file:'.$report_name.'.pdf');
+	redirect("/");	
+   }
+			
   }
 			
 			}

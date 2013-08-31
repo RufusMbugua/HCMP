@@ -205,6 +205,8 @@ function update_transaction(baseUrl,data_array){
 		}
  
 	$(function() {
+		
+	
 
 		/**********/
 		// a workaround for a flaw in the demo system (http://dev.jqueryui.com/ticket/4375), ignore!
@@ -341,6 +343,22 @@ function update_transaction(baseUrl,data_array){
 			$( "#Make-Order" )
 			.button()
 			.click(function() {
+					
+					if($("#order_no").val()==""){
+						alert("Please input the Order Number as is in the SORF");
+						return;
+						
+					}
+					if($("#bed_capacity").val()==""){
+						alert("Please input the Bed Capacity as is in the SORF");
+						return;
+						
+					}
+					if($("#workload").val()==""){
+						alert("Please input the Workload as is in the SORF");
+						return;
+						
+					}
 				
 				$('#user-order tbody').empty();
 				$('#test-hapa tbody').empty();
@@ -507,17 +525,17 @@ function update_transaction(baseUrl,data_array){
 	<tr>
 		<td>
 	
-     <b id="notification">Oder Form Number:</b> <input type="text" class="input_text" name="order_no"  />
+     <b id="notification">Oder Form Number:</b> <input type="text" class="input_text" name="order_no" id="order_no" required="required"/>
 	
 	</td>
 	<td>
 	
-	 <b id="notification">Bed Capacity:</b><input type="text" class="input_text" name="bed_capacity"  />
+	 <b id="notification">Bed Capacity:</b><input type="text" class="input_text" name="bed_capacity" id="bed_capacity" required="required"/>
 	 
 	  	</td>	
 	  	<td>
 	
-	 <b id="notification">Number of Patients:</b><input type="text" class="input_text" name="workload" /></p>
+	 <b id="notification">Number of Patients:</b><input type="text" class="input_text" name="workload" id="workload" required="required"/></p>
 	  
 	   </td>
 	   </tr>

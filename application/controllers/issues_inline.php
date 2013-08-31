@@ -63,15 +63,15 @@ return $data;
 	}
 
 	public function codeklerk(){ 
-                                        
-         $data['content_view'] = "IssueInternal_v_inline";
+          $facility=$this -> session -> userdata('news');                              
+         $data['content_view'] = "facility/facility_data/issue_internal_v";
          $data['title'] = "Stock";
-	 $data['banner_text'] = "Issue";
+	     $data['banner_text'] = "Issue";
          $data['link'] = "IssuesnReceipts";
-	 $data['quick_link'] = "IssueInternal_v_inline";
+	    $data['quick_link'] = "IssueInternal_v_inline";
 	 
-		$data['service']=Service::getall(17401);		
-		$data['drugs'] = Facility_Stock::getAllStock(17401);
+		$data['service']=Service::getall($facility);		
+		$data['drugs'] = Facility_Stock::getAllStock($facility);
 		$this -> load -> view("template",$data);
 	}
 

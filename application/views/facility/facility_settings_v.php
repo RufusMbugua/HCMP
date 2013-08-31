@@ -140,10 +140,13 @@ $(document).ready(function(){
 		<div class="activity users">
 		<a id="user_profile" href="#"><h2>User Profile</h2></a>
 		</div>
+		
+	
+		
 			<div class="activity update">
 	    <a id="facility_reset"><h2>Reset Facility Stock Data</h2></a>
 		</div>
-		
+	
 			<div class="activity update">
 	    <a href="<?php echo site_url('stock_management/facility_add_stock_data');?>"><h2>Add Facility Stock Data</h2></a>
 		</div>

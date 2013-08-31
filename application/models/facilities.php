@@ -27,11 +27,18 @@ class Facilities extends Doctrine_Record {
 		return $drugs;
 	}
 	public static function get_facility_name_($facility_code){
-			$query = Doctrine_Query::create() -> select("facility_name") -> from("facilities")->where("facility_code='$facility_code'");
+				
+	if($facility_code!=NULL){
+		$query = Doctrine_Query::create() -> select("facility_name") -> from("facilities")->where("facility_code='$facility_code'");
 		$drugs = $query -> execute();
 		$drugs=$drugs->toArray();
 		
 		return $drugs[0];	
+	}	
+else{
+	return NULL;
+}	
+			
 	}
 	
 	public static function get_d_facility($district){
@@ -334,5 +341,23 @@ WHERE u.facility ="'.$facility_code.'"
 
 return $q;
 }
+public static function get_dates_facility_went_online($county_id){
+$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT DATE_FORMAT(  `created_at` ,  '%M' ) AS 
+MONTH , DATE_FORMAT(  `created_at` ,  '%Y' ) AS YEAR,  `created_at` 
+FROM user
+WHERE facility !=0
+AND facility !=  ''
+AND county_id =$county_id
+GROUP BY MONTH(  `created_at` ) 
+ORDER BY  `created_at` ASC ");
+return $q;	
+}
 
+public static function get_facilities_which_went_online_($district_id,$MONTH,$YEAR){
+$q = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT count(distinct facility) as total from user where district=$district_id and facility !='' 
+and facility !=0 and date_format (`created_at`,'%Y %M') ='$YEAR $MONTH'
+and facility not in ( select distinct facility from user  where district=3 and date_format (`created_at`,'%Y %M') <'$YEAR $MONTH') ");
+return $q;		
+}
 }

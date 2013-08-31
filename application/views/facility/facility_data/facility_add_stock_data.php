@@ -63,18 +63,15 @@ input[type=radio]:checked + label:before {
 	</style>
 
    <script>    
-  function calculate_a_stock (argument) {
-  	
-  	
-  
-  	var x= argument;
-  	
-  	
- 
-    //do this
+    function calculate_a_stock (argument) {
 
+  	var x= argument;
+
+    //do this
     //checking if the quantity is a number 	    
 	var num = document.getElementsByName("a_stock["+x+"]")[0].value.replace(/\,/g,'');
+	
+	
 if(!isNaN(num)){
 if(num.indexOf('.') > -1) {
 alert("Decimals are not allowed.");
@@ -87,14 +84,46 @@ alert('Enter only numbers');
 document.getElementsByName("a_stock["+x+"]")[0].value= document.getElementsByName("a_stock["+x+"]")[0].value.substring(0,document.getElementsByName("a_stock["+x+"]")[0].value.length-1);
 return;
 }
- var actual_unit_size=get_unit_quantity(document.getElementsByName("u_size["+x+"]")[0].value);
 
- var total_a_stock=actual_unit_size*num;
+
+
+  	
+  	
+  	if(x==0){
+  	var radiocheck =($("input[type='radio'][name='unitissue']:checked").val());
+  		
+  	if (radiocheck == 'Pack_Size'){
+  		
+  		do_the_math(x,false);
+   }
+   else{
+	//do this other
+	var actual_unit_size=1;
+
+    var total_a_stock=actual_unit_size*num;
  
    document.getElementsByName("qreceived["+x+"]")[0].value=total_a_stock; 
+    }	
     
+  	}
+  	else{
+  	do_the_math(x,true);	
+  	}
+  	
+   }
+   
+   function do_the_math(x,status){
+   	var x=x;
+   	var status=status;
+   	var num = document.getElementsByName("a_stock["+x+"]")[0].value.replace(/\,/g,'');
+    var actual_unit_size=get_unit_quantity(document.getElementsByName("u_size["+x+"]")[0].value);
 
- var url = "<?php echo base_url().'stock_management/autosave_update'?>";
+   var total_a_stock=actual_unit_size*num;
+ 
+   document.getElementsByName("qreceived["+x+"]")[0].value=total_a_stock; 
+   
+   if(status){
+   	   var url = "<?php echo base_url().'stock_management/autosave_update'?>";
         $.ajax({
           type: "POST",
           data: "batch_no="+document.getElementsByName("batch_no["+x+"]")[0].value+
@@ -111,7 +140,9 @@ return;
             console.log(msg);
             
              }
-         });
+         }); 
+   }
+    
 
    }
    /*********************getting the last day of the month***********/
@@ -424,9 +455,9 @@ $('.del').live('click',function(){
 	<td><input size="10" type="text"  class="user1" readonly="readonly" name="kemsa_code[0]" id="kemsa_code" /></td>
 	<td><input size="10" type="text" class="user1" readonly="readonly"  name="u_size[0]" id="unit_size" /></td>
 	<td><div class="radio">
-	<input id="Unit_Size" type="radio" name="unitissue" value="Unit_Size" class="radioOptions">
+	<input id="Unit_Size" type="radio" name="unitissue" value="Pack_Size" class="radioOptions">
 	<label for="Unit_Size">Pack Size</label>
-	<input id="Pack_Size" type="radio" name="unitissue" value="Pack_Size" class="radioOptions">
+	<input id="Pack_Size" type="radio" name="unitissue" value="Unit_Size" class="radioOptions">
 	<label for="Pack_Size">Unit Size</label>
 </div>
 </td>

@@ -119,6 +119,8 @@ public function submit() {
 		}				
 		$this -> session -> set_userdata($session_data);
 		
+		Log::update_log_out_action($this -> session -> userdata('user_id'));
+		
 		$u1=new Log();
 		$action='Logged In';
 		$u1->user_id=$this -> session -> userdata('identity');
@@ -540,9 +542,15 @@ else{
 		
 		$email=$_POST['username'];
 		
+		
+		if($email!=NULL):
+		
 		$password='123456';
 		
 		$mycount= User::check_user_exist($email);
+		
+
+		if ($mycount>0 ):
 		$account_details=User::get_user_details($email)->toArray();
 		
 		
@@ -550,11 +558,16 @@ else{
 		$access_level=$access_level['level'];
 		
 		switch ($account_details[0]['usertype_id']) {
-			case 2 || 5:
+			case 2:
 		$facility_name=facilities::get_facility_name_($account_details[0]['facility']);		
 		$user_delegation="Facility: $facility_name[facility_name]";
 		$user_level="Facility Level";	
 				break;
+			case 5:
+		$facility_name=facilities::get_facility_name_($account_details[0]['facility']);		
+		$user_delegation="Facility: $facility_name[facility_name]";
+		$user_level="Facility Level";	
+				break;		
 			case 3:
 		$district_name=districts::get_district_name_($account_details[0]['district']);
         $user_level="District Level";		
@@ -568,7 +581,7 @@ else{
 		
 		
 		$subject="Password reset";
-		
+		$message='Hello '.$account_details[0]['fname'].'you requested for a password reset check you email address for more details (HCMP)';
 		
 		$message_1='Hello '.$account_details[0]['fname'].', <br> <br> You requested for a password reset on the Health Commodities Management Platform (HCMP).
 		<br>
@@ -590,9 +603,6 @@ else{
 		Password: '.$password.'
 		<br>
 		<br>';
-		
-		
-		if ($mycount>0) {
 			//hash then reset password
 			$salt = '#*seCrEt!@-*%';
 			$value=( md5($salt . $password));
@@ -603,21 +613,28 @@ else{
 			$updatep->execute("UPDATE user SET password='$value'  WHERE username='$email' or email='$email'; ");
 			
 			//send mail
-			
-			
+
 			$response=$this->send_email($email,$message_1,$subject);
+			$this->send_sms($account_details[0]['telephone'],$message);
 			
-			
+			 $data['email']=$email;
 			 $data['popup'] = "Successpopup";
 	         $this -> load -> view("login_v",$data);
 			
 			
-			//$this->send_sms($phone,$message);
-		}	
-		else{
-				$data['popup'] = "errorpopup";
+			
+			
+		    else: 
+			$data['popup'] = "errorpopup";
 			$this -> load -> view("forgotpassword_v",$data);
-			}	
+			endif;
+else: 
+	        $data['popup'] = "errorpopup";
+			$this -> load -> view("forgotpassword_v",$data);
+endif;
+
+	
+			
 	}
 	public function base_params($data) {
 		$this -> load -> view("template", $data);

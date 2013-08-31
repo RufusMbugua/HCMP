@@ -124,7 +124,13 @@ echo form_open('Raw_data/get_commodityIpdf');
 								$formatme = new DateTime($thedate);
 								$formatme1 = new DateTime($thedate1);
        							 $myvalue= $formatme->format('d M Y');
-       							 $myvalue1= $formatme1->format('d M Y');
+       						
+								if ($thedate1 == '0000-00-00') {
+									$myvalue1 = 'N/A';
+								} else{
+								$formatme1 = new DateTime($thedate1);       							 
+       							$myvalue1= $formatme1->format('d M Y');
+       							}
 								?>
 				
 						<tr>

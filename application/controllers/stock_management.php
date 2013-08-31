@@ -7,6 +7,7 @@ class Stock_Management extends auto_sms {
 		$this->load->helper(array('form','url'));
 	}
 	
+	
 	public function reset_facility_details(){
 		$facility_code=$this -> session -> userdata('news');
 		
@@ -166,24 +167,26 @@ class Stock_Management extends auto_sms {
 		for($i=0;$i<=$count;$i++){
 			
 			if(isset($kemsa_code[$i])&&$kemsa_code[$i]!=''){
-				
 			$mydata=array('facility_code'=>$facility_c,
 			'kemsa_code'=>$kemsa_code[$i],
 			'batch_no'=>$batch_no[$i],
 			'manufacture'=>$manuf[$i],
-			'expiry_date'=> date('y-m-d ,', strtotime($expiry_date[$i])),
+			'expiry_date'=> date('y-m-d', strtotime($expiry_date[$i])),
 			'balance'=>$a_stock[$i],
 			'quantity'=>$a_stock[$i],
 			'stock_date'=>$orderDate);
 			
 			Facility_Stock::update_facility_stock($mydata);
+			
 			$kemsa_code_=$kemsa_code[$i];
+				
+			
 			$facility_has_commodity=Facility_Transaction_Table::get_if_drug_is_in_table($facility_c,$kemsa_code_);
 			
 			
 		   
 		   if($facility_has_commodity>0){
-		   	$inserttransaction_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("select `opening_balance` from `facility_transaction_table`
+		  	$inserttransaction_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("select `opening_balance` from `facility_transaction_table`
                                           WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
 		
 			
@@ -198,11 +201,39 @@ class Stock_Management extends auto_sms {
 
 			$inserttransaction1->execute("UPDATE `facility_transaction_table` SET closing_stock = (SELECT SUM(balance)
 			 FROM facility_stock WHERE kemsa_code = '$kemsa_code_' and availability='1' and facility_code='$facility_c')
-                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code ='$facility_c'; ");   
+             WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code ='$facility_c'; "); 
                                           
-                                                               
+     
+            $facility_stock=Facility_Stock::get_facility_drug_total($facility_c,$kemsa_code_)->toArray();	
+		    
+			
+			$mydata=array('facility_code'=>$facility_c,
+			's11_No' => 'Update Stock Level',
+			'kemsa_code'=>$kemsa_code[$i],
+			'receipts'=>$a_stock[$i],
+			'batch_no'=>$batch_no[$i],
+			'expiry_date'=> date('y-m-d ,', strtotime($expiry_date[$i])),
+			'balanceAsof'=>$facility_stock[0]['balance'],
+			'date_issued' => date('y-m-d'),
+			'issued_to' => 'N/A',
+			'issued_by' => $this -> session -> userdata('identity'));   
+			Facility_Issues::update_issues_table($mydata);                                                   
 		   }
 		   else{
+		   	$mydata3 = array('facility_code'=>$facility_c,
+			's11_No' => 'Physical Stock Count',
+			'kemsa_code'=>$kemsa_code_,
+			'batch_no' => $batch_no[$i],
+			'expiry_date' => date('y-m-d ,', strtotime($expiry_date[$i])),
+			'qty_issued' => 0,
+			'balanceAsof'=>$a_stock[$i],
+			'date_issued' => date('y-m-d'),
+			'issued_to' => 'N/A',
+			'issued_by' => $this -> session -> userdata('identity')
+			);
+			Facility_Issues::update_issues_table($mydata3);
+		   		
+		   	
 		   	$mydata2=array('Facility_Code'=>$facility_c,
 			'Kemsa_Code'=>$kemsa_code_,
 			'Opening_Balance'=>0,
@@ -216,6 +247,11 @@ class Stock_Management extends auto_sms {
 		   }
 			
 			}
+			
+	
+			
+			
+			
 		}
 		
 		
@@ -334,7 +370,7 @@ public function donation()
 			$kemsa_code_=$infor->kemsa_code;
 			
 			
-			$mydata3 = array('facility_code'=>$facility_c,
+			/*$mydata3 = array('facility_code'=>$facility_c,
 			's11_No' => 'Physical Stock Count',
 			'kemsa_code'=>$kemsa_code_,
 			'batch_no' => 'N/A',
@@ -344,7 +380,7 @@ public function donation()
 			'date_issued' => date('y-m-d'),
 			'issued_to' => 'N/A',
 			'issued_by' => $this -> session -> userdata('identity')
-			);
+			);*/
 			//Facility_Issues::update_issues_table($mydata3);
 		   $facility_has_commodity=Facility_Transaction_Table::get_if_drug_is_in_table($facility_c,$kemsa_code_);
 		   
@@ -363,7 +399,7 @@ public function donation()
 			
 
 			$inserttransaction1->execute("UPDATE `facility_transaction_table` SET closing_stock = (SELECT SUM(balance)
-			 FROM facility_stock WHERE kemsa_code = '$kemsa_code_' and availability='1' and facility_code='$facility_c')
+			 FROM facility_stock WHERE kemsa_code = '$kemsa_code_' and status='1' and facility_code='$facility_c')
                                           WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code ='$facility_c'; ");   
                                           
                                                                
@@ -390,7 +426,7 @@ $inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
 			 
                                           
                                        
-         $this->session->set_flashdata('system_success_message', "You have recieved $count item(s)");
+        // $this->session->set_flashdata('system_success_message', "You have recieved $count item(s)");
 		 redirect('issues_main');	
 	}
 
@@ -483,20 +519,38 @@ $inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
 		    $status=*/
 			
 		     if($status==TRUE){     	
-				$this->stock_level();
+				 redirect('stock_management/stock_level');	
 		     }
 	}
-public function stock_level(){
-	 $facility_c=$this -> session -> userdata('news');
-		//$checker=$this->uri->segment(3);
+public function stock_level($msg=Null){
+	    $facility_c=$this -> session -> userdata('news');
+		$checker=$this->uri->segment(3);
 		$data['title'] = "Stock";
 		$data['content_view'] = "facility/stock_level_v";
-		$data['banner_text'] = "Update Physical Stock";
+		$data['banner_text'] = "Physical Stock";
 		$data['link'] = "order_management";
-		$data['msg']=NULL;
+		if(isset($msg)){
+			$data['msg']=$msg;
+			$data['update']='update stock levels';
+		}
+		if($msg==NULL){
+		$data['update']=NULL;
+		$data['msg']=" ";
+		$data['checker']="no_order";	
+		}
+		 if($checker=="v"){
+			$data['msg']="Verify that the system stock levels are the same as your physical stock count";
+			$data['update']='update stock levels';
+		}
+		 if($msg=='c0N123'){
+		 	$data['update']=NULL;
+		 	$data['msg']="Please confirm your stock details before placing your order";
+		 }
 		$data['facility_order'] = Facility_Transaction_Table::get_all($facility_c);
+		$data['max_date'] = Facility_Stock::get_max_date($facility_c)->toArray();
 		$data['quick_link'] = "stock_level";
 		$this -> load -> view("template", $data);
+
 	}
 public function allProducts(){
 	

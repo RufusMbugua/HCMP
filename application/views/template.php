@@ -416,7 +416,7 @@ if ($current == "home_controller") {echo "active";
 </nav>
 </div>
   	
-	<div style="font-size:15px; float:right; padding: 1em "><?php date_default_timezone_set('Europe/Moscow'); echo date('l, dS F Y'); ?>&nbsp;<div id="clock" style="font-size:15px; float:right; " ></div>
+	<div style="font-size:15px; float:right; padding: 1em "><?php  echo date('l, dS F Y'); ?>&nbsp;<div id="clock" style="font-size:15px; float:right; " ></div>
 	 </div><div style="width :53em;height: 4.2em; margin: auto; ;" ></div>
 	 <div >
 <?php $flash_success_data = NULL;
@@ -517,12 +517,12 @@ if ($current == "home_controller") {echo "active";
 <script>
 	$(document).ready(function() {
 		
-					$('.successreset').fadeOut(5000, function() {
+					$('.successreset').fadeOut(10000, function() {
     // Animation complete.
   });
-$('.errorlogin').fadeOut(5000, function() {
+//$('.errorlogin').fadeOut(10000, function() {
     // Animation complete.
-  });	
+ // });	
 			
 	
 		//$('#myModal').modal('hide')

@@ -110,10 +110,23 @@ GROUP BY fs.kemsa_code*/
 		return $stocks[0];
 	}
 	public static function getexp($date,$facility){
-		$query=Doctrine_query::create()->select("*")->from("Facility_Stock")->where ("facility_code='$facility' and expiry_date<='$date'");
+		$query=Doctrine_query::create()->select("*")->from("Facility_Stock")->where ("facility_code='$facility' and expiry_date<='$date'")->andwhere("STATUS ='1'");	
 		$expire=$query->execute();
 		return $expire;
 	}
+	public static function get_facility_expired_stuff($date,$facility){
+	$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
+->fetchAll("SELECT d.id as drug_id,d.kemsa_code,d.unit_size,d.drug_name,d.unit_cost,f_s.batch_no,f_s.manufacture,sum(f_s.balance) as balance ,f_s.expiry_date from facility_stock f_s, drug d where f_s.kemsa_code=d.id and f_s.facility_code='$facility' and f_s.expiry_date<='$date' and f_s.STATUS ='1' GROUP BY d.id");
+
+        return $inserttransaction ;	
+	}
+	
+	public static function get_facility_drug_total($facility_code,$drug_code){
+	$query = Doctrine_Query::create() -> select("sum(balance) as balance") -> from("Facility_Stock") -> where("facility_code='$facility_code' and kemsa_code=$drug_code")->andwhere("STATUS ='1'");	
+		$stocks= $query -> execute();
+		return $stocks;	
+	}
+	
 	public static function get_exp_count($date,$facility){
 		$query=Doctrine_query::create()->select("batch_no")->from("Facility_Stock")
 		->where ("facility_code='$facility' and expiry_date<='$date'")
@@ -170,7 +183,8 @@ AND fs.STATUS ='1'
 GROUP BY fs.kemsa_code
 ORDER BY d.drug_name ASC  ");
 
-        return $inserttransaction ;}
+        return $inserttransaction ;
+        }
         
         ////////////// getting facility stock level
      public static function get_facility_stock_level($distict){

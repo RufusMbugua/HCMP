@@ -135,6 +135,9 @@
     	if(value=="Box of 100"){
     		return 100;
     	}
+    	if(value=="50ml x 10 bottles"){
+    		return 10;
+    	}
     	if(value==null){
     		return 1;
     	}
@@ -154,9 +157,6 @@
 	 
 {
   case '250g':
-  return  1;
-  break;
-  case ' ':
   return  1;
   break;
   case '500mL':

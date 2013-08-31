@@ -19,7 +19,8 @@
         }
     });
     //default call
-    var url = "<?php echo base_url().'report_management/get_stock_status_ajax'?>"
+    var url = "<?php ////////
+     echo base_url().'report_management/get_stock_status_ajax'?>"
 		var div=".stockstatuschart";
 		ajax_request (url,div);
 
@@ -188,7 +189,7 @@
 	<h2 style="margin-bottom: 1.5em">Statistics & Notification</h2>
 	<div class="notifications_container">
 		 
-
+<?php echo $stats?>
 			
 	</div>
 	
@@ -221,7 +222,7 @@
 	</select>
 	
 </div>
-	<div class="stockstatuschart">
+	<div class="stockstatuschart" style="height:22em;  overflow: scroll;">
 	
 	
 </div>

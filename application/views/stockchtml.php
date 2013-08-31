@@ -106,10 +106,15 @@ echo form_open('Raw_data/get_stockcontrolpdf');
 		<?php 
 				foreach ($report as $user ) { ?>
 					
-					<?php foreach($user->Code as $d){ 
+					<?php foreach($user->Code as $d){
+						        $qty_receipts=0; 
 								$fname=$d->fname;
 								$lname=$d->lname;
 								$thedate=$user->date_issued;
+								$qty_receipts=$user->receipts;
+								
+								($qty_receipts==0) ? $qty_receipts=$user->balanceAsof+$user->qty_issued :$qty_receipts=$user->receipts;
+								
 								$thedate1=$user->expiry_date;
 								$formatme = new DateTime($thedate);
 								$myvalue= $formatme->format('d M Y');
@@ -131,7 +136,7 @@ echo form_open('Raw_data/get_stockcontrolpdf');
 							<td><font color = 'red'><?php echo $user->s11_No;?></font></td>
 							<td><font color = 'red'><?php echo $user->batch_no;?></font></td>
 							<td><font color = 'red'><?php echo $myvalue1;?></font></td>
-							<td><font color = 'red'><?php echo $user->balanceAsof+$user->qty_issued;?></font></td>
+							<td><font color = 'red'><?php echo $qty_receipts;?></font></td>
 							<td><font color = 'red'><?php echo $user->qty_issued;?></font></td>
 							<td><font color = 'red'><?php echo $user->balanceAsof;?></font></td>	
 							
@@ -144,7 +149,7 @@ echo form_open('Raw_data/get_stockcontrolpdf');
 							<td><?php echo $user->s11_No;?></td>
 							<td><?php echo $user->batch_no;?> </td>
 							<td><?php echo $myvalue1;?> </td>
-							<td><?php echo $user->balanceAsof+$user->qty_issued;?> </td>
+							<td><?php echo $qty_receipts;?> </td>
 							<td><?php echo $user->qty_issued;?></td>
 							<td><?php echo $user->balanceAsof;?></td>		
 							

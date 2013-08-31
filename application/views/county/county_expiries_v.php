@@ -210,7 +210,7 @@ table.data-table td {
   <tr><td><?php echo $item['facility_name'];?></td>
       <td><?php echo $item['facility_code'];?></td>
       <td>Ksh. <?php echo $item['balance'];?></td>
-      <td><a href=".site_url('stock_expiry_management/county_potential_expiries/'.$item['facility_code'])." class='link'>View</a></td>
+      <td><a href="<?php echo base_url().'stock_expiry_management/county_potential_expiries/'.$item['facility_code'] ?>" class='link'>View</a></td>
       </tr>
       <tr><td colspan="4"></td></tr>
 			<?php } ?>
@@ -241,7 +241,7 @@ table.data-table td {
       <td><?php echo $item['facility_name'];?></td>
       <td><?php echo $item['facility_code'];?></td>
       <td><?php echo $item['balance'];?></td>
-      <td><a href=".site_url('stock_expiry_management/expired/'.$item['facility_code'])." class='link'>View</a></td>
+      <td><a href="<?php echo base_url().'stock_expiry_management/expired/'.$item['facility_code']?>" class='link'>View</a></td>
       </tr>
       <tr><td colspan="4"></td></tr>
        <?php } ?>

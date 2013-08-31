@@ -11,25 +11,22 @@ class Order_Management extends auto_sms {
 		$this -> listing($tab);
 	}
 	public function new_order($note=NULL) {
-		
-		
-		
+
 		if(isset($note)){
 	    $facility_c=$this -> session -> userdata('news');
         $data['title'] = "New Order";
 		$data['content_view'] = "new_order_v";
 		$data['banner_text'] = "New Order";
 		$data['link'] = "order_management";
-		$data['drug_name']=Drug_Category::getAll();
-		
+		$data['drug_name']=Drug_Category::getAll();		
 		
 		$data['facility_order'] = Facility_Transaction_Table::get_commodities_for_ordering($facility_c);
 		$data['quick_link'] = "new_order";
 		$this -> load -> view("template", $data);
 		}
 		else{
-			$msg="Please confirm your stock details before placing your order";
-			$this->stock_level($msg);
+			
+			redirect("stock_management/stock_level/c0N123");
 		}
 	}
 	//update the facility transaction table after a physical count.
@@ -66,7 +63,7 @@ class Order_Management extends auto_sms {
        $myobj->save();
        }
                $note=TRUE;
-       $this->new_order($note);        
+      redirect("order_management/new_order/$note");
                }
                else{
                	            for($i=0;$i<$j;$i++){
@@ -202,35 +199,13 @@ class Order_Management extends auto_sms {
 		 }
 	 
 	 }
-              $this->stock_level("Stock details have been updated");
+$msg="Stock details have been updated";
+redirect("stock_management/stock_level/$msg");
+             
                }
                                
        }
-	public function stock_level($msg=Null){
-	    $facility_c=$this -> session -> userdata('news');
-		$checker=$this->uri->segment(3);
-		$data['title'] = "Stock";
-		$data['content_view'] = "facility/stock_level_v";
-		$data['banner_text'] = "Update Physical Stock";
-		$data['link'] = "order_management";
-		if(isset($msg)){
-			$data['msg']=$msg;
-			$data['update']='update stock levels';
-		}
-		 if($checker=="v"){
-			$data['msg']="Verify that the system stock levels are the same as your physical stock count";
-			$data['update']='update stock levels';
-		}
-		 if($msg=='Please confirm your stock details before placing your order'){
-		 	$data['update']=NULL;
-		 	$data['msg']=$msg;
-		 }
-		$data['facility_order'] = Facility_Transaction_Table::get_all($facility_c);
-		$data['max_date'] = Facility_Stock::get_max_date($facility_c)->toArray();
-		$data['quick_link'] = "stock_level";
-		$this -> load -> view("template", $data);
-
-	}
+	
 	public function new_order2() {
 		
 		$data['title'] = "Place Order";
@@ -241,10 +216,6 @@ class Order_Management extends auto_sms {
 		$data['quick_link'] = "new_order";
 		$this -> load -> view("template", $data);
 	}
-
-   
-   
-		
 	
 public function order_now(){
      	

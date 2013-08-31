@@ -66,6 +66,82 @@ class Issues_main extends auto_sms {
      	$this -> load -> view("template", $data);
 
 	}
+	public function Insert_test()
+	{
+
+		$ids=$_POST['kemsaCode'];		
+	    $Available=$_POST['AvStck'];
+		$batchN=$_POST['batchNo'];
+		$Expiry=$_POST['Exp'];
+		$sNo=$_POST['s11N'];
+        $qty=$_POST['qty'];
+		$thedate=$_POST['datepicker'];
+		$serviceP=$_POST['Servicepoint'];
+        $j=sizeof ($ids);
+       $count=0;
+
+
+
+        $facilityCode=$facility_c=$this -> session -> userdata('news');	
+		$usernow=$this -> session -> userdata('identity');
+
+		for($me=0;$me<$j;$me++){
+        	        	
+			if ($qty[$me]>0) {
+				$count++;
+
+
+
+				$mydata = array('facility_code' => $facilityCode,	'kemsa_code' => $ids[$me], 's11_No'=>$sNo[$me], 'batch_no' => $batchN[$me] ,
+				'expiry_date' => $Expiry[$me] ,'qty_issued'=> $qty[$me] ,
+				'issued_to'=>$serviceP,'balanceAsof'=>$Available[$me], 'date_issued'=>date('y-m-d',strtotime($thedate[$me])),'issued_by'=>$usernow);
+
+				$u = new Facility_Issues();
+
+    			$u->fromArray($mydata);
+
+    			$u->save();
+				//echo "$xraws records inserted";
+
+			$q = Doctrine_Query::create()
+			->update('Facility_Stock')
+				->set('balance', '?', $Available[$me])
+					->where("kemsa_code='$ids[$me]' AND batch_no='$batchN[$me]' and facility_code ='$facilityCode'");
+
+			$q->execute();
+
+			$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection();
+
+
+			$inserttransaction->execute("UPDATE `facility_transaction_table` SET total_issues = (SELECT SUM(qty_issued) 
+			FROM facility_issues WHERE kemsa_code = '$ids[$me]' and availability='1' and facility_code='$facilityCode')
+                                          WHERE `kemsa_code`= '$ids[$me]' and availability='1' and facility_code='$facilityCode'; ");
+			//echo "$numrows records updated";
+
+			$inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
+
+
+			$inserttransaction1->execute("UPDATE `facility_transaction_table` SET closing_stock = (SELECT SUM(balance)
+			 FROM facility_stock WHERE kemsa_code = '$ids[$me]' and availability='1' and facility_code='$facilityCode')
+                                          WHERE `kemsa_code`= '$ids[$me]' and availability='1' and facility_code ='$facilityCode'; ");
+			}
+
+
+			$data['title'] = "Stock";
+			$data['drugs'] = Drug::getAll();
+			$data['popout'] = "You have issued $count item(s)";
+			$data['content_view'] = "issuesnRecpt";
+			$data['banner_text'] = "Stock Control Card";
+			$data['link'] = "order_management";
+     		$data['quick_link'] = "stockcontrol_c";
+			$this -> load -> view("template", $data);
+
+		}
+        
+        
+
+
+	}
 	
 	public function Insert()
 	{
@@ -81,6 +157,7 @@ class Issues_main extends auto_sms {
         $j=sizeof ($ids);
        $count=0;
 	   
+	  
 	   
 	   
         $facilityCode=$facility_c=$this -> session -> userdata('news');	
@@ -94,7 +171,7 @@ class Issues_main extends auto_sms {
 				
 				
 				$mydata = array('facility_code' => $facilityCode,	'kemsa_code' => $ids[$me], 's11_No'=>$sNo[$me], 'batch_no' => $batchN[$me] ,
-				'expiry_date' => $Expiry[$me] ,'qty_issued'=> $qty[$me] ,
+				'expiry_date' => date('y-m-d',strtotime($Expiry[$me])),'qty_issued'=> $qty[$me] ,
 				'issued_to'=>$serviceP,'balanceAsof'=>$Available[$me], 'date_issued'=>date('y-m-d',strtotime($thedate[$me])),'issued_by'=>$usernow);
 				
 				$u = new Facility_Issues();

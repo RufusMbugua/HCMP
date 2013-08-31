@@ -15,6 +15,7 @@
 			}
 	);
 	</script>
+	<?php echo $stats_data; ////// ?>
 			<table  style="margin-left: 0;" id="example_main" width="100%">
 					<thead>
 					<tr>

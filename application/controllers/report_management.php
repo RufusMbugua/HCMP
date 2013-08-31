@@ -1810,7 +1810,7 @@ public function get_stock_status($option=NULL,$facility_code=NULL){
 
 
 
-$chart .="<chart palette='2' chartLeftMargin='0' useEllipsesWhenOverflow='1' plotSpacePercent='100' yAxisNamePadding='0'yAxisValuesPadding='0' bgColor='FFFFFF' showBorder='0' shownames='1' showvalues='1'   showSum='1' decimals='0' useRoundEdges='1'>";
+$chart .="<chart palette='2' chartLeftMargin='0' useEllipsesWhenOverflow='1' plotSpacePercent='100' yAxisNamePadding='0'yAxisValuesPadding='0' bgColor='FFFFFF' showBorder='0' shownames='1' showvalues='1'   showSum='1' decimals='0' useRoundEdges='1'".'exportEnabled="1" exportHandler="' . base_url() . 'scripts/FusionCharts/ExportHandlers/PHP/FCExporter.php" exportAtClient="0" exportAction="download"'." >";
 foreach($commodity_array as $commodity_detail){
 $chart .="<set label='".preg_replace("/[^A-Za-z0-9 ]/", "", $commodity_detail['drug_name'])."' value='$commodity_detail[total]' />";
 }
@@ -1877,7 +1877,7 @@ public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
 	
 	if(count($commodity_array)<20){
 		$width="100%";
-        $height="70%";	
+        $height="50%";	
 		}
 		
 		if(count($commodity_array)>20 && count($commodity_array)<50){
@@ -2005,33 +2005,111 @@ public function facility_settings(){
 	}
 	
 	public function get_county_facility_mapping(){
-		
+		$county_id=$this -> session -> userdata('county_id');
 		$data['title'] = "Facility Mapping";
 		$data['banner_text'] = "Facility Mapping";
-		$data['content_view'] = "county/facility_mapping_v";	
-		$county_id=$this -> session -> userdata('county_id');
+		$data['content_view'] = "county/facility_mapping_v";
+		$district_data=districts::getDistrict($county_id);
+	    $data['district_data']=$district_data;
+	//	$data['district_facility_data']=facilities::get_no_of_facilities_in_county_using_hcmp($county_id);
+	
+	   $table_data="<tbody>";
+	   $district_names="<thead><tr><th>Monthly Activities</th>";
+	   $district_total=array();
+	   $table_district_totals="";
+	   $all_facilities=0;
+	   
+	    
+	    $get_dates_facility_went_online=facilities::get_dates_facility_went_online($county_id);
+		
+		foreach ($get_dates_facility_went_online as $facility_dates){
+			
+		$monthly_total=0;
+			
+	    $table_data .="<tr>
+	    <td>".$facility_dates['MONTH']." ".$facility_dates['YEAR']."</td>";
+			
+	    foreach($district_data as $district_detail){
+	    
+		$district_id=$district_detail->id;
+		$district_name=$district_detail->district;
+		$get_facilities_which_went_online_=facilities::get_facilities_which_went_online_($district_id,$facility_dates['MONTH'],$facility_dates['YEAR']);
+	    $total=$get_facilities_which_went_online_[0]['total'];
+	    $monthly_total=$monthly_total+$total;
+		$all_facilities=$all_facilities+$total;
+		
+		(array_key_exists($district_name,$district_total)) ?
+        $district_total[$district_name]=$district_total[$district_name]+$total
+	    :$district_total=array_merge($district_total,array($district_name=>$total));
+	
+		$table_data .="<td>$total</td>";
 
-	    $data['district_data']=districts::getDistrict($county_id);
+		}
+		$table_data .="<td>$monthly_total</td></tr>";
+	
+		
+		}
+		$table_data .="<tr>";
+		
+		$checker=1;
+		
+	
+		
+		foreach($district_total as $key=>$value):
+		$district_names .="<th>$key</th>";
+			
+		($checker==1) ? $table_data .="<td><b>TOTAL</b></td><td>$value</td>" :$table_data .="<td>$value</td>";		
+		
+		$checker++;
+		
+		endforeach;
+		
+		$table_data .="<td>$all_facilities</td></tr></tbody></table>";
+		$district_names .="<th>TOTAL</th></tr></thead>";	
+		
+		$data['county_data']="<table class='data-table' width='100%'>".$district_names.$table_data;;
+
 	  
-	  $this -> load -> view("template",$data);
+	    $this -> load -> view("template",$data);
 	}
 	
 	public function get_district_facility_mapping_($district_id){
 	$facility_data=facilities::getFacilities($district_id);	
 	$table_body="";
-	$dpp_details=user::get_dpp_details($distirct_id);
+	
+	$dpp_details=user::get_dpp_details($district_id)->toArray();
+	$district_name=districts::get_district_name($district_id)->toArray();
+    
+    $dpp_fname='';
+	$dpp_lname='';
+	$dpp_phone='';
+	$dpp_email='';
+	
+	if(count($dpp_details)>0){
+	$dpp_fname=$dpp_details[0]['fname'];
+	$dpp_lname=$dpp_details[0]['lname'];
+	$dpp_phone=$dpp_details[0]['telephone'];
+	$dpp_email=$dpp_details[0]['email'];
+	}
+
 	$indicator="District";
 	$no_of_facility_users=0;
 	$no_of_facility_users_online=0;
 	$no_of_facilities=0;
+	$no_of_facilities_using=0;
 	
 	foreach($facility_data as $facility_detail){
+	$facility_code=$facility_detail->facility_code;
+	$facility_extra_data=facilities::get_facility_status_no_users_status($facility_code);	
 	$no_of_facility_users=$no_of_facility_users+$facility_extra_data[0]['number_of_users'];
 	$no_of_facility_users_online=$no_of_facility_users_online+$facility_extra_data[0]['number_of_users_online'];
 		
-	$facility_code=$facility_detail->facility_code;
-	$facility_extra_data=facilities::get_facility_status_no_users_status($facility_code);	
 	
+	$no_of_facilities=$no_of_facilities+1;
+	
+	if($facility_extra_data[0]['number_of_users']>0){
+		$no_of_facilities_using=$no_of_facilities_using+1;
+	}
 	
 	$table_body .="<tr>";
 	
@@ -2047,55 +2125,44 @@ public function facility_settings(){
 	}
 	
 	
-		$stats_data='<div>
-<div style="display: table-row;  ">
-    			<div style="display: table-cell;padding-bottom: 2em; ">
-      				<label style=" font-weight: ">Total No of Facilities in The '.$indicator.' </label>
-            	</div>   				
-    				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="badge" >'.$facility_data['total_no_of_facilities'].'</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row; ">
-    			<div style="display: table-cell;padding-bottom: 2em">
-      				<label style="font-weight: ">Total No of Facilities in The '.$indicator.'  Using HCMP </label>
-            		</div>   				
-    				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="badge">'.$facility_data['total_no_of_facilities_using_hcmp'].'</a>
-    				</div>
-  				</div>
-  				
-  				<div style="display: table-row;">
-    			<div style="display: table-cell; padding-bottom: 2em">
-      				<label style="font-weight: ">Total No of Users in The '.$indicator.' </label>
-            		     				</div>   				
-    				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="badge" >'.$user_data['total_no_of_users'].'</a>
-    				</div>
-  				</div>
-  				<div style="display: table-row;">
-    			<div style="display: table-cell; padding-bottom: 2em">
-      				<label style="font-weight: ">Total No of Users in The '.$indicator.'  Accessing HCMP last 7 days</label>
-            		     				</div>   				
-    				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="badge" >'.$user_data['total_no_of_users_7_days'].'</a>
-    				</div>
-    				<div style="display: table-row;">
-    				<div style="display: table-cell; padding-bottom: 2em">
-      				<label style="font-weight: ">Users online in The '.$indicator.'</label>
-            		     				</div>  
-            		     				
-					 				
-    				<div style="display: table-cell;padding-bottom: 2em">
-      				<a class="badge" >'.$user_data['active_users'].'</a>
-    				</div>	 				
-    				</div>
-					
-  </div>
-  </div>';	
+		$stats_data='
+		<table style="float:left">
+		<tr>
+		<td><label style=" font-weight: ">'.$district_name[0]['district'].' '.$indicator.' Pharmacist :</label></td>
+		<td><a class="badge">'.$dpp_fname.' '.$dpp_lname.'</a></td>
+		</tr>
+		<tr>
+		<td><label style="font-weight: ">Phone No.</label></td>
+		<td><a class="badge">'.$dpp_phone.'</a></td>
+		</tr>
+		<tr>
+		<td><label style="font-weight: ">Email Address</label></td>
+		<td><a class="badge">'.$dpp_email.'</a></td>
+		</tr>
+		</table>
+		<table style="float:left">
+		<tr>
+		<td><label style=" font-weight: ">Total No of Facilities in The '.$indicator.' </label></td>
+		<td><a class="badge" >'.$no_of_facilities.'</a></td>
+		</tr>
+		<tr>
+		<td><label style="font-weight: ">Total No of Facilities in The '.$indicator.'  Using HCMP </label></td>
+		<td>	<a class="badge">'.$no_of_facilities_using.'</a></td>
+		</tr>
+		</table>
+		<table style="float:left">
+		<tr>
+		<td><label style="font-weight: ">Total No of Users in The '.$indicator.' </label></td>
+		<td><a class="badge" >'.$no_of_facility_users.'</a></td>
+		</tr>
+		<tr>
+		<td><label style="font-weight: ">Users online in The '.$indicator.'</label></td>
+		<td><a class="badge" >'.$no_of_facility_users_online.'</a></td>
+		</tr>
+		</table>
+';	
 	
-	
+	$data['stats_data']=$stats_data;
 	$data['table_body']=$table_body;
 	$this->load->view("county/ajax_view/facility_mapping_v",$data);
 	
