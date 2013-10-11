@@ -32,30 +32,75 @@
 					"bJQueryUI": true,
 					"bPaginate": false
 				} );
-	
+				
+	     $( "#dialog" ).dialog({
+	     	
+         	
+         	autoOpen: false,
+			height: 650,
+			width:900,
+			modal: true
+		});	
 
 		$(".ajax_call").click(function(){
 		var url = "<?php echo base_url().'report_management/get_district_facility_mapping_/'?>";	
 		var id  = $(this).attr("id"); 
-		ajax_request_special (url+id)					
+		ajax_request_special_(url+id,'main_div','');				
 
 	
-	});
-		function ajax_request_special (url){
+	    });
+	
+	
+		$(".ajax_call_1").click(function(){
+			
+		var url = "<?php echo base_url().'report_management/get_district_drill_down_detail'?>";	
+		var id  = $(this).attr("id"); 				
+        var option=$(this).attr("option"); 
+        var date1=$(this).attr("date"); 
+        var  date=encodeURI(date1);
+      
+	    ajax_request_special_(url+"/"+id+"/"+option+"/"+date,'district_div', date1);	
+	    
+	    });
+
+    function ajax_request_special_(url,checker,date){
 	var url =url;
+	var checker=checker;
+	
 	var loading_icon="<?php echo base_url().'Images/loader.gif' ?>";
 	 $.ajax({
           type: "POST",
           url: url,
           beforeSend: function() {
-            $("#test_a").html("<img style='margin-left:20%;' src="+loading_icon+">");
+          	
+          	if(checker=="main_div"){
+          	 $("#test_a").html("<img style='margin-left:20%;' src="+loading_icon+">");	
+          	}else{
+          	 $('#dialog').html("");	
+          	}
+          	
+           
           },
           success: function(msg) {
-         $("#test_a").html(""); 	
+          	if(checker=="main_div"){	
+          		
+          $("#test_a").html(""); 	
           $("#test_a").html(msg); 
+          
+          }else{
+          	
+         $('#dialog').html(msg);
+         $('#dialog').dialog({
+         	title: 'HCMP Monthly roll out activity '+date,
+         })
+         $('#dialog').dialog('open');
+    
+          	
+          }
           }
         }); 
 }
+  
 		
 
 
@@ -170,7 +215,7 @@ echo "<li>
 <a class='ajax_call' id='$district_detail->id' href='#'>$district_detail->district</a>
 </li>";			
 			
-			
+		//////////////////////////////////	
 		}
 
 ?>		
@@ -181,6 +226,7 @@ echo "<li>
 </div>
 
 </div>
+<div id="dialog"></div> 
 <div class="dash_main" id = "dash_main">
 <div id="test_a" style="overflow: scroll; height: 51em; min-height:100%; margin: 0; width: 100%">
 

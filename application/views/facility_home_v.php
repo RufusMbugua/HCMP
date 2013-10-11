@@ -115,10 +115,10 @@ $(document).ready(function(){
                        </p>
                </div>
                <?php endif;
-               
-          if (count($historical_stock)<163){?> 
+               $histrorical_count=round($percentage_complete[0]['percentage'],1);
+          if ($histrorical_count<100){?> 
 		<div class="message warning">
-<h2>Incomplete Historical Stock (<?php echo floor($percentage_complete[0]['percentage']); ?>% complete)</h2>
+<h2>Incomplete Historical Stock (<?php echo $histrorical_count ?>% complete)</h2>
 			<p>
 				<a href="<?php 
 				echo site_url('stock_management/historical_stock_take');?>" <a class="link"> Please provide your historical stock information </a>

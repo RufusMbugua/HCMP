@@ -12,12 +12,105 @@ class cd4_Management extends MY_Controller {
 //		$this->get_kenyan_county_map();
 		$data['content_view']="cd4/dashboard";
 		$data['title']= "CD4 Home";
-		$data['banner_text']="b";
+		$data['banner_text']="CD4";
+		$data ['table_data'] = $this->cd4_sidebar();
 		$this->load->view('template',$data);
 	}
 	public function get_cd4_allocation_kenyan_map(){
 
 	$this->load->view("allocation_committee/ajax_view/cd4_allocation_county_map");
+}
+
+function objectToArray( $object ) {
+    if( !is_object( $object ) && !is_array( $object ) ) {
+        return $object;
+    }
+    if( is_object( $object ) ) {
+        $object = (array) $object;
+    }
+    return array_map( 'objectToArray', $object );
+}	
+
+public function api_get_facilities (){
+
+
+	function objectToArray( $object ) {
+    if( !is_object( $object ) && !is_array( $object ) ) {
+        return $object;
+    }
+    if( is_object( $object ) ) {
+        $object = (array) $object;
+    }
+    return array_map( 'objectToArray', $object );
+}	
+
+
+
+	date_default_timezone_set('EUROPE/Moscow');
+	$month = date('m');
+	$year = date('o');
+    $url = 'http://nascop.org/cd4/reportingfacsummary.php?yr='.$year.'&month='.$month;
+    $url = 'http://nascop.org/cd4/reportingfacsummary.php?county=24&yr=2013&month=07';
+//	$url = 'http://localhost/api/counties.php';
+ 	$string_manual = file_get_contents($url);
+
+
+
+	$string = json_decode($string_manual);
+	$string = objectToArray($string);
+// 	$string = $this->objectToArray($string);
+ return $string;
+ //	echo"<pre>";
+ 	//	var_dump($string);
+ 	//	echo"</pre>";
+
+}
+public function get_facilities_local(){
+
+	function objectToArray( $object ) {
+    if( !is_object( $object ) && !is_array( $object ) ) {
+        return $object;
+    }
+    if( is_object( $object ) ) {
+        $object = (array) $object;
+    }
+    return array_map( 'objectToArray', $object );
+}	
+
+	$this->load->database();
+	$q = $this->db->query('SELECT * FROM  `api_gen` ORDER BY  `api_gen`.`id` ASC LIMIT 0 , 1');
+	$local_json = $q->result_array();
+
+	$res_arr = json_decode($local_json[0]['json']);
+	$res_arr = objectToArray($res_arr);
+	//$res_arr = objectToArray($local_json[0]['json']);
+	return $res_arr;
+//	echo "<pre>";var_dump($res_arr); echo "</pre>";
+}
+
+public function cd4_sidebar(){
+	$tdata=' ';
+	$all_data = $this->get_facilities_local();
+   foreach ($all_data as $key => $county) {
+//   echo "<pre>"; var_dump($all_data); echo "</pre>";
+//   echo key($all_data);
+//   	echo($key);
+   
+   	$county_map_id = $county['county'];
+   	$countyname = $county['name'];
+   	$total_facilities = $county['particulars']['total'];
+	$reporting_facilities = $county['particulars']['reported'];
+	if ($total_facilities>0){
+ 	$reporting_rate=round((($reporting_facilities/$total_facilities)*100),1);
+ 	}
+ 	else {$reporting_rate = 0;}
+// 	county_allocation_details
+ 	$key +=1;
+ 	$tdata .='<tr><td><a href="'.base_url().'cd4_management/county_allocation_details/'.$key.'">'.$countyname.'</a></td><td>'.$reporting_facilities.'/'.$total_facilities.'</td></tr>';
+   
+}
+   return $tdata;
+
 }
 	// currently using county details from RTK/HCMP will load from cd4_  as next step
 	public function map_chart(){
@@ -27,17 +120,34 @@ class cd4_Management extends MY_Controller {
 	$colors=array("FFFFCC"=>"1","E2E2C7"=>"2","FFCCFF"=>"3","F7F7F7"=>"5","FFCC99"=>"6","B3D7FF"=>"7","CBCB96"=>"8","FFCCCC"=>"9");
 	
 	$counties=Counties::get_county_map_data();
-   	foreach( $counties as $county_detail){
+   /*	foreach( $counties as $county_detail){
    	$countyid=$county_detail->id;
 	$county_map_id=$county_detail->kenya_map_id;
    	$countyname=trim($county_detail->county);
    	
-	$county_detail=hcmp_stock_status::get_county_reporting_rate ($countyid);
-	$total_facilities=$county_detail[0]['total_facilities'];
-	$reporting_facilities=$county_detail[0]['reported'];
+
+
+// 	$county_detail=hcmp_stock_status::get_county_reporting_rate ($countyid);
+ 	$county_detail = $this->api_get_facilities($county_map_id);
+ 	$total_facilities=$county_detail->total;
+ 	$reporting_facilities=$county_detail->reported;
+	
 	$reporting_rate=round((($reporting_facilities/$total_facilities)*100),1);
  	$map .="<entity  link='".base_url()."cd4_management/county_allocation_details/$county_map_id' id='$county_map_id' displayValue ='$countyname' color='".array_rand($colors,1)."'  toolText='County :$countyname&lt;BR&gt; Total Facilities :".$total_facilities."&lt;BR&gt; Facilities Reporting  :".$reporting_facilities."&lt;BR&gt; Facility Reporting Rate :".$reporting_rate." %'/>";
-   		}
+   		}*/
+   $all_data = $this->get_facilities_local();
+   foreach ($all_data as $county) {
+   	$county_map_id = $county['county'];
+   	$countyname = $county['name'];
+   	$total_facilities = $county['particulars']['total'];
+	$reporting_facilities = $county['particulars']['reported'];
+	if ($total_facilities>0){
+ 	$reporting_rate=round((($reporting_facilities/$total_facilities)*100),1);
+ 	}
+ 	else {$reporting_rate = 0;}
+
+  $map .="<entity  link='".base_url()."cd4_management/county_allocation_details/$county_map_id' id='$county_map_id' displayValue ='$countyname' color='".array_rand($colors,1)."'  toolText='County :$countyname&lt;BR&gt; Total Facilities :".$total_facilities."&lt;BR&gt; Facilities Reporting  :".$reporting_facilities."&lt;BR&gt; Facility Reporting Rate :".$reporting_rate." %'/>"; 	
+   }
 
 	$map .="</data>
 		<styles>
@@ -162,7 +272,9 @@ $colors=array("FFFFCC"=>"1","E2E2C7"=>"2","FFCCFF"=>"3","F7F7F7"=>"5","FFCC99"=>
 	
 }
 
-public function county_allocation_details($county_id){
+
+
+public function county_allocation_details_old($county_id){
 
 
 	$data['content_view']='cd4/ajax_view/county_allocation_v';
@@ -230,7 +342,54 @@ $htm='';
 
 }
 
-function nascop_get($facil_mfl){
+public function county_allocation_details($county_id){
+
+	$county_id = $county_id-1;
+
+	$data['content_view']='cd4/ajax_view/county_allocation_v';
+	$htm='';
+	$htm.='<ul class="facility-list">';
+	
+	$all_counties = $this->get_facilities_local();
+	$countyname = $all_counties[$county_id]['name'];
+ //var_dump($all_counties[$county_id]);
+   if ($all_counties[$county_id]['particulars']>0){
+
+   	foreach ($all_counties[$county_id]['particulars']['particular']as $key => $facilities) {
+   		$facility_mfl = $facilities['mfl'];
+   		$facilityname = $facilities['name'];
+   		$status =  $facilities['status'];
+if ($status !=="Not Reported"){
+  $htm .='<li><a href="#'.$facility_mfl.'" class="allocate" onClick="showpreview('.$facility_mfl.')" >'.$facilityname.'</a></li>';
+ }
+ else{
+ $htm .='<li style="background: #FF0000;"><a href="#" title="'.$facilityname.' has not reported yet" class="allocate" onClick="alertnonreported()"  >'.$facilityname.'</a></li>';	
+ }
+
+
+ //$htm .='<li><a href="#'.$facility_mfl.'" class="allocate" onClick="showpreview('.$facility_mfl.')" >'.$facilityname.'</a></li>';
+
+
+   }
+ 
+   }
+   $htm.='</ul>';
+
+
+		$data['htm'] = $htm;
+			$data['banner_text']='Allocate '.$countyname;
+			$data['title']='CD4 Allocation '.$countyname;
+			$data['countyname'] =$countyname;
+
+	$this->load->view('template',$data);
+
+		  
+ 
+
+}
+
+function nascop_get($facil_mfl){ 
+	/*
 	//$facil_mfl = 11555;
 function objectToArray( $object ) {
     if( !is_object( $object ) && !is_array( $object ) ) {
@@ -242,6 +401,8 @@ function objectToArray( $object ) {
     return array_map( 'objectToArray', $object );
 }
 $url = 'http://nascop.org/cd4/arraytest.php?mfl='.$facil_mfl.''; // url for the aPI
+
+//$url = 'http://localhost/api/arraytest.php';
 $string_manual = file_get_contents($url); // Fetchin the API json
 //echo $string_manual;
 $string_manual = substr($string_manual, 0, -1); // Removes the last string character ']' from the json
@@ -255,10 +416,12 @@ $string = $string_manual;
 //echo $string_manual.'<br /><br />';
 //echo $string_manual;
 
-
 $string_manual = json_decode($string_manual); // decoding the json
 $string_manual = objectToArray($string_manual); // This is where I convert String Manual to array
-//var_dump($string_manual);
+
+ //var_dump($string_manual);
+*/
+$string_manual = $this->get_reported_local($facil_mfl);
 
 //echo'<br /><br />';
  if ($string_manual==null){
@@ -281,27 +444,85 @@ $string_manual = objectToArray($string_manual); // This is where I convert Strin
 				<span><b>FACILITY :</b>'.$string_manual['facility'].' ('.$string_manual['mfl'].')</span><br>
 				<span><b>DEVICE :</b>'.$string_manual['device'][0].'</span><br>
 				</fieldset>';
+				echo"<form action='../allocate_cd4' method='post' name='cd4_allocation' id='cd4_allocation'>";
 
 	echo "<table border='0' class='data-table' style='font-size: 0.9em;'>"; // Table begins
-	echo "<thead><th>Name(Unit)</th><th>reagentID</th><th>received </th><th>used</th><th>requested</th><th>Allocated</th></thead>";
+	echo "<thead><th>Name(Unit)</th><th>received </th><th>used</th><th>requested</th><th>Allocated</th></thead>";
 	foreach ($string_manual['device']['devices'] as $reagents_arr) {
+//		echo "<pre>";var_dump($reagents_arr);echo "</pre>";
+//		$used =  $reagents_arr['report']['used'];
+//		echo "<pre>";var_dump($reagents_arr);echo "</pre>";
+		$used = $reagents_arr['report']['used'];
+		$alloc_formula = 1.14*$used*4;
+	$alloc_formula = round($alloc_formula);
+ 
 	echo "<tr>";
 	echo "<td>".$reagents_arr['name'].'('.$reagents_arr['unit'].') </td>';
-	echo "<td>".$reagents_arr['reagentID'].' </td>';
+//	echo "<td>".$reagents_arr['reagentID'].' </td>';
 
 	echo "<td>".$reagents_arr['report']['received'].' </td>';
 	echo "<td>".$reagents_arr['report']['used'].' ';
 	echo "<td>".$reagents_arr['report']['requested'].' </td>';
-	echo "<td><input name='reagent' type='text' /></td>";
+
+	$reagentID = $reagents_arr['reagentID'];
+	$facility_code = $string_manual['mfl'];
+	$date = time();
+    date_default_timezone_set("EUROPE/Moscow");
+    $thismonth = date('mY', strtotime("this month"));
+	$allocation_for = $thismonth;
+	
+	echo "<input name='reagentID_$reagentID' type='hidden' value='$reagentID' />";
+	echo "<input name='facility_$reagentID' type='hidden' value='$facility_code' />";
+	echo "<input name='allocation_$reagentID' type='hidden' value='$allocation_for' />";
+	echo "<input name='date_$reagentID' type='hidden' value='$date' />";
+
+	echo "<td><input name='reagent_$reagentID' type='text' value='$alloc_formula' /></td>";
 	echo "</tr />";
 	//echo "<pre>";
 	//var_dump($reagents_arr);
 	//	echo "</pre>";
 }
 echo "</table>";// end og table
-echo '<input class="button ui-button ui-widget ui-state-default ui-corner-all" id="allocate" value="Allocate" role="button" aria-disabled="false">';
+echo '<input class="button ui-button ui-widget ui-state-default ui-corner-all" id="allocate" type="submit" value="Allocate" role="button" aria-disabled="false">';
+echo "</form>";
  }
 	}
+
+	function allocate_cd4(){
+		$cd4_arr = $_POST;
+		$chunks = (array_chunk($cd4_arr, 5));
+ 		foreach ($chunks as $cd4_arr) {
+			$reagent = $cd4_arr[0];
+			$facility = $cd4_arr[1];
+			$allocation_for = $cd4_arr[2];
+			$allocation_timestamp = $cd4_arr[3];
+			$allocation_qty = $cd4_arr[4];
+ 		$this->load->database();
+		$this->db->query("INSERT INTO `kemsa2`.`cd4_allocation` (`id`, `facility_code`, `reagentID`, `allocation_for`, `qty`, `date_allocated`, `allocated_by`) 
+												VALUES (NULL, '$facility', '$reagent', '$allocation_for', '$allocation_qty', '$allocation_timestamp', '');");
+		}
+ redirect('cd4_Management/allocations?allocationsuccess');
+
+//		echo "<pre>";
+//		var_dump($cd4_arr/);
+//		echo "</pre>";
+		}
+function allocation_per_facility($mfl){
+$this->load->database();
+
+$sel = $this->db->query('SELECT cd4_facility.facilityname, cd4_facility.MFLCode, cd4_facility.districtname, cd4_allocation.id, cd4_allocation.facility_code, cd4_allocation.reagentID, cd4_allocation.allocation_for, cd4_allocation.qty, cd4_allocation.date_allocated, cd4_allocation.allocated_by, cd4_reagents.reagentname, cd4_reagents.reagentID, cd4_countys.ID, cd4_countys.name, cd4_districts.name, cd4_districts.county, cd4_districts.ID
+FROM cd4_facility, cd4_allocation, cd4_reagents, cd4_districts, cd4_countys
+WHERE  `cd4_facility`.`MFLCode` =  `cd4_allocation`.`facility_code` 
+AND cd4_reagents.reagentID = cd4_allocation.reagentID
+AND cd4_countys.ID = cd4_districts.county
+AND cd4_facility.district = cd4_districts.ID
+AND cd4_allocation.qty>0
+AND cd4_facility.MFLCode='.$mfl.''); 
+$resarr = $sel->result_array();
+//for($i = 0; $i < count($resarr); $i++){if($i % 2) // OR if(!($i % 2)){unset($resarr[$i]);}}
+//echo "<pre>";print_r($resarr);echo "</pre>";
+return $resarr;
+}
 
 function facility_allocate($facility){
 	$htm = '';
@@ -468,10 +689,243 @@ $this -> load -> view("cd4/ajax_view/facility_zoom_v",$data);
 	
 	
 }
+    function sendmail($message,$output, $reportname) {
+        $this->load->helper('file');
+        //  $email_address = 'williamnguru@gmail.com';
+        //    $message = 'Hi William';
+        //      $subject = 'no subject today';
+        include 'auto_sms.php';
+//        $output = 'This is the output that should be stated on the pdf';
+ 
+        $newmail = new auto_sms();
+        $this->load->library('mpdf');
+        $mpdf = new mPDF();
+
+        $mpdf->WriteHTML($output);
+        $emailAttachment = $mpdf->Output($reportname . '.pdf', 'S');
+//	$emailAttachment = chunk_split(base64_encode($emailAttachment));
+//	echo $emailAttachment;
+        $attach_file = './pdf/' . $reportname . '.pdf';
+        if (!write_file('./pdf/' . $reportname . '.pdf', $mpdf->Output('report_name.pdf', 'S'))) {
+            $this->session->set_flashdata('system_error_message', 'An error occured');
+        } else {
+            $email_address = "onjathi@clintonhealthaccess.org";
+            $subject = 'Order Report For ' . $reportname;
+
+            $attach_file = './pdf/' . $reportname . '.pdf';
+            $bcc_email = 'williamnguru@gmail.com,kariukijackson@gmail.com,tngugi@gmail.com,rickinyua@gmail.com';
+            $response = $newmail->send_email($email_address, $message, $subject, $attach_file, $bcc_email);
+            // $response= $newmail->send_email(substr($email_address,0,-1),$message,$subject,$attach_file,$bcc_email);
+            if ($response) {
+                delete_files('./pdf/' . $reportname . '.pdf');
+            }
+        }
+    }
+
+public function send_mail($alloc_period){
+date_default_timezone_set('EUROPE/Moscow');
+$today = date('dS F Y');
+$pdf_html = " ";
+ 
+	$allocation_for = str_split($alloc_period);
+	$newdate = $allocation_for[0].':'.$allocation_for[1];
+    $date = date('F, Y', strtotime($newdate));
+//  $pdf_html .= ($date).'<br />';
+$pdf_html .="<div ALIGN=CENTER><img src='" . base_url() . "Images/coat_of_arms.png' height='70' width='70'style='vertical-align: top;' > </img></div>
+
+       <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold; font-size: 14px;'>
+       Ministry of Health<br />
+       CD4 Allocations for $date</div>
+       <hr />";
+ 
+$this->load->database();
+$q = $this->db->query('SELECT DISTINCT cd4_allocation.facility_code, cd4_facility.facilityname,cd4_allocation.allocation_for
+FROM cd4_allocation, cd4_facility
+WHERE cd4_allocation.facility_code = cd4_facility.MFLCode
+AND  cd4_allocation.allocation_for = '.$alloc_period.'');
+foreach ($q->result_array() as $key => $value) {
+//	var_dump($value);
+	$mfl = $value['facility_code'];
+	$facil = $this->allocation_per_facility($mfl);
+	$pdf_html .= $value['facilityname'].' ('.$mfl.')';
+	$pdf_html .= "<table>
+		<thead>
+		<th>Reagent</th>
+		<th>Quantity</th>
+		</thead>
+		<tbody>";
+
+	foreach ($facil as $key => $val) {
+		# code...
+		$pdf_html .='<tr>
+		<td>'.$val['reagentname'].'</td>
+		<td>'.$val['qty'].'</td>
+		</tr>';
+	}
+	$pdf_html .= "</tbody></table><hr />";
+
+}
+//echo $pdf_html ;
+$message = "<div ALIGN=CENTER><img src='" . base_url() . "Images/coat_of_arms.png' height='70' width='70'style='vertical-align: top;' > </img></div>
+
+       <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold; font-size: 14px;'>
+       Ministry of Health</div>
+       <hr />
+<table border='0' style='width:100%;'>
+<tr>
+<td>Telephone:(020) 2630867<br />Fax: (020) 2710518<br />E-mail: head@nascop.or.ke<br />Office Mobile: 0775-409108<br />Skype: nascop.ke</br />When replying please quote
+<br />Ref:NASCOP/ADMIN/MARPs/2013/5
+<br />
+............................................................<br />
+............................................................<br />
+To CEO KEMSA<br />
+Dear Sir
+</td>
+<td>
+NATIONAL AIDS & STI CONTROL PROGRAM<br />
+Kenyatta National Hospital Grounds<br />
+P.O. Box 19361, 00202<br />
+Nairobi<br />
+<br /><br /><br /><br /><br />
+
+$today  
+
+</td>
+</tr>
+<tr><td COLSPAN='2' style='border-bottom: solid 1px #3C3838;'><strong>RE:	Release of CD4 Reagents  </strong></td></tr>
+<tr>
+<td COLSPAN='2'>NASCOP is mandated to control HIV commodities. The purpose of this memo is to kindly request the release of CD4 reagents (FACS Calibur, FACS Count, Partec Cyflow) for Q4 2013. Please find the allocation list attached. 
+<br /><br />
+<strong>Dr. William K. Maina, OGW</strong>
+<br /><br />
+
+<u>Head, NASCOP.</u>
+<br /><br />
+</td>
+</tr>
+</table> 
+";
+$reportname = 'CD4 Allocations for '.$date;
+$this->sendmail($message,$pdf_html, $reportname);
+echo "The reports were sent successfully";
+}
+public function allocations(){
+
+	$data['table_body']="Hello World"; 
+	$data['title'] = "Cd4 Allocations";
+	$data['banner_text'] = "CD4 Allocations Countrywide";
+	$data['content_view']="cd4/ajax_view/cd4_overall_allocations";
+	$data['counties'] = array();
+	$countiesid[] = array();
+	$countiesnames[] = array();
+	$final_arr=array();
+
+$this->load->database();
+$sel = $this->db->query('SELECT cd4_facility.facilityname, cd4_facility.MFLCode, cd4_facility.districtname, cd4_allocation.id, cd4_allocation.facility_code, cd4_allocation.reagentID, cd4_allocation.allocation_for, cd4_allocation.qty, cd4_allocation.date_allocated, cd4_allocation.allocated_by, cd4_reagents.reagentname, cd4_reagents.reagentID, cd4_countys.ID, cd4_countys.name, cd4_districts.name, cd4_districts.county, cd4_districts.ID
+FROM cd4_facility, cd4_allocation, cd4_reagents, cd4_districts, cd4_countys
+WHERE  `cd4_facility`.`MFLCode` =  `cd4_allocation`.`facility_code` 
+AND cd4_reagents.reagentID = cd4_allocation.reagentID
+AND cd4_countys.ID = cd4_districts.county
+AND cd4_facility.district = cd4_districts.ID
+AND cd4_allocation.qty>0'); 
+$resarr = $sel->result_array();
+ 
+// echo "<pre>";print_r($resarr); echo "</pre>";
+
+$data['allocations'] = $resarr;
+
+
+$this->load->view('template',$data);
+}
+public function allocations_county($County)
+{
+	
+
+	$data['table_body']="Hello World"; 
+	$data['title'] = "Cd4 Allocations";
+	$data['banner_text'] = "CD4 Allocations";
+	$data['content_view']="cd4/ajax_view/cd4_allocations";
+	$data['counties'] = array();
+	$countiesid[] = array();
+	$countiesnames[] = array();
+	$final_arr=array();
+
+$this->load->database();
+$sel = $this->db->query('SELECT cd4_facility.name, cd4_facility.MFLCode, cd4_facility.districtname, cd4_allocation.id, cd4_allocation.facility_code, cd4_allocation.reagentID, cd4_allocation.allocation_for, cd4_allocation.qty, cd4_allocation.date_allocated, cd4_allocation.allocated_by, cd4_reagents.reagentname, cd4_reagents.reagentID, cd4_countys.ID, cd4_countys.name, cd4_districts.name, cd4_districts.county, cd4_districts.ID
+FROM cd4_facility, cd4_allocation, cd4_reagents, cd4_districts, cd4_countys
+WHERE  `cd4_facility`.`MFLCode` =  `cd4_allocation`.`facility_code` 
+AND cd4_reagents.reagentID = cd4_allocation.reagentID
+AND cd4_countys.ID = cd4_districts.county
+AND cd4_facility.district = cd4_districts.ID
+AND cd4_countys.ID = '.$County.' '); 
+$resarr = $sel->result_array();
+ 
+for($i = 0; $i < count($resarr); $i++)
+{
+    if($i % 2) // OR if(!($i % 2))
+    {
+        unset($resarr[$i]);
+    }
+}
+
+$data['allocations'] = $resarr;
+return $resarr;
+
+//$this->load->view('template',$data);
+ 
+}
+public function loadmonth_alloc($alloc_period)
+
+{ 
+
+date_default_timezone_set('EUROPE/Moscow');
+$today = date('dS F Y');
+$pdf_html = ' ';
+ 
+	$allocation_for = str_split($alloc_period);
+	$newdate = $allocation_for[0].':'.$allocation_for[1];
+    $date = date('F, Y', strtotime($newdate));
+//  $pdf_html .= ($date).'<br />';
+ 
+ 
+$this->load->database();
+$q = $this->db->query('SELECT DISTINCT cd4_allocation.facility_code, cd4_facility.facilityname,cd4_allocation.allocation_for
+FROM cd4_allocation, cd4_facility
+WHERE cd4_allocation.facility_code = cd4_facility.MFLCode
+AND  cd4_allocation.allocation_for = '.$alloc_period.'');
+foreach ($q->result_array() as $key => $value) {
+//	var_dump($value);
+	$mfl = $value['facility_code'];
+	$facil = $this->allocation_per_facility($mfl);
+	$pdf_html .= $value['facilityname'].' ('.$mfl.')';
+	$pdf_html .= "<table class='data-table'>
+		<thead>
+ 
+<th>Reagent</th>
+<th>Quantity</th>
+ 
+ 
+</tr></thead>
+		<tbody>";
+
+	foreach ($facil as $key => $val) {
+//		var_dump($val);
+		# code...
+		$pdf_html .='<tr>
+ 
+		<td>'.$val['reagentname'].'</td>
+		<td>'.$val['qty'].'</td>
+		</tr>';
+	}
+	$pdf_html .= "</tbody></table><br />";
+echo '<button onclick="send_mail('.$alloc_period.')" style="background: #CAEE59;border: solid 1px #ECECEC;">Send mail</button><br />';
+echo $pdf_html;
+}
+}
  public function allocated(){
 	//  $data['facility'] =Facilities::get_total_facilities_cd4_in_county($county_id);
 	$data['table_body']="Hello World"; 
-	$data['title'] = "County View";
+	$data['title'] = "CD4 Allocations";
 	$data['banner_text'] = "County View";
 	$data['content_view']="cd4/ajax_view/county_detail_zoom_v";
 	$data['counties'] = array();
@@ -575,6 +1029,113 @@ AND district ='.$district.'');
 		{echo'<option value="'.$facilityarr['facility'].'">'.$facilityarr['fname'].'</option>';}
 		} else{echo "<option>No data</option>";}
 	}
+public function get_reported_local($mfl)
+{
+		function objectToArray( $object ) {
+    if( !is_object( $object ) && !is_array( $object ) ) {
+        return $object;
+    }
+    if( is_object( $object ) ) {
+        $object = (array) $object;
+    }
+    return array_map( 'objectToArray', $object );
+}
+
+	$this->load->database();
+	$q = $this->db->query('SELECT * FROM  `api_facilities` WHERE  `mfl` ='.$mfl.' ORDER BY  `api_facilities`.`id` ASC LIMIT 0 , 1');
+	$res = $q->result_array();
+//	var_dump($res[0]['json']);
+
+	$fac_arr = $res[0]['json'];
+	$fac_arr = json_decode($fac_arr);
+	$fac_arr = objectToArray($fac_arr);
+//	echo "<pre>";var_dump($fac_arr);echo "</pre>";
+	return $fac_arr;
+}
+	public function facility_api_data($facil_mfl){
+
+ 
+$url = 'http://nascop.org/cd4/arraytest.php?mfl='.$facil_mfl.''; // url for the aPI
+
+//$url = 'http://localhost/api/arraytest.php';
+$string_manual = file_get_contents($url); // Fetchin the API json
+//echo $string_manual;
+$string_manual = substr($string_manual, 0, -1); // Removes the last string character ']' from the json
+//echo $string_manual;
+$string_manual = substr($string_manual, 12); // removes the first 12 string characters which includes a '<pre>' tag up to the '['
+// echo $string_manual;
+ 
+$now = time();
+$this->load->database();
+	$data = array(
+		'id'=> 'NULL',
+		'mfl'=>$facil_mfl,
+		'json'=>$string_manual,
+		'time'=>$now
+		);
+	$this->db->insert('api_facilities', $data); 
+ /*
+$string_manual = json_decode($string_manual); // decoding the json
+$string_manual = objectToArray($string_manual); // This is where I convert String Manual to array
+  */
+	}
+
+public function sync_nascop(){
+
+
+	$allfacilities = $this->api_get_facilities();
+//	
+	$reported_facilities_to_sync = array();
+
+
+ 	foreach ($allfacilities as $key => $value) {
+	if ($value['particulars']['reported'] > 0){foreach ($value['particulars']['particular'] as  $reportedfacilities)
+		{
+			
+			if ($reportedfacilities['status']=="Reported"){
+//				echo "<pre>";var_dump($reportedfacilities);echo "</pre>";
+			array_push($reported_facilities_to_sync, $reportedfacilities['mfl']);
+			}
+}
+}}
+ foreach ($reported_facilities_to_sync as  $sync_mfl_code) {
+// 	echo($sync_mfl_code.'<br />');
+ 	$this->facility_api_data($sync_mfl_code);
+ }
+ echo "Success: Facilities Sync Complete, Please wait shortly to sync Counties<br />";
+//	echo($allfacilities);
+    $allfacilities = json_encode($allfacilities);
+ 	$now = time();
+	$this->load->database();
+	$data = array(
+		'id'=> 'NULL',
+		'json'=>$allfacilities,
+		'date_sync'=>$now
+		);
+	$this->db->insert('api_gen', $data); 
+ 	echo "Counties Done synchronizing. You are now being redirected to another planet....";
+//	echo "Counties Sync Complete. Please wait for Reported facilities sync";
+//$allfacilities = $this->api_get_facilities();
+ 
+}
+public function i($MFLCode,$year,$month){
+	$date = $month.''.$year;
+		
+		$this->load->database();
+ 
+	$allocated_cd4_query = $this->db->query('SELECT * 
+FROM  `cd4_allocation` 
+WHERE  `facility_code` ='.$MFLCode.'
+AND  `allocation_for`  = '.$date.'');
+
+	$ret = $allocated_cd4_query->result_array();
+//	var_dump($ret);
+	$ret = json_encode($ret);
+	echo $ret;
+
+
+
+}
 
 	function loaddevices($facility){
 

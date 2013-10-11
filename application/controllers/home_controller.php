@@ -105,6 +105,8 @@ return $stats_data;
 		$date2 = date("Y-m-d",time());
 			 		
 		$date1=$compare['district_dl'];	
+		
+		
 		$x1=strtotime($date1);
 		$x2=strtotime($date2);
 		

@@ -184,20 +184,21 @@ GROUP BY fs.kemsa_code
 ORDER BY d.drug_name ASC  ");
 
         return $inserttransaction ;
-        }
-        
+        }      
         ////////////// getting facility stock level
      public static function get_facility_stock_level($distict){
      
 $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
-		->fetchAll("SELECT d.drug_name, ceil(SUM( fs.balance / d.total_units )) AS total
+		->fetchAll("SELECT d.drug_name, CEIL( SUM( fs.balance / d.total_units ) ) AS total, temp.consumption_level
 FROM facility_stock fs, drug d, facilities f
+LEFT JOIN historical_stock temp ON temp.facility_code ='$distict'
 WHERE fs.facility_code = f.facility_code
 AND f.facility_code =  '$distict'
+AND fs.kemsa_code = temp.drug_id
 AND d.id = fs.kemsa_code
-AND fs.STATUS ='1'
+AND fs.STATUS =  '1'
 GROUP BY fs.kemsa_code
-ORDER BY d.drug_name ASC  ");
+ORDER BY d.drug_name ASC ");
 
         return $inserttransaction ;} 
       ////////////// getting district stock level
@@ -306,11 +307,12 @@ public static function get_decom_count($district)
 		////get maufacuture for a given batch no
 	
 	public static function get_facility_commodity_stock_balance($kemsa_code,$facility_code){
-		$query = Doctrine_Query::create() -> select("count(balance) as total") -> from("Facility_Stock") -> where("kemsa_code='$kemsa_code' and facility_code='$facility_code'")->andwhere("status='1'");
+		$query = Doctrine_Query::create() -> select("sum(balance) as total") -> from("Facility_Stock") -> where("kemsa_code='$kemsa_code' and facility_code='$facility_code'")->andwhere("status='1'");
 		
 		$stocks= $query -> execute();
-		$stocks=$stocks->toArray();
-		return $stocks[0];
+		
+		$stocks=$stocks[0]->toArray();
+		return $stocks;
 	}
 	
 	// get the stocks for a given facility 

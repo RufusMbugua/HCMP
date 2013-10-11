@@ -150,5 +150,8 @@ $(document).ready(function(){
 			<div class="activity update">
 	    <a href="<?php echo site_url('stock_management/facility_add_stock_data');?>"><h2>Add Facility Stock Data</h2></a>
 		</div>
+		    <div class="activity update">
+      <a href="<?php echo site_url('report_management/facility_evaluation');?>"><h2>Perform HCMP Training Evaluation</h2></a>
+    </div>
 		</fieldset>
 	</div>

@@ -327,108 +327,6 @@ else{
 }
 }
 
-public function donation()
-	{
-		
-		$facility_c=$this -> session -> userdata('news');
-		
-		$kemsa_code=$_POST['kemsa_code'];
-		$expiry_date=$_POST['expiry_date'];
-		$batch_no=$_POST['batch_no'];
-		$manuf=$_POST['manuf'];
-		$a_stock=$_POST['qreceived'];
-		$count=count($kemsa_code);
-		$source=$_POST['source'];
-		$orderDate=date('y-m-d H:i:s');
-				;
-		
-		for($i=0;$i<=$count;$i++){
-			
-			if(isset($kemsa_code[$i])&&$kemsa_code[$i]!=''){
-				
-			$mydata=array('facility_code'=>$facility_c,
-			'kemsa_code'=>$kemsa_code[$i],
-			'batch_no'=>$batch_no[$i],
-			'manufacture'=>$manuf[$i],
-			'expiry_date'=> date('y-m-d ,', strtotime($expiry_date[$i])),
-			'balance'=>$a_stock[$i],
-			'quantity'=>$a_stock[$i],
-			'stock_date'=>$orderDate,
-			'sheet_no'=>$source[$i]
-			);
-			
-			Facility_Stock::update_facility_stock($mydata);
-
-			}
-		}
-
-//updating the facility transaction table
-		$data=Facility_Stock::count_facility_stock($facility_c,$orderDate);
-
-		foreach ($data as $infor) {
-			$qty=$infor->quantity1;
-			$kemsa_code_=$infor->kemsa_code;
-			
-			
-			/*$mydata3 = array('facility_code'=>$facility_c,
-			's11_No' => 'Physical Stock Count',
-			'kemsa_code'=>$kemsa_code_,
-			'batch_no' => 'N/A',
-			'expiry_date' => 'N/A',
-			'qty_issued' => 0,
-			'balanceAsof'=>$qty,
-			'date_issued' => date('y-m-d'),
-			'issued_to' => 'N/A',
-			'issued_by' => $this -> session -> userdata('identity')
-			);*/
-			//Facility_Issues::update_issues_table($mydata3);
-		   $facility_has_commodity=Facility_Transaction_Table::get_if_drug_is_in_table($facility_c,$kemsa_code_);
-		   
-		   if($facility_has_commodity>0){
-		   	$inserttransaction_1 = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("select   `adj` from `facility_transaction_table`
-                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
-		
-			
-			$new_value=$inserttransaction_1[0]['adj']+$qty;
-			
-		   	$inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection();
-			$inserttransaction->execute("UPDATE `facility_transaction_table` SET adj =$new_value
-                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code=$facility_c; ");
-                                          
-           $inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
-			
-
-			$inserttransaction1->execute("UPDATE `facility_transaction_table` SET closing_stock = (SELECT SUM(balance)
-			 FROM facility_stock WHERE kemsa_code = '$kemsa_code_' and status='1' and facility_code='$facility_c')
-                                          WHERE `kemsa_code`= '$kemsa_code_' and availability='1' and facility_code ='$facility_c'; ");   
-                                          
-                                                               
-		   }
-		   else{
-		   	$mydata2=array('Facility_Code'=>$facility_c,
-			'Kemsa_Code'=>$kemsa_code_,
-			'Opening_Balance'=>0,
-			'Total_Issues'=>0,
-			'Total_Receipts'=>0,
-			'Adj'=>$qty,
-			'Closing_Stock'=>$qty,
-			'availability'=>1);
-			
-			Facility_Transaction_Table::update_facility_table($mydata2);
-		   }
-		   
-		
-			}
-$inserttransaction1 = Doctrine_Manager::getInstance()->getCurrentConnection();
-			
-
-         $this->session->set_flashdata('system_success_message', "You have issued $count item(s)");
-			 
-                                          
-                                       
-        // $this->session->set_flashdata('system_success_message', "You have recieved $count item(s)");
-		 redirect('issues_main');	
-	}
 
 
 
@@ -585,19 +483,56 @@ public function get_facility_stock_details($confirmation_message=NULL){
 }
 public function update_facility_stock_details(){
 	 $id=$_POST['id'];
+	 $durg_id=$_POST['kemsa_code'];
 	 $batch_no=$_POST['batch_no'];
 	 $manufacturer=$_POST['manufacturer'];
 	 $expiry_date=$_POST['expiry_date'];
+	 $stock_level=$_POST['stock_level'];
+	  $delete=$_POST['delete'] ;
+	 
+	 $access_level = $this -> session -> userdata('user_type_id');
+	 $facility_code=$this -> session -> userdata('news');
+
+		
+		 
+	
+	
+
+	 
+
 	 
 	
 	 
 	 foreach ( $id as $key => $value) {
-	 	 $expiry_date[$key]=str_replace(",", " ", $expiry_date[$key]);
+	
+	if($delete[$key]==1):
+	
+
+	    $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->execute("update facility_transaction_table t, 
+		(select `opening_balance`,`closing_stock` from facility_transaction_table 
+		where facility_code='$facility_code' and kemsa_code=$durg_id[$key] and availability=1) temp
+		 set t. `opening_balance`=temp.`opening_balance`-$stock_level[$key] and t. `closing_stock`=temp.`closing_stock`-$stock_level[$key] 
+		 where t.facility_code='$facility_code' and t.kemsa_code=$durg_id[$key] and t.availability=1");
+		 
+          $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
+		->execute("delete from facility_stock where id=$id[$key]"); 
+
+	
+	 else:
+	     $expiry_date[$key]=str_replace(",", " ", $expiry_date[$key]);
 		 $myobj = Doctrine::getTable('Facility_Stock')->find($id[$key]);
          $myobj->batch_no=$batch_no[$key] ;
 		 $myobj->manufacture=$manufacturer[$key];
 		 $myobj->expiry_date=date('y-m-d',strtotime($expiry_date[$key]));
          $myobj->save(); 
+		
+	 endif;
+	 		
+	 	
+	 
+	 	
+	 	
 	 }
 
 	$this->session->set_flashdata('system_success_message', 'Stock Details Have Been Updated');

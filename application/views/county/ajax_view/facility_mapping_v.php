@@ -9,8 +9,46 @@
 					/* Build the DataTable with third column using our custom sort functions */
 				$('#example_main').dataTable( {
 					"bJQueryUI": true,
-					"bPaginate": false
+					"bPaginate": false,
+					 "aaSorting": [[ 3, "asc" ]]
 				} );
+				
+			$(".ajax_call_1").click(function(){
+							var id  = $(this).attr("id"); 
+							
+							
+							alert(id);
+							//if(id=="county_facility"){
+								
+  	                     //    var url= $(this).attr("name"); 
+  	
+  	                   //  ajax_request_special (url);
+  	                //  return;
+                      //  }
+	
+	});
+	
+	
+		function ajax_request_special (url){
+	var url =url;
+	 $.ajax({
+          type: "POST",
+          url: url,
+          beforeSend: function() {
+            $("#dialog").html("");
+          },
+          success: function(msg) {
+
+        	
+        	$('#dialog').html(msg);
+            $( "#dialog" ).dialog({
+			height: 650,
+			width:900,
+			modal: true
+		});
+          }
+        }); 
+}
 	
 			}
 	);

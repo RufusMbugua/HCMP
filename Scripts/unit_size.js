@@ -353,11 +353,11 @@ default:
     
     var new_order_value=0;
     
+  
+    closing=closing/unit_size;
  
-    new_order_value=((total_issues*4)-closing)/unit_size;
-    
-   
-    
+    new_order_value=((total_issues*4)-closing);
+  
     new_order_value=parseInt(new_order_value);
     if(new_order_value<0){
     	new_order_value =0;

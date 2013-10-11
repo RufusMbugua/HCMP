@@ -118,7 +118,7 @@ public function submit() {
 		
 		}				
 		$this -> session -> set_userdata($session_data);
-		
+		$this -> session -> set_userdata(array("user_type_id"=>$myvalue));
 		Log::update_log_out_action($this -> session -> userdata('user_id'));
 		
 		$u1=new Log();
@@ -320,7 +320,17 @@ else{
 		    $user_delegation="Facility: $facility_name[facility_name]";
 		    $user_level="Facility Level";
 		}
-
+		
+        if($facility_code!=null && $facility_code!=0){
+ $q = Doctrine_Manager::getInstance()->getCurrentConnection()
+ ->execute('update facilities f, (select distinct facility, min(`created_at`) 
+ as date from user u where facility='.$facility_code.') as temp set `using_hcmp`=1,
+ `date_of_activation`=temp.date where unix_timestamp(`date_of_activation`)=0 
+ and facility_code=temp.facility');
+		}
+		
+		
+		
         if($this->input->post('user_name')){
             $user_name=$this->input->post('email');
                   }		

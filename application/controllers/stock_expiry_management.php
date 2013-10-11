@@ -474,7 +474,7 @@ $html_data .=$html_data1;
 $this->generate_decommission_report_pdf($report_name,$title,$html_data);
 }
 public function generate_decommission_report_pdf($report_name,$title,$html_data) {
-	$current_year = date('Y');
+	    $current_year = date('Y');
 		$current_month = date('F');
 		$facility_code=$this -> session -> userdata('news');
 		$facility_name_array=Facilities::get_facility_name($facility_code)->toArray();
@@ -510,6 +510,25 @@ public function Decommission() {
 	//Change status of commodities to decommissioned
 	$date= date('Y-m-d');
 	$facility=$this -> session -> userdata('news');
+	$facility_code=$this -> session -> userdata('news');
+	$user_id=$this -> session -> userdata('user_id');
+	
+		$facility_name_array=Facilities::get_facility_name($facility_code)->toArray();
+		$facility_name=$facility_name_array['facility_name'];
+		$districtName = $this->session->userdata('full_name');
+		
+		
+		    $myobj1 = Doctrine::getTable('Districts')->find($facility_name_array['district']);
+			$disto_name=$myobj1->district;
+			$county=$myobj1->county;
+			$myobj2 = Doctrine::getTable('Counties')->find($county);
+			$county_name=$myobj2->county;
+			$myobj3 = Doctrine::getTable('user')->find($user_id);
+			$creator_name1=$myobj3 ->fname;
+			$creator_name2=$myobj3 ->lname;
+			
+			
+			$total=0;
 		
 			
 			//Create PDF of Expired Drugs that are to be decommisioned.
@@ -523,32 +542,42 @@ public function Decommission() {
 			$q->execute();
 			//create the report title
 		$html_title="<div ALIGN=CENTER><img src='".base_url()."Images/coat_of_arms.png' height='70' width='70'style='vertical-align: top;' > </img></div>
-      <div style='text-align:center; font-size: 14px;display: block;font-weight: bold;'>Expiries</div>
+    
        <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold; font-size: 14px;'>
-       Ministry of Public Health and Sanitation/Ministry of Medical Services</div>
-        <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold;display: block; font-size: 13px;'>Health Commodities Management Platform</div><hr />   ";
+       Ministry of Health</div>
+        <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold;display: block; font-size: 13px;'>Health Commodities Management Platform</div>
+         <div style='text-align:center; font-family: arial,helvetica,clean,sans-serif;display: block; font-weight: bold;display: block; font-size: 13px;'>Expired Commodities Between ".date("F",
+    strtotime("-1 month"))." - ".date("F")." ".date('Y')."</div><hr />   ";;
 		
 		/*****************************setting up the report*******************************************/
-		$html_body ='';
-		
-		
-
+$html_body ='';		
 $html_body.='<style>table.data-table {border: 1px solid #DDD;margin: 10px auto;border-spacing: 0px;}
 table.data-table th {border: none;color: #036;text-align: center;background-color: #F5F5F5;border: 1px solid #DDD;border-top: none;max-width: 450px;}
 table.data-table td, table th {padding: 4px;}
 table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px solid #DDD;height: 30px;margin: 0px;border-bottom: 1px solid #DDD;}
-.col5{background:#C9C299;}</style>
+.col5{background:#C9C299;}</style>'.
+"<table class='data-table' width=100%>
+<tr>
+<td>MFL No: $facility_code</td> 
+<td>Health Facility Name: $facility_name</td>
+<td>County: $county_name</td> 
+<td>Subcounty: $disto_name</td>
+</tr>
+</table>"
+.'
+<table class="data-table" width=100%>
+<thead>
 
-<table class="data-table"><thead>
-
-			<tr > <th ><strong>KEMSA Code</strong></th>
+			<tr><th><strong>Source</strong></th>
 			<th><strong>Description</strong></th>
+			<th><strong>Unit Size</strong></th>
 			<th><strong>Batch No Affected</strong></th>
 			<th><strong>Manufacturer</strong></th>
 			<th><strong>Expiry Date</strong></th>
-			<th><strong>Unit Size</strong></th>
+			<th><strong># of Days From Expiry</strong></th>	
 			<th><strong>Stock Expired(Unit Size)</strong></th>
-			<th><strong>Cost of Expired</strong></th>
+			<th><strong>Unit Cost (Ksh)</strong></th>
+			<th><strong>Cost of Expired (Ksh)</strong></th>
 			
 			
 
@@ -562,6 +591,11 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 								$mau=$drug['manufacture'];
 								$name=$drug['drug_name'];
 								$code=$drug['kemsa_code'];
+								
+								$code= isset($code) ? "KEMSA: code".$code  : '' ;
+								
+								
+								
 					            $unitS=$drug['unit_size'];
 								$unitC=$drug['unit_cost'];
 								$calc=$drug['balance'];
@@ -569,7 +603,7 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 								$formatme = new DateTime($thedate);
 								$cost=$calc*$unitC;
 								$myvalue= $formatme->format('d M Y');	
-								
+								$total=$total+$cost;
 			$facility_stock=Facility_Stock::get_facility_drug_total($facility,$drug_id)->toArray();					
 								
 			$mydata3 = array('facility_code'=>$facility,
@@ -583,6 +617,11 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 			'issued_to' => 'N/A',
 			'issued_by' => $this -> session -> userdata('identity')
 			);
+			 
+			   $now= new DateTime();
+			   $dDiff = $formatme->diff($now);
+  // echo $dDiff->format('%R'); // use for point out relation: smaller/greater
+             $date_diff= $dDiff->days;
 			
 			Facility_Issues::update_issues_table($mydata3);
 			
@@ -605,21 +644,29 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 							
 		    $html_body .='<tr><td>'.$code.'</td>
 							<td>'.$name.'</td>
+							<td >'.$unitS.'</td>
 							<td>'. $batch.'</td>
 							<td>'.$mau.'</td>
 							<td>'.$myvalue.'</td>
-							<td >'.$unitS.'</td>
+							<td>'.$date_diff.'</td>							
 							<td >'.$calc.'</td>
-							<td >'.$cost.'</td>
-							
+							<td >'.$unitC.'</td>
+							<td >'.number_format($cost, 2, '.', ',').'</td>	
 							</tr>';
 
 /***********************************************************************************************/
 					
 		  }
-		$html_body .='</tbody></table>'; 
-		
-		
+		$html_body .='
+		<tr>
+		<td colspan="10">
+		<b style="float: right; margin-right:5.0em">TOTAL cost(Ksh) of Expiries: &nbsp; '.number_format($total, 2, '.', ',').'</b>
+		</tr>
+		</tbody>
+		</table>'; 
+	//number_format($total, 2, '.', ',')
+	//echo $html_title.$html_body;
+	
 		//now ganerate an expiry pdf from the generated report
 			$this->load->library('mpdf');
 			$this->load->helper('file');
@@ -628,9 +675,10 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
             $this->mpdf->defaultheaderline = 1;  
             $this->mpdf->simpleTables = true;
             $this->mpdf->WriteHTML($html_body);
-            $this->mpdf->AddPage();
-			$this->mpdf->WriteHTML($html_body);
-			$report_name='Facility_Expired_Commodities'.$facility;
+           // $this->mpdf->AddPage();
+			//$this->mpdf->WriteHTML($html_body);
+			$this->mpdf->SetFooter("{DATE d/m/Y }|{PAGENO}/{nb}|Prepared by: $creator_name1 $creator_name2");
+			$report_name='Facility_Expired_Commodities_'.$facility."_".$date."_".$facility_name;
 			
 			
 			
@@ -640,6 +688,7 @@ table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px 
 	     redirect("/");	
              }
                   else{
+       
    if($this->send_stock_decommission_email($html_body,'Decommission Report For '.$facility,'./pdf/'.$report_name.'.pdf')){
    	delete_files('./pdf/'.$report_name.'.pdf');
    	$this->session->set_flashdata('system_success_message', 'Stocks Have Been Decommissioned');

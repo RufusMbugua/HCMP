@@ -1,4 +1,4 @@
-<script type="text/javascript" language="javascript" src="<?php echo base_url();  ?>Scripts/jquery.dataTables.js"></script>
+<script type="text/javascript" language="javascript" src="<?php echo base_url(); ///////// ?>Scripts/jquery.dataTables.js"></script>
 <script type="text/javascript" language="javascript" src="<?php echo base_url();  ?>Scripts/unit_size.js"></script>
 		<style type="text/css" title="currentStyle">
 			
@@ -118,6 +118,8 @@ return;
    	var num = document.getElementsByName("a_stock["+x+"]")[0].value.replace(/\,/g,'');
     var actual_unit_size=get_unit_quantity(document.getElementsByName("u_size["+x+"]")[0].value);
 
+
+  
    var total_a_stock=actual_unit_size*num;
  
    document.getElementsByName("qreceived["+x+"]")[0].value=total_a_stock; 
@@ -165,9 +167,12 @@ json_obj = {
         		
            var data =$("#desc").val();
            
-           var data_array=data.split("|");
+           var data_array=data.split("^");
          
            $('#unit_size').val(data_array[4]);
+          
+          
+           
             $('#kemsa_code').val(data_array[1]);
          
             $( "#desc_hidden" ).val(data);
@@ -184,7 +189,7 @@ json_obj = {
 			buttons: {
 				"Add Commodity": function() {
 					var details=$("#desc_hidden").val();	
-					var details_array=details.split("|");
+					var details_array=details.split("^");
 					
 var r=confirm("Are you sure you want to add"+" "+details_array[3]+" "+" with a total unit count of"+" "+$('#qreceived').val()+"?"+"Please confirm values before submitting.");
 if (r==true)
@@ -447,7 +452,7 @@ $('.del').live('click',function(){
 				
 			}
 			?>
-			<option value="<?php echo $id."|".$id1."|".$cat_name."|".$drug."|".$unit_size;?>"><?php echo $drug;?></option>
+			<option value="<?php echo $id."^".$id1."^".$cat_name."^".$drug."^".$unit_size;?>"><?php echo $drug;?></option>
 		<?php }
 		?>
 	</select>

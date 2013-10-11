@@ -143,8 +143,6 @@ return;
 			 var code=document.getElementsByName("kemsaCode["+jay+"]")[0].value;  
 			 var chr=chr;
 			 if(chr==true){
-			 	
-			 
 			 update_transaction2(baseUrl,"data_array="+code+"|"+data_array+"|"+data_array2);   
 			 }  
 	}

@@ -165,7 +165,7 @@ json_obj = {
         		
            var data =$("#desc").val();
            
-           var data_array=data.split("|");
+           var data_array=data.split("^");
          
            $('#unit_size').val(data_array[4]);
             $('#kemsa_code').val(data_array[1]);
@@ -184,7 +184,7 @@ json_obj = {
 			buttons: {
 				"Add Commodity": function() {
 					var details=$("#desc_hidden").val();	
-					var details_array=details.split("|");
+					var details_array=details.split("^");
 					
 var r=confirm("Are you sure you want to add"+" "+details_array[3]+" "+" with a total unit count of"+" "+$('#qreceived').val()+"?"+"Please confirm values before submitting.");
 if (r==true)
@@ -447,7 +447,7 @@ $('.del').live('click',function(){
 				
 			}
 			?>
-			<option value="<?php echo $id."|".$id1."|".$cat_name."|".$drug."|".$unit_size;?>"><?php echo $drug;?></option>
+			<option value="<?php echo $id."^".$id1."^".$cat_name."^".$drug."^".$unit_size;?>"><?php echo $drug;?></option>
 		<?php }
 		?>
 	</select>

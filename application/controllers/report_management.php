@@ -1844,6 +1844,30 @@ public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
 		$district_name=facilities::get_facility_name_($facility_code);
 	    $title=$district_name["facility_name"];		
         $commodity_array=facility_stock::get_facility_stock_level($facility_code);
+		
+		
+		$commodity_name=array();
+		$current_values=array();
+		$monthly_values=array();
+		foreach($commodity_array as $data):
+			
+			//array_key_exists($data['drug_name'],$commodity_name) ? $commodity_name['drug_name']=$data['drug_name'] : $commodity_name=array_merge($commodity_name, array($data['drug_name']=>$data['drug_name'])) ;
+		array_push($commodity_name,$data['drug_name']); 
+		array_push($current_values,(int) $data['total']); 
+		array_push($monthly_values, (int) $data['consumption_level']); 
+		
+		endforeach;
+	$data['title_1']="Current Balance";
+	$data['title_2']="Avarage Monthly Consumption";	
+	$data['commodity_name']=stripslashes(json_encode($commodity_name));
+	$data['current_values']=json_encode($current_values);
+	$data['monthly_values']=json_encode($monthly_values);
+	
+	
+	 
+	return $this->load->view("facility/facility_reports/facility_commodity_stock_level_v",$data);
+		
+	
 
 	}
 	
@@ -1889,13 +1913,14 @@ public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
         $height="200%";		
 		}
  
- $data['width']=$width;
- $data['height']=$height;
+       $data['width']=$width;
+       $data['height']=$height;
 	
 	
 	$data['facilities']=Facilities::getFacilities($district);
 	$data['option']=$option;
 	$data['facility_code']=$facility_code;
+	
 	$this->load->view("district/ajax_view/stock_status_v",$data);
 }
 	
@@ -2005,6 +2030,7 @@ public function facility_settings(){
 	}
 	
 	public function get_county_facility_mapping(){
+		
 		$county_id=$this -> session -> userdata('county_id');
 		$data['title'] = "Facility Mapping";
 		$data['banner_text'] = "Facility Mapping";
@@ -2022,18 +2048,18 @@ public function facility_settings(){
 	    
 	    $get_dates_facility_went_online=facilities::get_dates_facility_went_online($county_id);
 		
-		foreach ($get_dates_facility_went_online as $facility_dates){
+		foreach ($get_dates_facility_went_online as $facility_dates):
 			
 		$monthly_total=0;
-			
+		$date=$facility_dates['date_when_facility_went_online'];
 	    $table_data .="<tr>
-	    <td>".$facility_dates['MONTH']." ".$facility_dates['YEAR']."</td>";
+	    <td>".$date."</td>";
 			
-	    foreach($district_data as $district_detail){
+	    foreach($district_data as $district_detail):
 	    
 		$district_id=$district_detail->id;
 		$district_name=$district_detail->district;
-		$get_facilities_which_went_online_=facilities::get_facilities_which_went_online_($district_id,$facility_dates['MONTH'],$facility_dates['YEAR']);
+		$get_facilities_which_went_online_=facilities::get_facilities_which_went_online_($district_id,$facility_dates['date_when_facility_went_online']);
 	    $total=$get_facilities_which_went_online_[0]['total'];
 	    $monthly_total=$monthly_total+$total;
 		$all_facilities=$all_facilities+$total;
@@ -2042,13 +2068,16 @@ public function facility_settings(){
         $district_total[$district_name]=$district_total[$district_name]+$total
 	    :$district_total=array_merge($district_total,array($district_name=>$total));
 	
-		$table_data .="<td>$total</td>";
+	    ($total>0)  ? $table_data .="<td><a href='#' id='$district_id' class='ajax_call_1 link' option='monthly' date='$date'> $total</a></td>" : $table_data .="<td>$total</td>" ;
+	
+		
 
-		}
+		endforeach;
+		
 		$table_data .="<td>$monthly_total</td></tr>";
 	
 		
-		}
+		endforeach;
 		$table_data .="<tr>";
 		
 		$checker=1;
@@ -2058,7 +2087,7 @@ public function facility_settings(){
 		foreach($district_total as $key=>$value):
 		$district_names .="<th>$key</th>";
 			
-		($checker==1) ? $table_data .="<td><b>TOTAL</b></td><td>$value</td>" :$table_data .="<td>$value</td>";		
+		($checker==1) ? $table_data .="<td><b>TOTAL: Facilities using HCMP</b></td><td>$value</td>" :$table_data .="<td>$value</td>";		
 		
 		$checker++;
 		
@@ -2071,6 +2100,51 @@ public function facility_settings(){
 
 	  
 	    $this -> load -> view("template",$data);
+	}
+	
+	public function get_district_drill_down_detail($district_id,$option,$date_of_activation){
+	
+	$district_data="";
+	
+	if($option=='monthly'):
+		
+	$get_facility_data=facilities::get_facilities_reg_on_($district_id,urldecode($date_of_activation));	
+	
+
+	foreach($get_facility_data as $facility_data):
+		
+	$facility_code=$facility_data->facility_code;
+	$facility_user_data=user::get_user_info($facility_code);
+	$facility_name=$facility_data->facility_name;
+	
+	$district_data .='<span class="label label-info" width="100%">'.$facility_name.'</span>
+	
+	<table class="data-table" width="100%">
+	<thead>
+	<tr>
+	<th>First Name</th><th>Last Name</th><th>Email </th><th>Phone No.</th>
+	</tr>
+	</thead>
+	<tbody>';
+	
+	foreach($facility_user_data as $user_data_):
+	
+	$district_data .="<tr>
+	<td>$user_data_->fname</td><td>$user_data_->lname</td><td>$user_data_->email</td><td>$user_data_->telephone</td>
+	<tr>";
+	
+	
+	endforeach;
+	
+	$district_data .="</tbody></table>";
+		
+		endforeach;
+	
+	endif;
+	
+	echo $district_data;
+	
+		
 	}
 	
 	public function get_district_facility_mapping_($district_id){
@@ -2086,10 +2160,12 @@ public function facility_settings(){
 	$dpp_email='';
 	
 	if(count($dpp_details)>0){
+		
 	$dpp_fname=$dpp_details[0]['fname'];
 	$dpp_lname=$dpp_details[0]['lname'];
 	$dpp_phone=$dpp_details[0]['telephone'];
 	$dpp_email=$dpp_details[0]['email'];
+	
 	}
 
 	$indicator="District";
@@ -2112,11 +2188,14 @@ public function facility_settings(){
 	}
 	
 	$table_body .="<tr>";
+	$status=null;
+	$temp=$facility_extra_data[0]['status'];
+	($temp=="Active") ? $status="<span class='label label-success'>$temp</span>" : $status="<span class='label label-important'>$temp</span>";
 	
    $table_body .="<td>$facility_code</td>
 	              <td>$facility_detail->facility_name</td>
 	              <td>$facility_detail->owner</td>
-	              <td>".$facility_extra_data[0]['status']."</td>
+	              <td>$status</td>
 	              <td>".$facility_extra_data[0]['number_of_users']."</td>
 	              <td>".$facility_extra_data[0]['number_of_users_online']."</td>";
 	              
@@ -2525,6 +2604,145 @@ public function district_drawing_rights_chart(){
 			
 		
 		}
+
+public function facility_evaluation(){
+	   
+		$facility_code=$this->session->userdata('news');  
+		$user_id=$this->session->userdata('identity');  
+		             //New
+	   
+		$evaluation=facility_evaluation::getAll($facility_code,$user_id)->toArray();
+		
+		$data=(count($evaluation)==0)? array(0=>array(
+			'fhead_no' => null, 
+			'fdep_no' =>  null, 
+			'nurse_no' =>  null,  
+			'sman_no' =>  null, 
+			'ptech_no' =>  null, 
+			'trainer' =>  null, 
+			'comp_avail' =>  null, 
+			'modem_avail' => null, 
+			'bundles_avail' =>  null, 
+			'manuals_avail' =>  null, 
+			'satisfaction_lvl' =>  null, 
+			'agreed_time' =>  null, 
+			'feedback' =>  null, 
+			'pharm_supervision' =>  null, 
+			'coord_supervision' =>  null, 
+			'req_id' =>  null, 
+			'req_spec' =>  null, 
+			'req_addr' =>  null, 
+			'train_remarks' =>  null, 
+			'train_recommend' => null, 
+			'train_useful' => null, 
+			'comf_issue' =>  null, 
+			'comf_order' =>  null, 
+			'comf_update' =>  null, 
+			'comf_gen' =>  null, 
+			'use_freq' =>  null, 
+			'freq_spec' => null, 
+			'improvement' =>  null, 
+			'ease_of_use' =>  null, 
+			'meet_expect' =>  null, 
+			'expect_suggest' => null, 
+			'retrain' =>null))
+		  : $evaluation;
+		
+		$data['title'] = "Facility Training Evaluation";
+		$data['content_view'] = "facility/facility_reports/facility_evaluation";
+	    $data['banner_text'] = "Facility Training Evaluation";
+	    $data['facilities']=Facilities::get_one_facility_details($facility_code);
+		
+		$data['evaluation_data']=$data;
+
+	    $this -> load -> view("template", $data);           
+}
+
+public function facility_evaluation_($message=NULL){
+	
+$this->session->set_flashdata('system_success_message', "Facility Training Evaluation Has been ".$message);
+redirect('report_management/facility_evaluation');	
+}
+public function save_facility_eval()
+{
+		$facility_code=$this->session->userdata('news');
+		$current_user=$this->session->userdata('identity');
+		$date=date('y-m-d');
+		$data_array=$_POST['data_array'];
+		$dataarray=explode("|", $data_array);
+		$f_headno=$dataarray[0];
+		$f_depheadno=$dataarray[1];
+		$nurse_no=$dataarray[2];
+		$store_mgrno=$dataarray[3];
+		$p_techno=$dataarray[4];
+		$trainer=$dataarray[5];
+		$comp_avail=$dataarray[6];
+		$modem_avail=$dataarray[7];
+		$bundles_avail=$dataarray[8];
+		$manuals_avail=$dataarray[9];
+		$satisfaction_lvl=$dataarray[10];
+		$agreed_time=$dataarray[11];
+		$feedback=$dataarray[12];
+		$pharm_supervision=$dataarray[13];
+		$coord_supervision=$dataarray[14];
+		$req_id=$dataarray[15];
+		$req_spec=$dataarray[16];
+		$req_addr=$dataarray[17];
+		$train_remarks=$dataarray[18];
+		$train_recommend=$dataarray[19];
+		$train_useful=$dataarray[20];
+		$comf_issue=$dataarray[21];
+		$comf_order=$dataarray[22];
+		$comf_update=$dataarray[23];
+		$comf_gen=$dataarray[24];
+		$use_freq=$dataarray[25];
+		$freq_spec=$dataarray[26];
+		$improvement=$dataarray[27];
+		$ease_of_use=$dataarray[28];
+		$meet_expect=$dataarray[29];
+		$expect_suggest=$dataarray[30];
+		$retrain=$dataarray[31];
+
+		$mydata = array(
+		    'facility_code' => $facility_code,
+			'assessor' => $current_user, 
+			'date' => $date, 
+			'fhead_no' => $f_headno, 
+			'fdep_no' => $f_depheadno, 
+			'nurse_no' => $nurse_no, 
+			'sman_no' => $store_mgrno, 
+			'ptech_no' => $p_techno,
+			'trainer' => $trainer,
+			'comp_avail' => $comp_avail,
+			'modem_avail' => $modem_avail,
+			'bundles_avail' => $bundles_avail,
+			'manuals_avail' => $manuals_avail,
+			'satisfaction_lvl' => $satisfaction_lvl,
+			'agreed_time' => $agreed_time,
+			'feedback' => $feedback,
+			'pharm_supervision' => $pharm_supervision,
+			'coord_supervision' => $coord_supervision,
+			'req_id' => $req_id,
+			'req_spec' => $req_spec,
+			'req_addr' => $req_addr,
+			'train_remarks' => $train_remarks,
+			'train_recommend' => $train_recommend,
+			'train_useful' => $train_useful,
+			'comf_issue' => $comf_issue,
+			'comf_order' => $comf_order,
+			'comf_update' => $comf_update,
+			'comf_gen' => $comf_gen,
+			'use_freq' => $use_freq,
+			'freq_spec' => $freq_spec,
+			'improvement' => $improvement,
+			'ease_of_use' => $ease_of_use,
+			'meet_expect' => $meet_expect,
+			'expect_suggest' => $expect_suggest,
+			'retrain' => $retrain);
+			
+		echo Facility_Evaluation::save_facility_evaluation($mydata);
+
+}
 
 
 }

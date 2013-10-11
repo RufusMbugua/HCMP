@@ -28,7 +28,7 @@ define('_BORDER_RIGHT',4);
 define('_BORDER_BOTTOM',2);
 define('_BORDER_LEFT',1);
 
-if (!defined('_MPDF_PATH')) define('_MPDF_PATH','mpdf/'); 
+if (!defined('_MPDF_PATH')) define('_MPDF_PATH', 'mpdf/');
 if (!defined('_MPDF_URI')) define('_MPDF_URI',_MPDF_PATH);	// mPDF 5.0
 
 require_once(_MPDF_PATH.'includes/functions.php');

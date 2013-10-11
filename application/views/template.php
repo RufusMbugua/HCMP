@@ -67,7 +67,9 @@ if ($access_level == "dpp") {
 <link href="<?php echo base_url().'CSS/bootstrap-responsive.css'?>" type="text/css" rel="stylesheet"/>
 <link href="<?php echo base_url().'CSS/jquery-ui.css'?>" type="text/css" rel="stylesheet"/> 
 <script src="<?php echo base_url().'Scripts/jquery.js'?>" type="text/javascript"></script> 
-<script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script> 
+<script src="<?php echo base_url();?>Scripts/HighCharts/highcharts.js"></script>
+<script src="<?php echo base_url();?>Scripts/HighCharts/modules/exporting.js"></script>
+<!--<script src="<?php echo base_url().'Scripts/jquery.form.js'?>" type="text/javascript"></script> -->
 <script src="<?php echo base_url().'Scripts/jquery-ui.js'?>" type="text/javascript"></script>
 <!--<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>-->
 
@@ -373,9 +375,10 @@ if ($current == "home_controller") {echo "active";
 <?php if($user_is_allocation_committee){
 	?>
 	<li class="active"><a data-clone="RTK Home" href="<?php echo base_url();?>home_controller">RTK</a></li>
-<!--	<li><a  data-clone="RTK Allocation" href="<?php echo base_url();?>rtk_management/national_allocation">Allocation</a></li>
-	<li><a  data-clone="CD4 Home" href="<?php echo base_url();?>cd4_management/">CD4</a></li>-->
-	<li><a  data-clone="CD4 Allocation" href="<?php echo base_url();?>cd4_management">CD4</a></li>
+
+ <li><a  data-clone="RTK Allocation" href="<?php echo base_url();?>rtk_management/allocations">RTK Allocations</a></li>
+	<li><a  data-clone="CD4 Home" href="<?php echo base_url();?>cd4_management/">CD4</a></li> 
+	<li><a  data-clone="CD4 Allocation" href="<?php echo base_url();?>cd4_management/allocations">CD4 Allocations</a></li>
 	<?php } ?>
 <?php if($user_is_moh){
 	?>
