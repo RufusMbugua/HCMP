@@ -189,8 +189,8 @@ $(function() {
 
 </script>
 <?php 
-$attributes = array( 'name' => 'myform', 'id'=>'myform');
-	 $facility_code=$this->session->userdata('news');    
+     $attributes = array( 'name' => 'myform', 'id'=>'myform');
+	 //$facility_code=$this->session->userdata('news');    
 	 
 		foreach ($facilities as $facility) {
 			$facility_name=$facility['facility_name'];
@@ -198,8 +198,12 @@ $attributes = array( 'name' => 'myform', 'id'=>'myform');
 			$district=$facility['district_name'];
 		}
 		
-		$fname=$this->session->userdata('names');
-		$lname=$this->session->userdata('inames');
+		
+		 $myobj = Doctrine::getTable('user')->find($user_id);
+		 $fname=   $myobj->fname ;
+		 $lname=   $myobj->lname;
+		
+		
 		$username=$fname.' '.$lname;
 		
 		?>

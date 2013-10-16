@@ -88,4 +88,24 @@ public static function save_facility_evaluation($data_array){
 		return "updated";	
 		endif;
 	}
+	
+	public static function get_facility_evaluation_form_results($district_id=null, $county_id=null){
+		
+	    $sql_condition= isset($district_id) ?  " and f.district=d.id and d.id=$district_id" :  " and f.district=d.id and d.county=$county_id";
+		
+		$query = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+		select f.facility_code, f.facility_name, count(u.id) as total_users, count(f_e.id) as responses
+        from facilities f, facility_evaluation f_e, user u, districts d
+        where f.facility_code=f_e.facility_code and u.facility=f.facility_code".$sql_condition);
+	
+	    return $query;	
+	}
+	public static function get_people_who_have_responded($facility_code){
+		$query = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+		select date_created,assessor,trainer, u.fname, u.lname, f_e.facility_code
+        from facility_evaluation f_e,user u
+        where f_e.facility_code=$facility_code and f_e.facility_code=u.facility and u.id=f_e.assessor");
+	
+	    return $query;	
+	}
 }

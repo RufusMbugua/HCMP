@@ -1,5 +1,5 @@
 <script type="text/javascript">
-$(document).ready(function(){
+$(function() {
         $('#container').highcharts({
             chart: {
                 type: 'bar'
@@ -42,4 +42,4 @@ $(document).ready(function(){
 		</script>
 
 		
-		<div id="container" style="min-width: 310px; height: auto; margin: 0 auto"></div>
+		<div id="container" style="height: auto; width: auto; margin: 0 auto"></div>

@@ -222,7 +222,7 @@
 	</select>
 	
 </div>
-	<div class="stockstatuschart" style="height:22em;  overflow: scroll;">
+	<div class="stockstatuschart"  id="stockstatuschart" style="height:22em;  overflow: scroll;">
 	
 	
 </div>

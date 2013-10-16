@@ -236,11 +236,11 @@ class Stock_Management extends auto_sms {
 		   	
 		   	$mydata2=array('Facility_Code'=>$facility_c,
 			'Kemsa_Code'=>$kemsa_code_,
-			'Opening_Balance'=>0,
+			'Opening_Balance'=>$a_stock[$i],
 			'Total_Issues'=>0,
 			'Total_Receipts'=>0,
-			'Adj'=>$qty,
-			'Closing_Stock'=>$qty,
+			'Adj'=>0,
+			'Closing_Stock'=>$a_stock[$i],
 			'availability'=>1);
 			
 			Facility_Transaction_Table::update_facility_table($mydata2);

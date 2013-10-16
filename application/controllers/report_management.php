@@ -1853,8 +1853,8 @@ public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
 			
 			//array_key_exists($data['drug_name'],$commodity_name) ? $commodity_name['drug_name']=$data['drug_name'] : $commodity_name=array_merge($commodity_name, array($data['drug_name']=>$data['drug_name'])) ;
 		array_push($commodity_name,$data['drug_name']); 
-		array_push($current_values,(int) $data['total']); 
-		array_push($monthly_values, (int) $data['consumption_level']); 
+		array_push($current_values,isset($data['total']) ? (int) $data['total'] : (int) 0); 
+		array_push($monthly_values, isset($data['consumption_level']) ? (int)  $data['consumption_level'] : (int) 0); 
 		
 		endforeach;
 	$data['title_1']="Current Balance";
@@ -1910,7 +1910,7 @@ public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
 		}
 		if(count($commodity_array)>50){
 		$width="100%";
-        $height="200%";		
+        $height="300%";		
 		}
  
        $data['width']=$width;
@@ -2605,10 +2605,13 @@ public function district_drawing_rights_chart(){
 		
 		}
 
-public function facility_evaluation(){
+public function facility_evaluation($facility_code=null,$user_id=null){
 	   
-		$facility_code=$this->session->userdata('news');  
-		$user_id=$this->session->userdata('identity');  
+	    if(!isset($facility_code) && !isset($user_id)){
+	    $facility_code=$this->session->userdata('news');  
+		$user_id=$this->session->userdata('identity');  	
+	    }
+		
 		             //New
 	   
 		$evaluation=facility_evaluation::getAll($facility_code,$user_id)->toArray();
@@ -2651,8 +2654,9 @@ public function facility_evaluation(){
 		$data['title'] = "Facility Training Evaluation";
 		$data['content_view'] = "facility/facility_reports/facility_evaluation";
 	    $data['banner_text'] = "Facility Training Evaluation";
-	    $data['facilities']=Facilities::get_one_facility_details($facility_code);
-		
+	    $data['facilities']=Facilities::get_one_facility_details($facility_code,$user_id);
+		$data['facility_code']=$facility_code;
+		$data['user_id']=$user_id;
 		$data['evaluation_data']=$data;
 
 	    $this -> load -> view("template", $data);           
@@ -2743,6 +2747,65 @@ public function save_facility_eval()
 		echo Facility_Evaluation::save_facility_evaluation($mydata);
 
 }
+
+public function get_facility_evaluation_form_results(){
+	    
+		//$district_id=null;
+	//	$county_id=null;
+		$access_level= $this->session->userdata('user_type_id');
+		
+		$district_id= ($access_level==3)? $this->session->userdata('district') : null;
+		
+		$county_id= ($access_level==10)? $this->session->userdata('county_id') : null;
+		
+		
+		$facility_raw_data= Facility_Evaluation::get_facility_evaluation_form_results($district_id,$county_id);
+		
+		
+		$table_data=null;
+		
+		foreach ($facility_raw_data as $key=>$data){
+		$table_data .="<tr>
+		<td class='center'>$data[facility_code]</td>
+		<td class='center'>$data[facility_name]</td>
+		<td class='center'>$data[total_users]</td>
+		<td class='center'>$data[responses]</td>		
+		</tr>";
+		}
+	
+	    $data['facility_response']=$table_data;		
+	    $data['title'] = "Facility Training Evaluation Results";
+		$data['content_view'] = "district/district_report/facility_evaluation_report_v";
+	    $data['banner_text'] = "Facility Training Evaluation Results";
+		
+
+
+	    $this -> load -> view("template", $data);  
+	
+}
+
+  public function get_facility_evaluation_data($facility_code){
+  	
+  	$data= Facility_Evaluation::get_people_who_have_responded($facility_code);
+	
+	$table_data='<table  cellspacing="0" border="0" width="100%"><tr><th>Responednt</th><th>Trainer</th><th>Date</th><th>view</th></tr>';
+	
+	foreach($data as $key=>$facility_data):
+		
+	$date=date('d M Y', strtotime($facility_data['date_created']));
+		
+	$table_data .="<tr><td>$facility_data[fname] $facility_data[lname] </td><td>$facility_data[trainer] </td><td>$date</td>
+	<td><a href='".base_url()."report_management/facility_evaluation/$facility_data[facility_code]/$facility_data[assessor]' class='link'>view response</a></td></tr>";
+		
+	endforeach;
+	
+	echo $table_data."</table>";
+	
+  }
+  
+  public function facility_evaluation_data($facility_code,$user_id){
+  	
+  }
 
 
 }

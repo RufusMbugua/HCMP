@@ -186,10 +186,10 @@ $( "#dialog1" ).dialog({
                             	
                             <input class="user" readonly="readonly" type="text"<?php echo 'name="stock_level['.$count.']"'?> value="<?php echo $drug->balance;?>"  /></td>
                              <?php
-                        
+                        echo "<input type='hidden' name='delete[$count]' value='0' />";
                         if($access_level==2): 
                         echo "<td>
-                         <input type='hidden' name='delete[$count]' value='0' />
+                         
                         <input type='checkbox' name='delete[$count]' value='1' />
                         
                         </td>" ; endif; // ;                        

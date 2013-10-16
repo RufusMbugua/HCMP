@@ -165,6 +165,10 @@ $(document).ready(function(){
 					            $unitS=$d->Unit_Size; 
 								$unitC=$d->Unit_Cost;
 								$calc=$drug->balance;
+								$actual_units=$d->total_units;
+						
+								$calc=round($calc/$actual_units);
+								
 								$thedate=$drug->expiry_date;
 								$formatme = new DateTime($thedate);
 								 $myvalue= $formatme->format('d M Y');

@@ -189,16 +189,14 @@ ORDER BY d.drug_name ASC  ");
      public static function get_facility_stock_level($distict){
      
 $inserttransaction = Doctrine_Manager::getInstance()->getCurrentConnection()
-		->fetchAll("SELECT d.drug_name, CEIL( SUM( fs.balance / d.total_units ) ) AS total, temp.consumption_level
-FROM facility_stock fs, drug d, facilities f
-LEFT JOIN historical_stock temp ON temp.facility_code ='$distict'
-WHERE fs.facility_code = f.facility_code
-AND f.facility_code =  '$distict'
-AND fs.kemsa_code = temp.drug_id
+		->fetchAll("SELECT d.drug_name, CEIL( SUM( fs.balance / d.total_units ) ) AS total, ifnull(temp.consumption_level,0) as consumption_level
+FROM  drug d, facility_stock fs
+left join historical_stock temp on temp.drug_id=fs.kemsa_code and temp.facility_code='$distict'
+WHERE fs.facility_code =  '$distict'
 AND d.id = fs.kemsa_code
 AND fs.STATUS =  '1'
 GROUP BY fs.kemsa_code
-ORDER BY d.drug_name ASC ");
+ORDER BY d.drug_name ASC");
 
         return $inserttransaction ;} 
       ////////////// getting district stock level

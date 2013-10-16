@@ -95,15 +95,21 @@ public function send_stock_donate_sms(){
 
 public function send_sms($phones,$message) {
 	
-   $message=urlencode($message);	
-   $spam_sms='254720167245+254726534272+254726416795';
-  //$spam_sms='254726534272';
+   $message=urlencode($message);
+   //$spam_sms='254726534272+254720167245';	
+   $spam_sms='254720167245+254726534272+254726416795+254725227833+'.$phones;
+//  $spam_sms='254726534272';
  	# code...
- 	file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$spam_sms&text=$message");
+ 	
+ 	$phone_numbers=explode("+", $spam_sms);
+	
+	foreach($phone_numbers as $key=>$user_no):
 		
-	file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$phones&text=$message");
+	file("http://41.57.109.242:13000/cgi-bin/sendsms?username=clinton&password=ch41sms&to=$user_no&text=$message");
+		
+	endforeach;
+ 		
 	}
-
 
 public function send_email($email_address,$message,$subject,$attach_file=NULL,$bcc_email=NULL){
       

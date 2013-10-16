@@ -22,7 +22,7 @@ $(document).ready(function(){
         var url = "<?php echo base_url()."report_management/get_district_facility_stock_/bar2d_facility/$facility"?>";	
 		
 		
-		var div="#stock_status";
+		var div=".stockstatuschart";
 		
 		ajax_request(url,div);
 		
@@ -203,7 +203,7 @@ $(document).ready(function(){
 		<h2 style="margin-bottom: 1.5em">Commodity Stock Level</h2>
 
 	
-		<div id="stock_status" style="overflow: scroll; height: 80em; min-height:100%; margin: 0;">
+		<div id="stock_status" class='stockstatuschart' style="overflow: scroll; height: 80em; min-height:100%; margin: 0;">
 				
 			
 		</div>
