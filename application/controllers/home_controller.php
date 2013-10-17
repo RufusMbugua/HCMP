@@ -116,10 +116,11 @@ return $stats_data;
 
 		$difference=($x1-$x2)/86400;
 /*****************************************Notifications********************************************/	
-            $data['percentage_complete'] = Historical_Stock::historical_stock_rate($facility_c);	    
+            $data['percentage_complete'] = Historical_Stock::historical_stock_rate($facility_c);	
+            $data['total_drugs']=count(Drug::getAll());  
 		    $data['diff']=$difference;			
 			$data['exp']=Facility_Stock::get_exp_count($date,$facility_c);
-		    $data['historical_stock'] = Historical_Stock::historical_stock_rate($facility_c);	
+		   // $data['historical_stock'] = Historical_Stock::historical_stock_rate($facility_c);	
 			$data['exp_count']=Facility_Stock::get_exp_count($date,$facility_c);
 			$data['stock']=Facility_Stock::count_facility_stock_first($facility_c);
 		    $data['pending_orders'] = Ordertbl::get_pending_count($facility_c);

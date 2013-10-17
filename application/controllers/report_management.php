@@ -1858,7 +1858,7 @@ public function get_stock_status_ajax($option=NULL,$facility_code=NULL){
 		
 		endforeach;
 	$data['title_1']="Current Balance";
-	$data['title_2']="Avarage Monthly Consumption";	
+	$data['title_2']="Average Monthly Consumption";	
 	$data['commodity_name']=stripslashes(json_encode($commodity_name));
 	$data['current_values']=json_encode($current_values);
 	$data['monthly_values']=json_encode($monthly_values);

@@ -55,7 +55,7 @@ $(document).ready(function(){
 	<div id="left_content">
 		<fieldset>
 			<legend>Notifications</legend>
-			<?php if($incomplete_order > 0): ?>
+			<!--<?php if($incomplete_order > 0): ?>
 			<div class="message warning">
 			<h2>Incomplete Order</h2>
 			<p>
@@ -72,7 +72,7 @@ $(document).ready(function(){
 				echo site_url('stock_management/stock_level');?>" <a class="link"><?php echo $diff.' Days to deadline. Order now'?> </a>
 			</p>
 		</div>
-			<?php endif; ?>
+			<?php endif; ?>-->
 		<?php if($dispatched>0):?>
 		<div class="message information">			
 			<h2>Dispatched Orders</h2>			
@@ -114,29 +114,37 @@ $(document).ready(function(){
                        <a href="<?php echo site_url('stock_expiry_management/default_expiries_notification');?>" <a class="link"><?php echo $exp_count['balance']; ?> Product(s) Expiring in the next 6 months</a>
                        </p>
                </div>
-               <?php endif;
-               $histrorical_count=round($percentage_complete[0]['percentage'],1);
-          if ($histrorical_count<100){?> 
-		<div class="message warning">
-<h2>Incomplete Historical Stock (<?php echo $histrorical_count ?>% complete)</h2>
-			<p>
-				<a href="<?php 
-				echo site_url('stock_management/historical_stock_take');?>" <a class="link"> Please provide your historical stock information </a>
-			</p>
-		</div>
-		<?php }?>
-		 <?php 
+               <?php endif;?>
+                <?php 
                
           if (count($stock)<1){?> 
 	<div class="message warning">
-			<h2>No Stock</h2>
+			<h2>1. No Stock (On First Run)</h2>
 			<p>
 				<a href="<?php 
 				echo site_url('stock_management/facility_first_run');?>" <a class="link"> Please update your stock details </a>
 			</p>
 		</div>
 	
+		<?php }
+		  
+               $histrorical_count= count($percentage_complete)==0 ? 0 : round($percentage_complete[0]['percentage'],1);
+			   
+			   
+			
+       if ($histrorical_count<100){?> 
+		<div class="message warning">
+<h2>2. Incomplete Historical Stock (<?php echo $histrorical_count ?>% complete)</h2>
+			<p>
+				<a href="<?php 
+				echo site_url('stock_management/historical_stock_take');?>" <a class="link"> Please provide your historical stock information (<?php
+				
+				echo ($histrorical_count==0)? $total_drugs : $percentage_complete[0]['balance'] ; 
+				?> commodities remaining) </a>
+			</p>
+		</div>
 		<?php }?>
+		
                
 		</fieldset>
 		<fieldset>
@@ -154,6 +162,13 @@ $(document).ready(function(){
 		<div class="activity issue">
 		<a href="<?php echo site_url('Issues_main/Index/Internal/'.$facility);?>"><h2>Issue Commodities to Sevice Points</h2></a>
 		</div>
+		<div class="activity ext">
+		<a href="<?php echo site_url('Issues_main/Index/External/'.$facility);?>"><h2>Donate Commodities</h2></a>
+		</div>	
+
+		<div class="activity ext">
+		<a href="<?php echo site_url('Issues_main/Index/Donation/'.$facility)?>"><h2>Receive Donation From Other Sources</h2></a>
+		</div>
 		<div class="activity order">
 		<a href="<?php echo site_url('order_management/new_order');?>">	<h2>Order Commodities</h2></a>
 		</div>
@@ -165,13 +180,7 @@ $(document).ready(function(){
 		<a href="<?php echo site_url('user_management/users_manage');?>"><h2>User Management</h2></a>
 		</div>
 		<?php endif; ?>
-		<div class="activity ext">
-		<a href="<?php echo site_url('Issues_main/Index/External/'.$facility);?>"><h2>Donate Commodities</h2></a>
-		</div>	
-
-		<div class="activity ext">
-		<a href="<?php echo site_url('Issues_main/Index/Donation/'.$facility)?>"><h2>Receive Donation From Other Sources</h2></a>
-		</div>
+		
 	    <!-- <div class="activity update">
 	    <a href="<?php echo site_url('order_management/stock_level/v');?>"><h2>Update Physical Stock Count</h2>	</a>
 		</div>-->
@@ -188,7 +197,7 @@ $(document).ready(function(){
 		<div class="activity update">
 	    <a href="<?php echo site_url('stock_management/historical_stock_take');?>"><h2>Provide Historical Stock Data</h2></a>
 		</div>
-	<?php }else if (count($historical_stock)==0){?> 
+	<?php }else if (count($percentage_complete)==0){?> 
 	
 		<div class="activity update">
 	    <a href="<?php echo site_url('stock_management/historical_stock_take');?>"><h2>Provide Historical Stock Data</h2></a>
@@ -200,10 +209,11 @@ $(document).ready(function(){
 	</div>
 	<div id="right_content">
 
-		<h2 style="margin-bottom: 1.5em">Commodity Stock Level</h2>
-
+		<h2 style="margin-bottom: 1.5em">Commodity Stock Level in Pack Size</h2>
+        <h6>Mouse over to see values</h6>
 	
-		<div id="stock_status" class='stockstatuschart' style="overflow: scroll; height: 80em; min-height:100%; margin: 0;">
+		
+			<div id="stock_status" class='stockstatuschart' style="overflow: scroll; height: 80em; min-height:100%; margin: 0;">
 				
 			
 		</div>

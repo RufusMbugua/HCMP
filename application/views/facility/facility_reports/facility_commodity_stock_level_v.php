@@ -1,6 +1,6 @@
 <script type="text/javascript">
 $(function() {
-        $('#container').highcharts({
+        $('#stock_status').highcharts({
             chart: {
                 type: 'bar'
             },

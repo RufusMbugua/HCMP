@@ -42,14 +42,14 @@
 		
 		
        $('#facilities').change(function() {
-       	var div=".stockstatuschart";
+       	var div="#stock_status";
 		var url = "<?php echo base_url().'report_management/get_district_facility_stock_/'?>";	
 		url=url+"bar2d_facility/"+$(this).val();
 		ajax_request(url,div);
 		});
 
         $('#desc').change(function() {
-        var div=".stockstatuschart";
+        var div="#stock_status";
 		var url = "<?php echo base_url().'report_management/get_district_facility_stock_/'?>";	
 		url=url+"bar2d_drug/"+$(this).val();
 		ajax_request(url,div);
@@ -222,7 +222,7 @@
 	</select>
 	
 </div>
-	<div class="stockstatuschart"  id="stockstatuschart" style="height:22em;  overflow: scroll;">
+	<div class="stockstatuschart"  id="stock_status" style="height:22em;  overflow: scroll;">
 	
 	
 </div>

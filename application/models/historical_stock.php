@@ -19,6 +19,7 @@ class Historical_Stock extends Doctrine_Record {
 		$this->setTableName('historical_stock');	
 	}	
 	public function get_historical_stock($facility_code){
+		
 		$query = Doctrine_Query::create() -> select("*") -> from("historical_stock") -> where("facility_code=$facility_code");
 		$stock = $query -> execute();
 		return $stock;
@@ -32,13 +33,12 @@ class Historical_Stock extends Doctrine_Record {
 	public static function historical_stock_rate($facility_code){
 	
 		
-			$query = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("SELECT d.unit_size, d.id, h.`drug_id` , d.kemsa_code, d_c.category_name, d.drug_name, h.`consumption_level` , h.`unit_count` , h.`selected_option`,(count(consumption_level)/163)*100 as percentage
-FROM drug_category d_c, drug d
-LEFT JOIN  `historical_stock` h ON d.id = h.drug_id
-AND h.facility_code =$facility_code
-WHERE d.drug_category = d_c.id");
-		
-
+				$query = Doctrine_Manager::getInstance()->getCurrentConnection()->fetchAll("
+SELECT drug_id, 
+SUM(consumption_level) AS quantity1, (count(consumption_level)/(select count(id) from drug))*100 as percentage,((select count(id) from drug)-SUM(consumption_level)) as balance
+FROM historical_stock
+WHERE facility_code=$facility_code
+group by drug_id");
 		
 		return $query;
 	}
